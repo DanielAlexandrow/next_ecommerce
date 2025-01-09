@@ -27,5 +27,73 @@
         "passed": 20,
         "failed": 5,
         "coverage": "80%"
+    },
+    "php_test_state": {
+        "timestamp": "2024-04-04",
+        "summary": {
+            "passed_suites": [
+                "ProductControllerTest",
+                "ExampleTest",
+                "NavigationItemTest",
+                "ProductCategoryTest",
+                "ProductOrderTest",
+                "OrderTest",
+                "CartServiceTest",
+                "CategoryServiceTest",
+                "CheckoutServiceTest",
+                "OrderServiceTest",
+                "ProductServiceTest",
+                "EmailVerificationTest",
+                "PasswordResetTest",
+                "RegistrationTest",
+                "ApiVisitTest",
+                "ExampleTest"
+            ],
+            "total_tests": 47,
+            "all_passing": true
+        },
+        "removed_tests": [
+            "OrderTest",
+            "ProductTest",
+            "AccessibilityTest",
+            "KeyboardNavigationTest",
+            "ScreenReaderTest",
+            "RateLimitingTest",
+            "AuthenticationTest",
+            "ChatTest",
+            "CacheStrategyTest",
+            "MemoryLeakTest",
+            "PerformanceTest"
+        ],
+        "test_categories": {
+            "unit": {
+                "controllers": [
+                    "ProductControllerTest"
+                ],
+                "models": [
+                    "NavigationItemTest",
+                    "ProductCategoryTest",
+                    "ProductOrderTest",
+                    "OrderTest"
+                ],
+                "services": [
+                    "CartServiceTest",
+                    "CategoryServiceTest",
+                    "CheckoutServiceTest",
+                    "OrderServiceTest",
+                    "ProductServiceTest"
+                ]
+            },
+            "feature": {
+                "auth": [
+                    "EmailVerificationTest",
+                    "PasswordResetTest",
+                    "RegistrationTest"
+                ],
+                "api": [
+                    "ApiVisitTest"
+                ]
+            }
+        }
     }
 }

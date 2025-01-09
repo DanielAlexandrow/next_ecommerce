@@ -386,4 +386,226 @@ describe('ProductForm Edge Cases', () => {
             expect(mockSetValue).toHaveBeenCalledWith('name', specialChars);
         });
     });
+
+    describe('Advanced Input Validation', () => {
+        it('handles empty spaces in input values', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue,
+                formState: {
+                    ...createBasicMockFormContext().formState,
+                    errors: {}
+                }
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const nameInput = screen.getByTestId('product-name-input');
+            const testCases = [
+                '   Leading spaces',
+                'Trailing spaces   ',
+                '   Multiple   Spaces   Between   ',
+                '\t\tTabs\t\t',
+                '\nNewlines\n\n',
+                ' '  // Just spaces
+            ];
+
+            for (const testCase of testCases) {
+                await act(async () => {
+                    fireEvent.change(nameInput, { target: { value: testCase } });
+                });
+
+                await waitFor(() => {
+                    expect(mockSetValue).toHaveBeenLastCalledWith('name', testCase.trim());
+                });
+            }
+        });
+
+        it('handles HTML tags in input values', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue,
+                formState: {
+                    ...createBasicMockFormContext().formState,
+                    errors: {}
+                }
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const descriptionInput = screen.getByTestId('product-description-input');
+            const htmlTestCases = [
+                '<script>alert("xss")</script>',
+                '<img src="x" onerror="alert(1)">',
+                '<style>body { display: none }</style>',
+                '<a href="javascript:alert(1)">Click me</a>',
+                '<<SCRIPT>>alert("XSS")<<</SCRIPT>>',
+                '<img src="x" onmouseover="alert(1)">',
+                '<svg><script>alert(1)</script></svg>'
+            ];
+
+            for (const testCase of htmlTestCases) {
+                await act(async () => {
+                    fireEvent.change(descriptionInput, { target: { value: testCase } });
+                });
+
+                await waitFor(() => {
+                    // Should escape or strip HTML tags
+                    expect(mockSetValue).toHaveBeenLastCalledWith('description',
+                        expect.not.stringContaining('<script>'));
+                });
+            }
+        });
+
+        it('handles SQL injection attempts in input values', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue,
+                formState: {
+                    ...createBasicMockFormContext().formState,
+                    errors: {}
+                }
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const nameInput = screen.getByTestId('product-name-input');
+            const sqlTestCases = [
+                "'; DROP TABLE products; --",
+                "' OR '1'='1",
+                "'; INSERT INTO users VALUES ('hacked'); --",
+                "' UNION SELECT * FROM users; --",
+                "'; DELETE FROM products WHERE 1=1; --",
+                "' OR 'x'='x",
+                "admin'--",
+                "1'; SELECT * FROM users WHERE 't' = 't"
+            ];
+
+            for (const testCase of sqlTestCases) {
+                await act(async () => {
+                    fireEvent.change(nameInput, { target: { value: testCase } });
+                });
+
+                await waitFor(() => {
+                    // Should escape SQL special characters
+                    expect(mockSetValue).toHaveBeenLastCalledWith('name',
+                        expect.stringMatching(/^[^;'"]*$/));
+                });
+            }
+        });
+
+        it('handles unicode and emoji characters', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const nameInput = screen.getByTestId('product-name-input');
+            const unicodeTestCases = [
+                '🌟 Star Product',
+                '产品名称',
+                'محصول',
+                'προϊόν',
+                'उत्पाद',
+                '제품',
+                '🎉 Party 🎊 Time 🎈 Product',
+                '❤️ Love 💕 This',
+                '🔥 Hot Deal 💯'
+            ];
+
+            for (const testCase of unicodeTestCases) {
+                await act(async () => {
+                    fireEvent.change(nameInput, { target: { value: testCase } });
+                });
+
+                await waitFor(() => {
+                    expect(mockSetValue).toHaveBeenLastCalledWith('name', testCase);
+                });
+            }
+        });
+
+        it('handles rapid input changes', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const nameInput = screen.getByTestId('product-name-input');
+            const rapidChanges = ['a', 'ab', 'abc', 'abcd', 'abcde'];
+
+            for (const value of rapidChanges) {
+                await act(async () => {
+                    fireEvent.change(nameInput, { target: { value } });
+                });
+            }
+
+            // Should have been called for each change
+            expect(mockSetValue).toHaveBeenCalledTimes(rapidChanges.length);
+            // Last call should be with the final value
+            expect(mockSetValue).toHaveBeenLastCalledWith('name', 'abcde');
+        });
+
+        it('handles paste events with mixed content', async () => {
+            const mockSetValue = vi.fn();
+            const mockFormContext = {
+                ...createBasicMockFormContext(),
+                setValue: mockSetValue
+            };
+
+            vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+            render(<ProductForm mode="new" product={mockProduct} />);
+
+            const descriptionInput = screen.getByTestId('product-description-input');
+            const mixedContent = `
+                <h1>Product Title</h1>
+                🌟 Special Features:
+                • Item 1
+                • Item 2
+                <script>alert('test')</script>
+                -- SQL Comment
+                Price: $99.99
+            `.trim();
+
+            await act(async () => {
+                // Simulate paste event
+                const pasteEvent = new Event('paste', { bubbles: true });
+                Object.defineProperty(pasteEvent, 'clipboardData', {
+                    value: {
+                        getData: () => mixedContent
+                    }
+                });
+                fireEvent.paste(descriptionInput, pasteEvent);
+                // Also trigger change event as it would happen in real browser
+                fireEvent.change(descriptionInput, { target: { value: mixedContent } });
+            });
+
+            await waitFor(() => {
+                // Should sanitize HTML and preserve emojis and basic formatting
+                expect(mockSetValue).toHaveBeenCalledWith('description',
+                    expect.not.stringContaining('<script>'));
+                expect(mockSetValue).toHaveBeenCalledWith('description',
+                    expect.stringContaining('🌟'));
+            });
+        });
+    });
 }); 

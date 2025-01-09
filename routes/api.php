@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Subproduct;
+use App\Http\Controllers\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+    // Chat routes
+    Route::post('/chat/messages', [ChatController::class, 'sendMessage']);
+    Route::get('/chat/messages', [ChatController::class, 'getMessages']);
+    Route::post('/chat/typing', [ChatController::class, 'agentTyping']);
+    Route::post('/chat/status', [ChatController::class, 'agentStatusChange']);
 });
 
 // Test routes
