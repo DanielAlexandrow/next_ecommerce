@@ -1,53 +1,59 @@
-# Test Issues and Solutions
+# Test Issues Tracker
 
-## Current Status (2024-01-17)
+## Latest Test Run (2024-01-09)
 
-### PHP Tests
-- ✅ All 65 tests passing (181 assertions)
-- Key test suites:
-  - ProductControllerTest
-  - ProductOrderTest
-  - ProductCreationTest
+### Failed Tests Summary
+1. `resources/js/tests/e2e/AdminSidebar.test.ts`
+   - Issue: Playwright Test configuration error
+   - Error: Unexpected test.describe() call
+   - Status: ⚠️ Configuration Error
+   - Fix Required: Review Playwright test setup and configuration
 
-### Vitest Tests
-- 🔄 In Progress
-- Recent Issues:
-  1. ImageSelect component undefined map error
-     - Solution: Mocked ImageSelect component to prevent undefined variable issues
-  2. act(...) warnings
-     - Solution: Wrapped all state updates in act()
-  3. Form submission test failures
-     - Solution: Improved form context mocking with createMockFormContext
-  4. Input changes and checkbox toggle failures
-     - Solution: Fixed event handling in form context mock
-  5. Unhandled error with form.setError
-     - Solution: Added setError and clearErrors to form context mock
+2. `resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx`
+   - Issues:
+     - `handles input changes`: mockSetValue not called as expected
+     - `handles checkbox toggle`: mockSetValue not called as expected
+   - Status: ⚠️ Mock Function Issues
+   - Fix Required: Review mock setup and event handling
 
-## Recent Fixes
+3. `resources/js/tests/components/Store/Review/ReviewComponent.test.tsx`
+   - Issues:
+     - `validates form inputs`: Toast error not called with expected message
+     - `handles review submission`: createReview API not called as expected
+     - `handles API errors gracefully`: Wrong error message shown
+     - `handles loading state during sort`: Missing opacity-50 class
+   - Status: ⚠️ Multiple Issues
+   - Fix Required: Review form validation, API integration, and loading state implementation
 
-### ProductForm.test.tsx
-1. Added comprehensive mock for react-hook-form
-2. Improved child component mocking (BrandSelect, CategorySelect, ImageSelect)
-3. Enhanced form submission handling with proper event prevention
-4. Added proper state management for input changes and checkbox toggles
-5. Fixed form context mock to include all required methods (setError, clearErrors)
-6. Improved event handling for input changes and checkbox toggle
+### Test Statistics
+- Total Test Files: 22
+- Passed Files: 19
+- Failed Files: 3
+- Total Tests: 117
+- Passed Tests: 111
+- Failed Tests: 6
+- Success Rate: 94.87%
 
-## Known Edge Cases
-1. Form submission with empty required fields
-2. Special character handling in product names
-3. Image selection with no available images
-4. Brand/Category selection with empty lists
+### Common Patterns in Failures
+1. Mock Function Issues
+   - Several tests failing due to mock functions not being called as expected
+   - Potential issue with event handling or mock setup
 
-## Next Steps
-1. Verify all act(...) warnings are resolved
-2. Ensure ImageSelect mock properly handles empty states
-3. Add test coverage for edge cases
-4. Improve error handling tests
+2. Component State Management
+   - Loading states not properly reflected in UI
+   - Form validation state issues
 
-## Lessons Learned
-1. Always include complete form context mock with all required methods
-2. Wrap state updates in act() to prevent warnings
-3. Mock child components to prevent undefined variable issues
-4. Handle events properly in form context mock
-5. Test both success and error cases for form submission 
+3. API Integration
+   - Review submission and error handling not working as expected
+
+### Action Items
+1. Fix Playwright configuration for E2E tests
+2. Review mock setup in ProductForm tests
+3. Audit ReviewComponent implementation:
+   - Form validation logic
+   - API integration
+   - Loading state management
+   - Error handling
+
+### Previous Issues Resolution Status
+[Previous issues will be listed here when comparing with past runs] 
