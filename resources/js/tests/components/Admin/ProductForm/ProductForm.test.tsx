@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ProductForm from '@/components/Admin/ProductForm/ProductForm';
 import { useForm } from 'react-hook-form';
@@ -173,12 +173,10 @@ describe('ProductForm Edge Cases', () => {
         const mockFormContext = {
             ...createBasicMockFormContext(),
             setValue: mockSetValue,
-            register: vi.fn((name: string) => ({
-                name,
-                onChange: vi.fn((e: React.ChangeEvent<HTMLInputElement>) => mockSetValue(name, e.target.value)),
-                onBlur: vi.fn(),
-                ref: vi.fn()
-            }))
+            control: {
+                ...createBasicMockFormContext().control,
+                _formState: { isDirty: false }
+            }
         };
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
@@ -187,10 +185,15 @@ describe('ProductForm Edge Cases', () => {
 
         const nameInput = screen.getByTestId('product-name-input');
         await act(async () => {
-            fireEvent.change(nameInput, { target: { value: 'New Product Name' } });
+            // Trigger the field.onChange directly through the Controller
+            const field = nameInput.closest('div[data-testid="product-name-input"]')!;
+            const controller = field.querySelector('input')!;
+            fireEvent.change(controller, { target: { value: 'New Product Name' } });
         });
 
-        expect(mockSetValue).toHaveBeenCalledWith('name', 'New Product Name');
+        await waitFor(() => {
+            expect(mockSetValue).toHaveBeenCalledWith('name', 'New Product Name');
+        });
     });
 
     it('handles checkbox toggle', async () => {
@@ -198,13 +201,11 @@ describe('ProductForm Edge Cases', () => {
         const mockFormContext = {
             ...createBasicMockFormContext(),
             setValue: mockSetValue,
-            getValues: vi.fn().mockReturnValue({ available: true }),
-            register: vi.fn((name: string) => ({
-                name,
-                onChange: vi.fn((e: React.ChangeEvent<HTMLInputElement>) => mockSetValue(name, e.target.checked)),
-                onBlur: vi.fn(),
-                ref: vi.fn()
-            }))
+            control: {
+                ...createBasicMockFormContext().control,
+                _formState: { isDirty: false }
+            },
+            getValues: vi.fn().mockReturnValue({ available: true })
         };
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
@@ -213,9 +214,14 @@ describe('ProductForm Edge Cases', () => {
 
         const checkbox = screen.getByTestId('product-available-checkbox');
         await act(async () => {
-            fireEvent.click(checkbox);
+            // Trigger the onCheckedChange directly through the Controller
+            const field = checkbox.closest('div[data-testid="product-available-checkbox"]')!;
+            const controller = field.querySelector('button')!;
+            fireEvent.click(controller);
         });
 
-        expect(mockSetValue).toHaveBeenCalledWith('available', false);
+        await waitFor(() => {
+            expect(mockSetValue).toHaveBeenCalledWith('available', false);
+        });
     });
 }); 
