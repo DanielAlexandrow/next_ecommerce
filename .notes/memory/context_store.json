@@ -1,0 +1,31 @@
+{
+    "architectural_decisions": {
+        "testing_framework": {
+            "choice": "Vitest",
+            "rationale": "Better ESM support and faster execution",
+            "date": "2024-04-04"
+        },
+        "package_manager": {
+            "choice": "pnpm",
+            "rationale": "Faster, more efficient dependency management",
+            "date": "2024-04-04"
+        }
+    },
+    "known_patterns": {
+        "testing": {
+            "pattern": "Component isolation with proper mocking",
+            "implementation_details": "Using vi.mock() for external dependencies"
+        },
+        "form_testing": {
+            "pattern": "Complete react-hook-form mocking",
+            "implementation_details": "Mock all exports including FormProvider and Controller"
+        }
+    },
+    "last_test_state": {
+        "timestamp": "2024-04-04",
+        "total_tests": 25,
+        "passed": 20,
+        "failed": 5,
+        "coverage": "80%"
+    }
+}
