@@ -34,7 +34,7 @@ describe('DeleteProductModal', () => {
     it('renders delete product modal correctly', () => {
         render(<DeleteProductModal {...mockProps} />);
 
-        expect(screen.getByText('Delete Product')).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: 'Delete Product' })).toBeInTheDocument();
         expect(screen.getByText(/Are you sure you want to delete "Test Product"/)).toBeInTheDocument();
         expect(screen.getByText(/This action cannot be undone/)).toBeInTheDocument();
     });

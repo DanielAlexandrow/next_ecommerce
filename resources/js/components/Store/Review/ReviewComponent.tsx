@@ -72,6 +72,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
             {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                     key={star}
+                    data-testid="star-rating-star"
                     className={cn(
                         sizes[size],
                         star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300',

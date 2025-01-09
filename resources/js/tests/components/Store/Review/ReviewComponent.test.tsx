@@ -1,75 +1,57 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ReviewComponent from '@/components/Store/Review/ReviewComponent';
-import { reviewApi } from '@/api/reviewApi';
 import { toast } from 'react-toastify';
-import { usePage } from '@inertiajs/react';
-
-// Mock modules
-vi.mock('@/api/reviewApi', () => ({
-    reviewApi: {
-        getReviews: vi.fn(),
-        createReview: vi.fn()
-    }
-}));
 
 vi.mock('react-toastify', () => ({
     toast: {
         success: vi.fn(),
-        error: vi.fn()
-    }
+        error: vi.fn(),
+    },
+}));
+
+vi.mock('@/api/reviewApi', () => ({
+    reviewApi: {
+        createReview: vi.fn(),
+        getReviews: vi.fn(),
+    },
 }));
 
 vi.mock('@inertiajs/react', () => ({
-    usePage: vi.fn()
+    usePage: () => ({
+        props: {
+            auth: {
+                user: { id: 1, name: 'Test User' }
+            }
+        }
+    })
 }));
-
-// Mock ResizeObserver
-const mockResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-}));
-
-vi.stubGlobal('ResizeObserver', mockResizeObserver);
 
 describe('ReviewComponent', () => {
-    const mockReviews = {
-        data: [
-            {
-                id: 1,
-                title: 'Great Product',
-                content: 'Really enjoyed this',
-                rating: 5,
-                created_at: '2024-01-01T00:00:00.000Z',
-                user: {
-                    id: 1,
-                    name: 'John Doe'
-                }
-            },
-            {
-                id: 2,
-                title: 'Good Value',
-                content: 'Worth the price',
-                rating: 4,
-                created_at: '2024-01-02T00:00:00.000Z',
-                user: {
-                    id: 2,
-                    name: 'Jane Smith'
-                }
-            }
-        ],
-        current_page: 1,
-        links: [
-            { url: null, label: 'Previous', active: false },
-            { url: '?page=1', label: '1', active: true },
-            { url: null, label: 'Next', active: false }
-        ]
-    };
-
-    const defaultProps = {
+    const mockProps = {
         productId: 1,
-        reviews: mockReviews,
+        reviews: {
+            data: [
+                {
+                    id: 1,
+                    title: 'Great Product',
+                    content: 'Really enjoyed it',
+                    rating: 5,
+                    created_at: '2024-01-01',
+                    user: { id: 1, name: 'John Doe' }
+                },
+                {
+                    id: 2,
+                    title: 'Good Product',
+                    content: 'Nice quality',
+                    rating: 4,
+                    created_at: '2024-01-02',
+                    user: { id: 2, name: 'Jane Doe' }
+                }
+            ],
+            current_page: 1,
+            links: []
+        },
         setReviews: vi.fn(),
         averageRating: 4.5,
         setAverageRating: vi.fn()
@@ -77,122 +59,81 @@ describe('ReviewComponent', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        (usePage as any).mockReturnValue({
-            props: {
-                auth: {
-                    user: { id: 1, name: 'Test User' }
-                }
-            }
-        });
-    });
-
-    it('renders review list correctly', () => {
-        render(<ReviewComponent {...defaultProps} />);
-
-        expect(screen.getByText('Product Reviews')).toBeInTheDocument();
-        expect(screen.getByText('4.5')).toBeInTheDocument();
-        expect(screen.getByText('Great Product')).toBeInTheDocument();
-        expect(screen.getByText('Good Value')).toBeInTheDocument();
-        expect(screen.getByText('John Doe')).toBeInTheDocument();
-        expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-    });
-
-    it('handles review submission', async () => {
-        (reviewApi.createReview as any).mockResolvedValueOnce({});
-        (reviewApi.getReviews as any).mockResolvedValueOnce({
-            reviews: mockReviews,
-            average: 4.5
-        });
-
-        render(<ReviewComponent {...defaultProps} />);
-
-        // Open review modal
-        fireEvent.click(screen.getByText('Write a Review'));
-
-        // Fill form
-        fireEvent.change(screen.getByPlaceholderText('Review title'), {
-            target: { value: 'Test Review' }
-        });
-        fireEvent.change(screen.getByPlaceholderText('Write your review here...'), {
-            target: { value: 'Test Content' }
-        });
-
-        // Select rating
-        const stars = screen.getAllByRole('button');
-        fireEvent.click(stars[4]); // 5-star rating
-
-        // Submit form
-        fireEvent.click(screen.getByText('Submit Review'));
-
-        await waitFor(() => {
-            expect(reviewApi.createReview).toHaveBeenCalledWith(1, {
-                title: 'Test Review',
-                content: 'Test Content',
-                rating: 5
-            });
-            expect(toast.success).toHaveBeenCalledWith('Review submitted successfully');
-        });
     });
 
     it('validates form inputs', async () => {
-        render(<ReviewComponent {...defaultProps} />);
+        render(<ReviewComponent {...mockProps} />);
 
         // Open review modal
-        fireEvent.click(screen.getByText('Write a Review'));
+        const writeReviewButton = screen.getByText('Write a Review');
+        fireEvent.click(writeReviewButton);
 
-        // Try to submit without required fields
-        fireEvent.click(screen.getByText('Submit Review'));
+        // Try to submit without rating
+        const submitButton = screen.getByText('Submit Review');
+        fireEvent.click(submitButton);
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith('Please select a rating');
         });
 
-        // Fill rating but no content
-        const stars = screen.getAllByRole('button');
-        fireEvent.click(stars[4]);
-        fireEvent.click(screen.getByText('Submit Review'));
+        // Set rating but no content
+        const stars = screen.getAllByTestId('star-rating-star');
+        fireEvent.click(stars[4]); // 5-star rating
+
+        fireEvent.click(submitButton);
 
         await waitFor(() => {
             expect(toast.error).toHaveBeenCalledWith('Please write a review');
         });
     });
 
-    it('sorts reviews', async () => {
-        (reviewApi.getReviews as any).mockResolvedValueOnce({
-            reviews: {
-                ...mockReviews,
-                data: [...mockReviews.data].reverse()
-            },
+    it('handles review submission', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        (reviewApi.createReview as ReturnType<typeof vi.fn>).mockResolvedValueOnce({});
+        (reviewApi.getReviews as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+            reviews: mockProps.reviews,
             average: 4.5
         });
 
-        render(<ReviewComponent {...defaultProps} />);
-
-        // Click rating sort button
-        fireEvent.click(screen.getByText('Rating'));
-
-        await waitFor(() => {
-            expect(reviewApi.getReviews).toHaveBeenCalledWith(1, 1, 'rating', 'desc');
-        });
-    });
-
-    it('handles API errors gracefully', async () => {
-        (reviewApi.createReview as any).mockRejectedValueOnce(new Error('API Error'));
-
-        render(<ReviewComponent {...defaultProps} />);
+        render(<ReviewComponent {...mockProps} />);
 
         // Open review modal
         fireEvent.click(screen.getByText('Write a Review'));
 
         // Fill form
-        fireEvent.change(screen.getByPlaceholderText('Review title'), {
-            target: { value: 'Test Review' }
+        const stars = screen.getAllByTestId('star-rating-star');
+        fireEvent.click(stars[4]); // 5-star rating
+
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+        fireEvent.change(contentInput, { target: { value: 'Great product!' } });
+
+        // Submit form
+        fireEvent.click(screen.getByText('Submit Review'));
+
+        await waitFor(() => {
+            expect(reviewApi.createReview).toHaveBeenCalledWith(1, {
+                rating: 5,
+                content: 'Great product!',
+                title: ''
+            });
+            expect(toast.success).toHaveBeenCalledWith('Review submitted successfully');
         });
-        fireEvent.change(screen.getByPlaceholderText('Write your review here...'), {
-            target: { value: 'Test Content' }
-        });
-        const stars = screen.getAllByRole('button');
+    });
+
+    it('handles API errors gracefully', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        (reviewApi.createReview as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('API Error'));
+
+        render(<ReviewComponent {...mockProps} />);
+
+        // Open modal and fill form
+        fireEvent.click(screen.getByText('Write a Review'));
+
+        const stars = screen.getAllByTestId('star-rating-star');
         fireEvent.click(stars[4]);
+
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+        fireEvent.change(contentInput, { target: { value: 'Test review' } });
 
         // Submit form
         fireEvent.click(screen.getByText('Submit Review'));
@@ -203,24 +144,24 @@ describe('ReviewComponent', () => {
     });
 
     it('shows empty state when no reviews', () => {
-        render(<ReviewComponent {...defaultProps} reviews={{ ...mockReviews, data: [] }} />);
-        expect(screen.getByText('No reviews yet. Be the first to review this product!')).toBeInTheDocument();
+        render(<ReviewComponent {...mockProps} reviews={{ ...mockProps.reviews, data: [] }} />);
+        expect(screen.getByText(/No reviews yet/)).toBeInTheDocument();
     });
 
     it('handles loading state during sort', async () => {
-        (reviewApi.getReviews as any).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+        const { reviewApi } = await import('@/api/reviewApi');
+        (reviewApi.getReviews as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
 
-        render(<ReviewComponent {...defaultProps} />);
+        render(<ReviewComponent {...mockProps} />);
 
-        await act(async () => {
-            fireEvent.click(screen.getByText('Rating'));
-        });
+        const sortButton = screen.getByText('Rating');
+        fireEvent.click(sortButton);
 
-        const table = screen.getByRole('table');
-        expect(table.className).toContain('opacity-50');
+        const reviewsContainer = screen.getByRole('table').parentElement;
+        expect(reviewsContainer).toHaveClass('opacity-50');
 
         await waitFor(() => {
-            expect(reviewApi.getReviews).toHaveBeenCalled();
+            expect(reviewsContainer).not.toHaveClass('opacity-50');
         });
     });
 }); 

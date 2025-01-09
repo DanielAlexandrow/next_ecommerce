@@ -10,22 +10,23 @@ describe('StarRating', () => {
 
     it('renders correct number of stars', () => {
         render(<StarRating {...defaultProps} />);
-        const stars = screen.getAllByRole('button');
+        const stars = screen.getAllByTestId('star-rating-star');
         expect(stars).toHaveLength(5);
     });
 
     it('fills correct number of stars based on rating', () => {
         render(<StarRating {...defaultProps} />);
-        const stars = screen.getAllByRole('button');
+        const stars = screen.getAllByTestId('star-rating-star');
 
         // First 3 stars should be filled
         stars.slice(0, 3).forEach(star => {
-            expect(star.className).toContain('fill-yellow-400');
+            expect(star).toHaveClass('text-yellow-400', 'fill-yellow-400');
         });
 
         // Last 2 stars should be empty
         stars.slice(3).forEach(star => {
-            expect(star.className).not.toContain('fill-yellow-400');
+            expect(star).not.toHaveClass('fill-yellow-400');
+            expect(star).toHaveClass('text-gray-300');
         });
     });
 
@@ -33,7 +34,7 @@ describe('StarRating', () => {
         const onRatingChange = vi.fn();
         render(<StarRating {...defaultProps} onRatingChange={onRatingChange} />);
 
-        const stars = screen.getAllByRole('button');
+        const stars = screen.getAllByTestId('star-rating-star');
         fireEvent.click(stars[4]); // Click the 5th star
 
         expect(onRatingChange).toHaveBeenCalledWith(5);
@@ -43,47 +44,47 @@ describe('StarRating', () => {
         const onRatingChange = vi.fn();
         render(<StarRating {...defaultProps} onRatingChange={onRatingChange} readOnly />);
 
-        const stars = screen.getAllByRole('button');
+        const stars = screen.getAllByTestId('star-rating-star');
         fireEvent.click(stars[4]);
 
         expect(onRatingChange).not.toHaveBeenCalled();
-        expect(stars[0].className).toContain('cursor-default');
-        expect(stars[0].className).not.toContain('hover:scale-110');
+        expect(stars[0]).toHaveClass('cursor-default');
+        expect(stars[0]).not.toHaveClass('hover:scale-110');
     });
 
     it('applies different sizes correctly', () => {
         const { rerender } = render(<StarRating {...defaultProps} size="sm" />);
-        let stars = screen.getAllByRole('button');
-        expect(stars[0].className).toContain('w-4 h-4');
+        let stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).toHaveClass('w-4', 'h-4');
 
         rerender(<StarRating {...defaultProps} size="md" />);
-        stars = screen.getAllByRole('button');
-        expect(stars[0].className).toContain('w-5 h-5');
+        stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).toHaveClass('w-5', 'h-5');
 
         rerender(<StarRating {...defaultProps} size="lg" />);
-        stars = screen.getAllByRole('button');
-        expect(stars[0].className).toContain('w-6 h-6');
+        stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).toHaveClass('w-6', 'h-6');
     });
 
     it('defaults to medium size', () => {
         render(<StarRating {...defaultProps} />);
-        const stars = screen.getAllByRole('button');
-        expect(stars[0].className).toContain('w-5 h-5');
+        const stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).toHaveClass('w-5', 'h-5');
     });
 
     it('applies hover effects only in interactive mode', () => {
         const { rerender } = render(<StarRating {...defaultProps} />);
-        let stars = screen.getAllByRole('button');
-        expect(stars[0].className).toContain('hover:scale-110');
+        let stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).toHaveClass('hover:scale-110');
 
         rerender(<StarRating {...defaultProps} readOnly />);
-        stars = screen.getAllByRole('button');
-        expect(stars[0].className).not.toContain('hover:scale-110');
+        stars = screen.getAllByTestId('star-rating-star');
+        expect(stars[0]).not.toHaveClass('hover:scale-110');
     });
 
     it('maintains consistent star order', () => {
         render(<StarRating {...defaultProps} />);
-        const stars = screen.getAllByRole('button');
+        const stars = screen.getAllByTestId('star-rating-star');
 
         // Click each star and verify the rating
         stars.forEach((star, index) => {
