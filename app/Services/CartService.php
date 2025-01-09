@@ -8,10 +8,8 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 
-class CartService
-{
-	public function getCartItems($userId = null)
-	{
+class CartService {
+	public function getCartItems($userId = null) {
 		$cart = $this->getOrCreateCart($userId);
 
 		if (!$cart) {
@@ -29,8 +27,7 @@ class CartService
 	}
 
 
-	public function getOrCreateCart($userId = null)
-	{
+	public function getOrCreateCart($userId = null) {
 		$cart = Cart::where(function ($query) use ($userId) {
 			if ($userId) {
 				$query->where('user_id', $userId);
@@ -51,8 +48,7 @@ class CartService
 	}
 
 
-	public function addOrIncrementCartItem($productId, $userId = null)
-	{
+	public function addOrIncrementCartItem($productId, $userId = null) {
 		$cart = $this->getOrCreateCart($userId);
 
 		$item = $cart->cartitems()->where('subproduct_id', $productId)->first();
@@ -65,8 +61,7 @@ class CartService
 		}
 	}
 
-	public function removeOrDecrementCartItem($productId, $userId = null)
-	{
+	public function removeOrDecrementCartItem($productId, $userId = null) {
 		$cart = $this->getOrCreateCart($userId);
 		if (!$cart) {
 			return;
@@ -85,8 +80,7 @@ class CartService
 		return $this->getCartItems($userId);
 	}
 
-	protected function deleteCart(Cart $cart)
-	{
+	protected function deleteCart(Cart $cart) {
 		if (!is_null($cart->user_id)) {
 			Session::forget('cart_id');
 		}

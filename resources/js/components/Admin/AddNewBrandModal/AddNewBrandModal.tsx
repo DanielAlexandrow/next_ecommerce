@@ -1,15 +1,15 @@
 import { handleFormError } from "@/lib/utils";
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
-import { z } from "zod";
 import { Form } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from "@/components/ui/input";
 import { useBrandStore } from "@/stores/useBrandStore";
 import { brandApi, BrandData } from "@/api/brandApi";
+import { z } from "zod";
+import { BaseModal, DefaultModalFooter } from "@/components/ui/modal/BaseModal";
+import { useFormModal } from "@/hooks/useFormModal";
 
 const formSchema = z.object({
 	name: z.string().min(4).max(50),
@@ -25,87 +25,71 @@ const AddNewBrandDialog = () => {
 		modalBrand
 	} = useBrandStore();
 
-	let defaultValues: BrandData = {
-		name: '',
+	const defaultValues: BrandData = {
+		name: modalMode === 'update' && modalBrand ? modalBrand.name : '',
 	};
-
-	if (modalMode === 'update' && modalBrand) {
-		defaultValues = {
-			name: modalBrand.name,
-		};
-	}
 
 	const form = useForm<BrandData>({
 		resolver: zodResolver(formSchema),
-		defaultValues: defaultValues,
+		defaultValues,
 	});
 
-	const addBrand = async (values: BrandData) => {
-		try {
-			const newBrand = await brandApi.addBrand(values);
-			setOpenAddBrandModal(false);
-			setBrands([...brands, newBrand]);
-			toast.success('Brand added successfully');
-		} catch (error) {
-			handleFormError(error, form);
-		}
-	};
-
-	const updateBrand = async (values: BrandData) => {
-		try {
-			if (modalBrand?.id) {
+	const { handleSubmit, isLoading } = useFormModal({
+		form,
+		onSubmit: async (values) => {
+			if (modalMode === 'update' && modalBrand?.id) {
 				const updatedBrand = await brandApi.updateBrand(modalBrand.id, values);
-				setOpenAddBrandModal(false);
 				setBrands(
 					brands.map((brand) =>
 						brand.id === updatedBrand.id ? updatedBrand : brand
 					)
 				);
-				toast.success('Brand updated successfully');
+				return updatedBrand;
+			} else {
+				const newBrand = await brandApi.addBrand(values);
+				setBrands([...brands, newBrand]);
+				return newBrand;
 			}
-		} catch (error) {
-			handleFormError(error, form);
-		}
-	};
-
-	const onSubmit = async (values: BrandData) => {
-		if (modalMode === 'add') {
-			await addBrand(values);
-		} else if (modalMode === 'update') {
-			await updateBrand(values);
-		}
-	};
+		},
+		successMessage: modalMode === 'update' ? 'Brand updated successfully' : 'Brand added successfully'
+	});
 
 	const title = modalMode === 'update' ? 'Update brand' : 'Add new brand';
 
 	return (
-		<Dialog open={openAddBrandModal} onOpenChange={setOpenAddBrandModal}>
-			<DialogContent>
-				<DialogTitle>{title}</DialogTitle>
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className='flex'>
-						<div className='flex-1 pr-4'>
-							<FormField
-								control={form.control}
-								name='name'
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Name</FormLabel>
-										<FormControl>
-											<Input placeholder='' {...field} maxLength={50} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button type='submit' className='mt-5'>
-								Submit
-							</Button>
-						</div>
-					</form>
-				</Form>
-			</DialogContent>
-		</Dialog>
+		<BaseModal
+			open={openAddBrandModal}
+			onOpenChange={setOpenAddBrandModal}
+			title={title}
+			testId="add-brand-modal"
+			footer={
+				<DefaultModalFooter
+					onCancel={() => setOpenAddBrandModal(false)}
+					onConfirm={form.handleSubmit(handleSubmit)}
+					confirmText="Submit"
+				/>
+			}
+		>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(handleSubmit)} className='flex'>
+					<div className='flex-1 pr-4'>
+						<FormField
+							control={form.control}
+							name='name'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input placeholder='' {...field} maxLength={50} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+				</form>
+			</Form>
+		</BaseModal>
 	);
 };
 

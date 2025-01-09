@@ -40,14 +40,17 @@ export function BrandSelect({ productBrand, setProductBrand }) {
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button
+					data-testid="brand-select-trigger"
 					variant="outline"
 					role="combobox"
 					aria-expanded={open}
 					className="w-[200px] justify-between"
 				>
-					{value
-						? allBrands.find((brand) => brand.name === value)?.name
-						: "Select brand..."}
+					<span data-testid="selected-brand">
+						{value
+							? allBrands.find((brand) => brand.name === value)?.name
+							: "Select brand..."}
+					</span>
 					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</PopoverTrigger>
@@ -59,6 +62,7 @@ export function BrandSelect({ productBrand, setProductBrand }) {
 						<CommandGroup>
 							{allBrands.map((brand) => (
 								<CommandItem
+									data-testid={`brand-option-${brand.id}`}
 									key={brand.id}
 									value={brand.name}
 									onSelect={(currentValue) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { FilterValues } from '@/stores/store/productSearchStore';
 
-const API_URL = '/products';
+const API_URL = '/api/products';
 
 export const productApi = {
 	createProduct: async (payload: any) => {
@@ -15,7 +15,7 @@ export const productApi = {
 	},
 
 	searchProducts: async (filters: FilterValues) => {
-		const response = await axios.get('/store/products/search', {
+		const response = await axios.get(`${API_URL}/search`, {
 			params: {
 				name: filters.name,
 				minPrice: filters.minPrice,
@@ -26,6 +26,11 @@ export const productApi = {
 				inStock: filters.inStock
 			}
 		});
+		return response.data;
+	},
+
+	async deleteProduct(id: number) {
+		const response = await axios.delete(`/products/${id}`);
 		return response.data;
 	},
 };

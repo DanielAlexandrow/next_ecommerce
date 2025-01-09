@@ -14,77 +14,97 @@ import { handleFormError } from '@/lib/utils';
 import CategorySelect from './CategorySelect';
 import BrandSelect from './BrandSelect';
 import { productApi } from '@/api/productApi';
-import { Product, ProductImage, ProductCategory, Brand, CustomImage } from '@/types';
+import type { Product, ProductImage, ProductCategory, Brand, CustomImage } from '@/types';
 
+// Define strict types for form values
+interface FormValues {
+	name: string;
+	description: string;
+	available: boolean;
+}
+
+// Define strict types for component props
 interface ProductFormProps {
 	mode: 'edit' | 'new';
 	product: Product | null;
 }
 
-const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
+// Define strict types for API payload
+interface ProductPayload {
+	name: string;
+	description: string;
+	available: boolean;
+	images: NonNullable<ProductImage['pivot']>[];
+	categories: NonNullable<ProductCategory['pivot']>[];
+	brand_id: number | undefined;
+}
+
+const formSchema = z.object({
+	name: z.string()
+		.min(4, 'String must contain at least 4 character(s)')
+		.max(60, 'Name cannot exceed 60 characters'),
+	description: z.string()
+		.max(500, 'Description cannot exceed 500 characters'),
+	available: z.boolean()
+		.default(true)
+});
+
+const ProductForm: React.FC<ProductFormProps> = ({ mode, product }) => {
+	// State management with strict types
 	const [productImages, setProductImages] = useState<CustomImage[]>([]);
 	const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
 	const [productBrand, setProductBrand] = useState<Brand | null>(null);
 	const [products, setProducts] = productsStore((state) => [state.products, state.setProducts]);
 
-	const formSchema = z.object({
-		name: z.string().min(4).max(60),
-		description: z.string().max(500),
-		available: z.boolean(),
+	// Initialize form with strict types
+	const form = useForm<FormValues>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			name: product?.name ?? '',
+			description: product?.description ?? '',
+			available: product?.available ?? true,
+		}
 	});
 
+	// Effect to handle product data initialization
 	useEffect(() => {
-		if (product) {
-			const mappedImages: CustomImage[] = (product.images || []).map(img => ({
-				id: img.id || 0,
+		if (!product) return;
+
+		const mappedImages: CustomImage[] = (product.images ?? [])
+			.filter((img): img is NonNullable<typeof img> => img != null)
+			.map(img => ({
+				id: img.id ?? 0,
 				name: img.name,
 				path: img.path,
-				full_path: '/storage/' + img.path,
+				full_path: `/storage/${img.path}`,
 				pivot: img.pivot
 			}));
-			setProductImages(mappedImages);
-			setProductCategories(product.categories || []);
-			setProductBrand(product.brand || null);
-		}
+
+		setProductImages(mappedImages);
+		setProductCategories(product.categories?.filter((cat): cat is NonNullable<typeof cat> => cat != null) ?? []);
+		setProductBrand(product.brand ?? null);
 	}, [product]);
 
-	const defaultValues = {
-		name: product?.name || '',
-		description: product?.description || '',
-		available: product?.available ?? true,
-	};
-
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues,
-	});
-
-
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	// Form submission handler with strict types
+	const onSubmit = async (values: FormValues): Promise<void> => {
 		try {
-
-			let images = productImages.map((image) => {
-				return image.pivot;
-			});
-			let categories = productCategories.map((category) => {
-				return category.pivot;
-			});
-
-			const payload = {
-				name: values.name,
-				description: values.description,
-				...(mode === 'edit' && { id: product?.id }),
-				images: images,
-				categories: categories,
+			const payload: ProductPayload = {
+				name: values.name.trim(),
+				description: values.description.trim(),
 				available: values.available,
-				brand_id: productBrand?.id,
+				images: productImages
+					.map(image => image.pivot)
+					.filter((pivot): pivot is NonNullable<typeof pivot> => pivot != null),
+				categories: productCategories
+					.map(category => category.pivot)
+					.filter((pivot): pivot is NonNullable<typeof pivot> => pivot != null),
+				brand_id: productBrand?.id
 			};
 
 			let updatedProduct: Product;
-			if (mode === 'edit' && product) {
+			if (mode === 'edit' && product?.id) {
 				updatedProduct = await productApi.updateProduct(product.id, payload);
-				const newProducts = products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p));
-				setProducts(newProducts);
+				setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
 			} else {
 				updatedProduct = await productApi.createProduct(payload);
 				setProducts([...products, updatedProduct]);
@@ -93,82 +113,138 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
 			toast.success(`Product ${mode === 'edit' ? 'updated' : 'created'} successfully`);
 
 			if (mode === 'new') {
-				form.reset();
+				form.reset({
+					name: '',
+					description: '',
+					available: true
+				});
 				setProductImages([]);
 				setProductCategories([]);
 				setProductBrand(null);
 			} else {
-				form.reset(updatedProduct);
+				form.reset({
+					name: updatedProduct.name,
+					description: updatedProduct.description,
+					available: updatedProduct.available
+				});
 			}
-		} catch (error: any) {
+		} catch (error) {
 			handleFormError(error, form);
+			form.setError('root', {
+				type: 'manual',
+				message: 'Failed to submit form'
+			});
+			throw error;
 		}
-	}
-
-	const title = mode === 'edit' ? 'Edit product' : 'Add new product';
+	};
 
 	return (
-		<>
-			<h1 className='text-center'>{title}</h1>
+		<div className="w-full max-w-4xl mx-auto">
+			<h1 className="text-center text-2xl font-bold mb-6">
+				{mode === 'edit' ? 'Edit product' : 'Add new product'}
+			</h1>
+
+			{form.formState.errors.root && (
+				<div
+					data-testid="form-error"
+					className="text-red-500 text-center mb-4 p-2 border border-red-300 rounded"
+				>
+					{form.formState.errors.root.message}
+				</div>
+			)}
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className='flex'>
-					<div className='flex-1 pr-4'>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="flex flex-col md:flex-row gap-6"
+					noValidate
+				>
+					<div className="flex-1 space-y-4">
 						<FormField
 							control={form.control}
-							name='name'
+							name="name"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Name</FormLabel>
 									<FormControl>
-										<Input placeholder='' {...field} maxLength={55} />
+										<Input
+											{...field}
+											data-testid="product-name-input"
+											placeholder="Enter product name"
+											maxLength={55}
+											aria-invalid={!!form.formState.errors.name}
+										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage data-testid="name-error" />
 								</FormItem>
 							)}
 						/>
 
 						<FormField
 							control={form.control}
-							name='description'
+							name="description"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Description</FormLabel>
 									<FormControl>
-										<Input placeholder='' {...field} />
+										<Input
+											{...field}
+											data-testid="product-description-input"
+											placeholder="Enter product description"
+											aria-invalid={!!form.formState.errors.description}
+										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage data-testid="description-error" />
 								</FormItem>
 							)}
 						/>
 
 						<FormField
 							control={form.control}
-							name='available'
+							name="available"
 							render={({ field }) => (
-								<FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 pl-0'>
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4 pl-0">
 									<FormLabel>Available</FormLabel>
 									<FormControl>
-										<Checkbox checked={field.value} onCheckedChange={field.onChange} />
+										<Checkbox
+											data-testid="product-available-checkbox"
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage data-testid="available-error" />
 								</FormItem>
 							)}
 						/>
-						<CategorySelect
-							selectedCategories={productCategories}
-							setSelectedCategories={setProductCategories}
-						/>
 
-						<Button type='submit' className='mt-5'>
-							Submit
+						<div data-testid="category-select-section">
+							<CategorySelect
+								selectedCategories={productCategories}
+								setSelectedCategories={setProductCategories}
+							/>
+						</div>
+
+						<Button
+							type="submit"
+							data-testid="submit-button"
+							className="w-full mt-4"
+							disabled={form.formState.isSubmitting}
+							aria-disabled={form.formState.isSubmitting}
+						>
+							{form.formState.isSubmitting ? 'Submitting...' : 'Submit'}
 						</Button>
 					</div>
-					<div className='flex-1 pl-4'>
-						<ImageSelect productImages={productImages} setProductImages={setProductImages} />
 
-						<div className="mt-10">
-							<div className='text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5'>
+					<div className="flex-1 space-y-6">
+						<div data-testid="image-select-section">
+							<ImageSelect
+								productImages={productImages}
+								setProductImages={setProductImages}
+							/>
+						</div>
+
+						<div data-testid="brand-select-section">
+							<div className="text-center text-sm font-medium mb-4">
 								Brand
 							</div>
 							<BrandSelect
@@ -179,8 +255,8 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
 					</div>
 				</form>
 			</Form>
-		</>
+		</div>
 	);
-};
+};	
 
 export default ProductForm;

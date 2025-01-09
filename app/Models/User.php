@@ -2,25 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
 
-use App\Models\Coordinate;
-
-class User extends Authenticatable implements MustVerifyEmail {
-    use HasApiTokens, HasFactory, Notifiable;
+class User extends Authenticatable {
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
-        'username',
         'name',
         'email',
         'password',
-        'id_address_info',
-        'role',
-
     ];
 
     protected $hidden = [
@@ -28,39 +23,35 @@ class User extends Authenticatable implements MustVerifyEmail {
         'remember_token',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
+
+    /**
+     * Set the user's password.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function setPasswordAttribute($value) {
+        if ($value && !Hash::verifyConfiguration($value)) {
+            $this->attributes['password'] = Hash::make($value);
+        } else {
+            $this->attributes['password'] = $value;
+        }
+    }
 
     public function avatar(): string {
         return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=200&d=mp';
     }
 
-    public function addressInfo() {
-        return $this->hasOne(AddressInfo::class, 'id', 'id_address_info');
-    }
-    public function orders() {
-        return $this->hasMany(Order::class, 'user_id');
-    }
-
-    /**
-     * Get the coordinate associated with the driver.
-     */
-    public function coordinate() {
-        return $this->hasOne(Coordinate::class);
-    }
-
-    /**
-     * Check if the user is an admin.
-     */
-    public function isAdmin(): bool {
-        return $this->role === 'admin';
-    }
-
-    /**
-     * Check if the user is a driver.
-     */
-    public function isDriver(): bool {
-        return $this->role === 'driver';
+    public function getAvatarAttribute(): string {
+        return $this->avatar();
     }
 }

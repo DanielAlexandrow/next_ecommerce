@@ -29,7 +29,7 @@ export const ProductFilters: React.FC = () => {
     };
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" role="form">
             <div className="space-y-4">
                 {/* Search Input */}
                 <div>

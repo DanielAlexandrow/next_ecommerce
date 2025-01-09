@@ -15,13 +15,19 @@ class StoreProductController extends Controller {
 	}
 
 	public function index(Request $request, $product_id) {
-		$product = Product::where('id', $product_id)
-			->with(['images', 'categories', 'subproducts', 'reviews'])
-			->firstOrFail();
+		try {
+			$product = Product::where('id', $product_id)
+				->with(['images', 'categories', 'subproducts', 'reviews'])
+				->firstOrFail();
 
-		return inertia('store/ProductPage', [
-			'product' => $product,
-		]);
+			return inertia('store/ProductPage', [
+				'product' => $product,
+			]);
+		} catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+			return inertia('store/ProductPage', [
+				'product' => null,
+			]);
+		}
 	}
 
 	public function search(Request $request) {
@@ -38,7 +44,7 @@ class StoreProductController extends Controller {
 
 		return response()->json([
 			'products' => $products['data'],
-			'pagination' => [
+			'pagination' => [ 
 				'total' => $products['total'],
 				'per_page' => $products['per_page'],
 				'current_page' => $products['current_page'],

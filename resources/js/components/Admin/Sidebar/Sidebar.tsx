@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { CiFileOn } from 'react-icons/ci';
 import { FaProductHunt } from 'react-icons/fa';
@@ -12,6 +11,7 @@ import { FaStore } from "react-icons/fa";
 import { ShoppingCartIcon } from 'lucide-react';
 import { FaTrademark } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
+import { IoLocationOutline } from "react-icons/io5";
 
 
 
@@ -61,9 +61,19 @@ const sidebarItems = [
 		href: '/productsearch',
 	},
 	{
+		icon: <IoLocationOutline />,
+		text: 'Driver Location',
+		href: '/driver/coordinates',
+	},
+	{
 		icon: <IoSettingsOutline />,
 		text: 'Settings',
 		href: '/shop-settings',
+	},
+	{
+		icon: <FiAlignJustify />,
+		text: 'Categories',
+		href: '/admin/categories',
 	},
 ];
 

@@ -64,54 +64,64 @@ const BrandPage = () => {
 	);
 
 	return (
-		<div className='m-w[800px]'>
-			<h1 className='text-center'>Brands</h1>
-			<div className='mt-10'> <Paginate links={links} /> </div>
-			<Table className='text-center'>
-				<TableHeader>{tableFields}</TableHeader>
-				<TableBody>
-					{brands.map((brand) => (
-						<TableRow key={brand.id}>
-							<TableCell>{brand.id}</TableCell>
-							<TableCell>{brand.name}</TableCell>
-							<TableCell>
-								<DropdownMenu>
-									<DropdownMenuTrigger>Open</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuItem
-											onClick={() => {
-												setModalBrand(brand);
-												setOpenDeleteModal(true);
-											}}>
-											Delete
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											onClick={() => {
-												setModalBrand(brand);
-												setModalMode('update');
-												setOpenAddBrandModal(true);
-											}}>
-											Edit
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-				<TableFooter>{tableFields}</TableFooter>
-			</Table>
-			<div className='mt-10'> <Paginate links={links} /> </div>
+		<div className="container mx-auto px-4 py-8">
+			<h1 className="text-3xl font-bold text-center mb-8">Brands</h1>
 
-			<Button
-				onClick={() => {
-					setModalMode('add');
-					setModalBrand(null);
-					setOpenAddBrandModal(true);
-				}}
-			>
-				Add new brand
-			</Button>
+			<div className="max-w-6xl mx-auto space-y-6">
+				<div className="bg-card rounded-lg shadow-sm p-6">
+					<Table className="w-full text-center">
+						<TableHeader>{tableFields}</TableHeader>
+						<TableBody>
+							{brands.map((brand) => (
+								<TableRow key={brand.id}>
+									<TableCell className="text-center">{brand.id}</TableCell>
+									<TableCell className="text-center">{brand.name}</TableCell>
+									<TableCell className="text-center">
+										<DropdownMenu>
+											<DropdownMenuTrigger className="flex items-center gap-2">
+												Open
+											</DropdownMenuTrigger>
+											<DropdownMenuContent>
+												<DropdownMenuItem
+													onClick={() => {
+														setModalBrand(brand);
+														setOpenDeleteModal(true);
+													}}>
+													Delete
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={() => {
+														setModalBrand(brand);
+														setModalMode('update');
+														setOpenAddBrandModal(true);
+													}}>
+													Edit
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+
+				<div className="flex justify-between items-center">
+					<div className="flex justify-center">
+						<Paginate links={links} />
+					</div>
+
+					<Button
+						onClick={() => {
+							setModalMode('add');
+							setModalBrand(null);
+							setOpenAddBrandModal(true);
+						}}
+					>
+						Add new brand
+					</Button>
+				</div>
+			</div>
 
 			{openDeleteModal && <DeleteConfirmationDialog />}
 			{openAddBrandModal && <AddNewBrandDialog />}

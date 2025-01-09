@@ -65,6 +65,7 @@ const CategorySelect = ({ selectedCategories, setSelectedCategories }: CategoryS
 						<li className='mt-2' key={category.id}>
 							<Badge>
 								<div
+									data-testid={`selected-category-${category.id}`}
 									onClick={() =>
 										setSelectedCategories(
 											selectedCategories.filter((cat) => cat.id !== category.id)
@@ -82,6 +83,7 @@ const CategorySelect = ({ selectedCategories, setSelectedCategories }: CategoryS
 				All Categories
 			</div>
 			<Input
+				data-testid="category-select-trigger"
 				placeholder='Type in a category'
 				type='text'
 				onChange={(e) => setFilterText(e.target.value)}
@@ -93,7 +95,7 @@ const CategorySelect = ({ selectedCategories, setSelectedCategories }: CategoryS
 					{filterText.length > 2 && allCategories.every((category) => category.name !== filterText) ? (
 						<li className='mt-2'>
 							<Badge>
-								<div onClick={() => handleCreateCategory(filterText)}>
+								<div data-testid="create-category-button" onClick={() => handleCreateCategory(filterText)}>
 									"{filterText}" not available. Press to create and add to list
 								</div>
 							</Badge>
@@ -102,7 +104,12 @@ const CategorySelect = ({ selectedCategories, setSelectedCategories }: CategoryS
 					{filteredCategories.map((category) => (
 						<li className='mt-2' key={category.id}>
 							<Badge>
-								<div onClick={() => handleSelectCategory(category)}>{category.name}</div>
+								<div
+									data-testid={`category-option-${category.id}`}
+									onClick={() => handleSelectCategory(category)}
+								>
+									{category.name}
+								</div>
 							</Badge>
 						</li>
 					))}

@@ -1,21 +1,19 @@
 import axios from 'axios';
-import { OrderDetails } from '@/types';
+import type { Order } from '@/types/orders';
 
 export const orderApi = {
-	getOrderItems: async (orderId: number, isCustomer: boolean): Promise<OrderDetails> => {
-		const url = isCustomer ? `/customers/getorders/${orderId}` : `/orders/getitems/${orderId}`;
-		const response = await axios.get(url);
-		if (response.status !== 200) {
-			throw new Error('Failed to fetch order items');
-		}
+	getUserOrders: async (): Promise<Order[]> => {
+		const response = await axios.get<Order[]>('/profile/orders/get');
 		return response.data;
 	},
 
-	generatePDF: async (orderId: number): Promise<Blob> => {
-		const response = await axios.post(`/orders/generatepdf/${orderId}`, {}, { responseType: 'blob' });
-		if (response.status !== 200) {
-			throw new Error('Failed to generate PDF');
-		}
+	getOrderDetails: async (orderId: number): Promise<Order> => {
+		const response = await axios.get<Order>(`/profile/orders/getitems/${orderId}`);
+		return response.data;
+	},
+
+	getOrderItems: async (orderId: number) => {
+		const response = await axios.get(`/profile/orders/getitems/${orderId}`);
 		return response.data;
 	}
 };

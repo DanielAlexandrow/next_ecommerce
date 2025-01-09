@@ -23,7 +23,8 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
 export interface Brand {
 	id: number;
 	name: string;
-
+	description?: string;
+	products_count?: number;
 }
 
 export type PaginateProps<T> = {
@@ -94,6 +95,14 @@ export interface NavigationCategoryRel {
 export interface Category {
 	id: number;
 	name: string;
+	description?: string;
+	parent_id?: number | null;
+	parent?: Category;
+	children?: Category[];
+	products_count?: number;
+	subcategories_count?: number;
+	created_at?: string;
+	updated_at?: string;
 }
 
 export interface Product {
@@ -182,9 +191,9 @@ export interface CartItem {
 	id: number;
 	cart_id: number;
 	subproduct_id: number;
+	quantity: number;
 	created_at: string;
 	updated_at: string;
-	quantity: number;
 	subproduct: StoreSubproduct;
 }
 
@@ -213,4 +222,50 @@ export interface OrderDetails {
 	}>;
 	customer: Customer;
 	customerRegistered: boolean;
+}
+
+export interface Product {
+	id: number;
+	name: string;
+	description: string;
+	available: boolean;
+	images: Image[];
+	subproducts: Subproduct[];
+	categories: Category[];
+}
+
+export interface Image {
+	id: number;
+	name: string;
+	path: string;
+}
+
+export interface Subproduct {
+	id: number;
+	name: string;
+	price: number;
+	available: boolean;
+	product_id: number;
+}
+
+export interface Category {
+	id: number;
+	name: string;
+	description?: string;
+	parent_id?: number;
+	products_count?: number;
+	children?: Category[];
+}
+
+export interface PageProps {
+	auth: {
+		user: User;
+	};
+}
+
+export interface User {
+	id: number;
+	name: string;
+	email: string;
+	avatar: string;
 }

@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NavigationItem extends Model
-{
+class NavigationItem extends Model {
 	use HasFactory;
 
 	protected $table = 'navigation_item';
@@ -16,16 +15,15 @@ class NavigationItem extends Model
 	protected $fillable = [
 		'name',
 		'order_num',
-		'description'
+		'description',
+		'header_id'
 	];
 
-	public function header()
-	{
+	public function header() {
 		return $this->belongsTo(Header::class);
 	}
 
-	public function categories()
-	{
+	public function categories() {
 		return $this->belongsToMany(Category::class);
 	}
 }

@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\AddressInfo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Guest extends Model
-{
+class Guest extends Model {
 	use HasFactory;
 
 	protected $fillable = [
-		'id_address_info',
+		'email',
+		'phone',
+		'name',
+		'address',
+		'city',
+		'country',
+		'postal_code'
 	];
 
-	public function addressInfo()
-	{
-		return $this->belongsTo(AddressInfo::class, 'id_address_info');
-	}
-
-	public function orders()
-	{
-		return $this->hasMany(Order::class, 'guest_id');
+	public function orders(): HasMany {
+		return $this->hasMany(Order::class);
 	}
 }

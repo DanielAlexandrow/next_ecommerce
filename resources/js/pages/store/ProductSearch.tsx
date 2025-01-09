@@ -26,7 +26,9 @@ const ProductSearch = () => {
 		const loadProducts = async () => {
 			setIsLoading(true);
 			try {
+				console.log('Loading products...');
 				const data = await productApi.searchProducts(filters);
+				console.log('Products loaded:', data.products);
 				setProducts(data.products);
 			} catch (error) {
 				console.error('Failed to load products:', error);
@@ -67,7 +69,7 @@ const ProductSearch = () => {
 					{isLoading ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
 							{[...Array(6)].map((_, i) => (
-								<div key={i} className="h-[380px] bg-muted rounded-lg"></div>
+								<div key={i} data-testid="product-skeleton" className="h-[380px] bg-muted rounded-lg"></div>
 							))}
 						</div>
 					) : (
@@ -75,6 +77,7 @@ const ProductSearch = () => {
 							{products.map((product) => (
 								<Card
 									key={product.id}
+									data-testid="product-card"
 									className="group hover:shadow-lg transition-shadow cursor-pointer"
 									onClick={() => handleProductClick(product.id)}
 								>

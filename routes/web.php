@@ -20,6 +20,24 @@ use App\Http\Controllers\Store\UserAdressInfoController;
 use App\Http\Controllers\Store\UserOrdersController;
 use App\Http\Controllers\Store\UserPasswordController;
 
+// Public routes
+Route::get('/', function () {
+	return redirect('/productsearch');
+});
+Route::get('/navigation/getnavdata', [NavigationController::class, 'getNavigationData']);
+Route::get('/productsearch', [ProductSearchController::class, 'index']);
+Route::get('/api/products/search', [ProductSearchController::class, 'search']);
+Route::get('/categoryservice', [CategoryController::class, 'index']);
+Route::get('/productsnav/{navigationItemId}', [ProductSearchController::class, 'getProductsByNavigationItem']);
+
+// Cart routes
+Route::post('/cart/add', [CartController::class, 'add']);
+Route::post('/cart/remove', [CartController::class, 'remove']);
+Route::get('/cart', [CartController::class, 'index']);
+Route::get('/getcartitems', [CartController::class, 'getcartitems']);
+
+// Checkout routes
+Route::post('/checkout/{cartId}', [CheckoutController::class, 'checkout']);
 
 Route::middleware(['auth'])->group(function () {
 	// Images routes
@@ -29,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
 
 	// Products routes
 	Route::resource('/products', ProductController::class)->only(['index', 'create', 'store', 'destroy', 'update', 'show']);
-	Route::get('/product/{product_id}', [StoreProductController::class, 'index']); // Moved this here for logical grouping
+	Route::get('/product/{product_id}', [StoreProductController::class, 'index']);
 
 	Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
 	Route::post('/products/{product}/reviews', [ReviewController::class, 'store']);
@@ -39,16 +57,28 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/subproducts/byproduct/{product_id}', [SubproductController::class, 'getSubproductsByProductId']);
 
 	// Categories routes
-	Route::resource('/categories', CategoryController::class)->only(['index', 'store']);
+	Route::prefix('categories')->group(function () {
+		Route::get('/', [CategoryController::class, 'index']);
+		Route::post('/', [CategoryController::class, 'store']);
+		Route::put('/{id}', [CategoryController::class, 'update']);
+		Route::delete('/{id}', [CategoryController::class, 'destroy']);
+		Route::get('/search', [CategoryController::class, 'search']);
+		Route::post('/bulk-delete', [CategoryController::class, 'bulkDelete']);
+		Route::get('/hierarchy', [CategoryController::class, 'getHierarchy']);
+	});
 
-	// Navigation routes
+	Route::get('/admin/categories', function () {
+		return inertia('admin/CategoryManagement');
+	})->name('admin.categories');
+
+	// Navigation management routes
 	Route::resource('/navigation', NavigationController::class)->only(['index', 'store', 'update']);
-
-	Route::get('/navigation/getnavdata', [NavigationController::class, 'getNavigationData']); // Moved this here for logical grouping
 
 	// Orders routes
 	Route::resource('/orders', AdminOrders::class)->only(['index']);
 	Route::get('/orders/getitems/{order_id}', [AdminOrders::class, 'getOrderDetails']);
+	Route::post('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
+	Route::put('/orders/{order}/status', [AdminOrders::class, 'updateStatus']);
 
 	Route::resource('/brands', BrandController::class)->only(['index', 'store', 'update', 'destroy']);
 	Route::get('/brands/getallbrands', [BrandController::class, 'getAllBrands']);
@@ -57,12 +87,10 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/profile/adressinfo', [UserAdressInfoController::class, 'index']);
 	Route::post('/profile/updateadress', [UserAdressInfoController::class, 'store']);
 	Route::get('/profile/orders', [UserOrdersController::class, 'index']);
-	Route::get('/profile/orders/getitems/{order_id}', [UserOrdersController::class, 'getOrderDetails']);
+	Route::get('/profile/orders/get', [UserOrdersController::class, 'getUserOrders']);
+	Route::get('/profile/orders/getitems/{orderId}', [UserOrdersController::class, 'getOrderDetails']);
 	Route::get('/profile/password', [UserPasswordController::class, 'index']);
-
 	Route::post('/profile/password', [UserPasswordController::class, 'update']);
-
-
 
 	Route::get('/shop-settings', [ShopSettingsController::class, 'index']);
 	Route::post('/api/shop-settings', [ShopSettingsController::class, 'update']);
@@ -72,29 +100,26 @@ Route::middleware(['auth'])->group(function () {
 
 	// Driver-specific routes
 	Route::middleware(['role:driver'])->group(function () {
-		Route::get('/driver/coordinates', function () {
-			return inertia('Driver/DriverCoordinatesPage');
-		});
-		Route::post('/driver/coordinates', [CoordinateController::class, 'store']);
+		Route::get('/driver/coordinates', [DriverController::class, 'index']);
 		Route::get('/driver/orders', [DriverOrderController::class, 'index'])->name('driver.orders');
+		Route::get('/api/drivers', [DriverController::class, 'getDrivers']);
+		Route::post('/driver/coordinates', [CoordinateController::class, 'store']);
 		Route::get('/driver/coordinates/current', [CoordinateController::class, 'show']);
+		Route::put('/driver/coordinates', [CoordinateController::class, 'update']);
 	});
 });
 
-Route::get('/productsearch', [ProductSearchController::class, 'index']); // Product search route
-Route::post('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
+Route::fallback(function () {
+	if (request()->expectsJson()) {
+		return response()->json([
+			'message' => 'Not Found',
+			'error' => 'The requested endpoint does not exist.'
+		], 404);
+	}
 
-// Cart routes
-Route::post('/cart/add', [CartController::class, 'add']);
-Route::post('/cart/remove', [CartController::class, 'remove']);
-Route::get('/cart', [CartController::class, 'index']);
-Route::get('/getcartitems', [CartController::class, 'getcartitems']); // Moved this here for logical grouping
-
-// Checkout routes
-Route::post('/checkout/{cartId}', [CheckoutController::class, 'checkout']);
-
-// Add this route
-Route::get('/store/products/search', [ProductSearchController::class, 'search']);
+	return response()->view('errors.404', [], 404);
+});
 
 require __DIR__ . '/features.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/profile.php';

@@ -3,25 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\User;
+use App\Models\CartItem;
 
+class Cart extends Model {
+	use HasFactory;
 
-class Cart extends Model
-{
-	protected $table = 'cart';
+	protected $table = 'carts';
 
 	protected $fillable = [
 		'user_id',
 	];
 
-
-	public function user()
-	{
-		return $this->hasOne(User::class);
+	public function user() {
+		return $this->belongsTo(User::class);
 	}
 
-	public function cartitems()
-	{
+	public function cartItems() {
 		return $this->hasMany(CartItem::class);
 	}
 }

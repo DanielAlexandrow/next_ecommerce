@@ -4,65 +4,67 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-
-/**
- * Product
- *
- * @mixin Eloquent
- */
 class Product extends Model {
     use HasFactory;
 
-    /**
-     * @var string
-     */
-    protected $table = 'products';
-
-
-    /**
-     * @var string[]
-     */
     protected $fillable = [
         'name',
         'description',
-        'available',
         'brand_id',
+        'metadata',
+        'available'
     ];
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function subproducts() {
-        return $this->hasMany(Subproduct::class, 'product_id');
+    protected $casts = [
+        'metadata' => 'array',
+        'available' => 'boolean'
+    ];
+
+    protected static function boot() {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->name = strip_tags($product->name);
+            $product->description = strip_tags($product->description);
+        });
+
+        static::updating(function ($product) {
+            $product->name = strip_tags($product->name);
+            $product->description = strip_tags($product->description);
+        });
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function images() {
-        return $this->belongsToMany(Image::class, 'product_images')->withPivot('order_num');
+    public function subproducts(): HasMany {
+        return $this->hasMany(Subproduct::class);
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function categories() {
-        return $this->belongsToMany(Category::class, 'product_categories');
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function brand() {
-        return $this->belongsTo(Brand::class);
-    }
-
-    public function reviews() {
+    public function reviews(): HasMany {
         return $this->hasMany(Review::class);
     }
 
-    public function averageRating() {
+    public function brand(): BelongsTo {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function categories(): BelongsToMany {
+        return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    public function images(): BelongsToMany {
+        return $this->belongsToMany(Image::class, 'product_images')
+            ->withPivot('order_num')
+            ->orderBy('order_num');
+    }
+
+    public function getAverageRatingAttribute(): ?float {
+        if ($this->reviews()->count() === 0) {
+            return null;
+        }
+
         return $this->reviews()->avg('rating');
     }
 }

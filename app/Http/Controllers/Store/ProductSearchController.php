@@ -20,26 +20,75 @@ class ProductSearchController extends Controller {
 	}
 
 	public function search(Request $request) {
-		$filters = [
-			'name' => $request->input('name', ''),
-			'minPrice' => $request->input('minPrice', 0),
-			'maxPrice' => $request->input('maxPrice', 1000),
-			'sortKey' => $this->getSortKey($request->input('sortBy', 'newest')),
-			'sortDirection' => $this->getSortDirection($request->input('sortBy', 'newest')),
-			'limit' => 12
-		];
+		try {
+			// Validate request parameters
+			$validated = $request->validate([
+				'name' => 'nullable|string|max:255',
+				'minPrice' => 'nullable|numeric|min:0',
+				'maxPrice' => 'nullable|numeric|min:0',
+				'sortBy' => 'nullable|string|in:newest,price_asc,price_desc,name_asc,name_desc,rating_desc',
+				'page' => 'nullable|integer|min:1'
+			]);
 
-		$products = $this->productService->getPaginatedStoreProducts($filters);
+			// Check if maxPrice is less than minPrice
+			if ($request->has('minPrice') && $request->has('maxPrice') && 
+				$request->input('maxPrice') < $request->input('minPrice')) {
+				return response()->json([
+					'message' => 'Maximum price cannot be less than minimum price',
+					'errors' => ['maxPrice' => ['Maximum price must be greater than minimum price']]
+				], 422);
+			}
 
-		return response()->json([
-			'products' => $products['data'],
-			'pagination' => [
-				'total' => $products['total'],
-				'per_page' => $products['per_page'],
-				'current_page' => $products['current_page'],
-				'last_page' => $products['last_page']
-			]
-		]);
+			$filters = [
+				'name' => $request->input('name', ''),
+				'minPrice' => $request->input('minPrice', 0),
+				'maxPrice' => $request->input('maxPrice', 1000),
+				'sortKey' => $this->getSortKey($request->input('sortBy', 'newest')),
+				'sortDirection' => $this->getSortDirection($request->input('sortBy', 'newest')),
+				'limit' => 12
+			];
+
+			$products = $this->productService->getPaginatedStoreProducts($filters);
+
+			if (!isset($products['data'])) {
+				throw new \Exception('Invalid product data structure');
+			}
+
+			return response()->json([
+				'products' => $products['data'],
+				'pagination' => [
+					'total' => $products['total'],
+					'per_page' => $products['per_page'],
+					'current_page' => $products['current_page'],
+					'last_page' => $products['last_page']
+				]
+			]);
+		} catch (\Illuminate\Validation\ValidationException $e) {
+			return response()->json([
+				'message' => 'Invalid input parameters',
+				'errors' => $e->errors()
+			], 422);
+		} catch (\Exception $e) {
+			return response()->json([
+				'message' => 'An error occurred while processing your request',
+				'error' => $e->getMessage()
+			], 500);
+		}
+	}
+
+	public function getProductsByNavigationItem($navigationItemId)
+	{
+		try {
+			// Return the Inertia view for the product search page with navigation item ID
+			return Inertia::render('store/ProductSearch', [
+				'navigationItemId' => $navigationItemId
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'message' => 'An error occurred while processing your request',
+				'error' => $e->getMessage()
+			], 500);
+		}
 	}
 
 	private function getSortKey(string $sortBy): string {

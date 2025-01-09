@@ -1,50 +1,76 @@
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '../../ui/button';
+import React from 'react';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
-import { productsStore } from '@/stores/productlist/productstore';
-import axios from 'axios';
 import { subproductApi } from '@/api/subproductApi';
 
-const DeleteSubproductModal: React.FC = () => {
-	const [selectedSubproduct, open, setOpen, setSubproductsModal, subproducts, setSubproducts] = productsStore(
-		(state) => [
-			state.selectedSubproduct,
-			state.openDeleteSubproductModal,
-			state.setOpenDeleteSubproductModal,
-			state.setSubproductsModal,
-			state.subproducts,
-			state.setSubproducts,
-		]
-	);
+interface DeleteSubproductModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	subproductId: number;
+	subproductName: string;
+	onDelete: () => void;
+}
 
-	if (!selectedSubproduct) return null;
+const DeleteSubproductModal: React.FC<DeleteSubproductModalProps> = ({
+	isOpen,
+	onClose,
+	subproductId,
+	subproductName,
+	onDelete
+}) => {
+	const [isDeleting, setIsDeleting] = React.useState(false);
 
-	const deleteSubproduct = async () => {
-		if (!selectedSubproduct) return;
-
+	const handleDelete = async () => {
+		setIsDeleting(true);
 		try {
-			await subproductApi.deleteSubproduct(selectedSubproduct.id);
-
-			setOpen(false);
-			const updatedSubproducts = subproducts.filter((subproduct) => subproduct.id !== selectedSubproduct.id);
-			setSubproducts(updatedSubproducts);
-			toast.success('Option deleted successfully');
-			setSubproductsModal(true);
+			await subproductApi.deleteSubproduct(subproductId);
+			toast.success('Variant deleted successfully');
+			onDelete();
+			onClose();
 		} catch (error) {
-			toast.error('Error deleting product');
 			console.error('Delete error:', error);
+			toast.error('Failed to delete variant');
+		} finally {
+			setIsDeleting(false);
 		}
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={setOpen}>
-			<DialogTrigger asChild></DialogTrigger>
+		<Dialog open={isOpen} onOpenChange={onClose}>
 			<DialogContent>
-				<DialogTitle>Delete Subproduct {selectedSubproduct.name}?</DialogTitle>
-				<DialogContent>This action is irreversable</DialogContent>
-				<DialogFooter className='mt-10'>
-					<Button onClick={deleteSubproduct}>Delete</Button>{' '}
-				</DialogFooter>
+				<DialogTitle>Delete Product Variant</DialogTitle>
+				<DialogDescription>
+					Are you sure you want to delete "{subproductName}"? This action cannot be undone.
+				</DialogDescription>
+				<div className="mt-4 space-y-4">
+					<div className="text-sm text-gray-500">
+						This will permanently remove:
+						<ul className="list-disc list-inside mt-2">
+							<li>Variant information</li>
+							<li>Stock records</li>
+							<li>Price history</li>
+						</ul>
+					</div>
+					<div className="flex justify-end gap-2">
+						<Button
+							type="button"
+							variant="outline"
+							onClick={onClose}
+							disabled={isDeleting}
+						>
+							Cancel
+						</Button>
+						<Button
+							type="button"
+							variant="destructive"
+							onClick={handleDelete}
+							disabled={isDeleting}
+						>
+							{isDeleting ? 'Deleting...' : 'Delete Variant'}
+						</Button>
+					</div>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);

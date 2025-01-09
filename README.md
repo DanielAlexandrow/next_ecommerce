@@ -1,122 +1,146 @@
-### tl;dr
+# E-commerce Admin Panel
 
-```bash
-git clone https://github.com/irsyadadl/inertia.ts.git project
-cd project
-composer install
-cp .env.example .env
-php artisan key:generate
-bun i && bun run build
-php artisan serve
-```
+A modern e-commerce admin panel built with Laravel, React, TypeScript, and Tailwind CSS.
 
-> This project using React `v18` and Laravel `v10`
+## Features
 
-### Laravel Inertia React w/ Typescript
+- Product Management
+  - Create, edit, and delete products
+  - Manage product variants/options
+  - Product categorization
+  - Image management
+  
+- Category Management
+  - Hierarchical category structure
+  - Category CRUD operations
+  - Bulk category actions
+  
+- Brand Management
+  - Brand CRUD operations
+  - Brand association with products
+  
+- Order Management
+  - Order tracking
+  - Order status updates
+  - Customer information
 
-By default, if we use package like Laravel breeze, it'll use regular javascript react by default. But this project is
-for you who want to use inertia.js with typescript boilerplate.
+## Tech Stack
 
-This project has come with some features like:
+- **Backend**: Laravel 10
+- **Frontend**: React + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **State Management**: Zustand
+- **API Communication**: Axios + React Query
+- **Forms**: React Hook Form
+- **Routing**: Inertia.js
 
--   Authentication
--   User Profile
--   User Password
--   User Delete
--   User Resources (--only=[index, show, destroy])
--   Pagination (Simple)
+## Development Notes & Lessons Learned
 
-### Quick Login
+### UI/UX Improvements
+1. **Modal vs. Inline Forms**
+   - Initially used inline forms for create/edit operations
+   - Switched to modals for better UX and consistency
+   - Modals provide better focus and clearer context
 
-This project has a feature to login quickly. You can use this feature by adding `/dev/login/{user_id}` to the url. For
-example: `http://localhost:8000/dev/login/1`. And then you can login as user with id `1`. But this feature only works in
-development mode with `APP_ENV=local` in `.env` file. Make sure you have a user with id `1` in your database.
+2. **Table Design**
+   - Standardized table design across all list views
+   - Added consistent text centering
+   - Improved action button placement
+   - Added card wrappers for better visual hierarchy
 
-### The default branch has been renamed!
+3. **Component Structure**
+   - Separated modals into standalone components
+   - Improved reusability of form components
+   - Consistent modal patterns for create/edit operations
 
-**9.x** is now named **laravel-9.x**
+### State Management
+1. **Zustand Implementation**
+   - Used Zustand for global state management
+   - Separate stores for different features (products, brands, etc.)
+   - Clear actions and state updates
 
-If you have a local clone, you can update it by running the following commands.
+2. **React Query**
+   - Implemented for server state management
+   - Improved caching and data fetching
+   - Better loading and error states
 
-```bash
-git branch -m 9.x laravel-9.x
-git fetch origin
-git branch -u origin/laravel-9.x laravel-9.x
-git remote set-head origin -a
-```
+### API Design
+1. **Endpoint Structure**
+   - RESTful endpoints for all CRUD operations
+   - Consistent response formats
+   - Proper error handling
 
-### About Laravel
+2. **Data Validation**
+   - Server-side validation with Laravel
+   - Client-side validation with React Hook Form
+   - Consistent error messaging
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and
-creative experience to be truly fulfilling.
+### Performance Optimizations
+1. **Table Rendering**
+   - Implemented pagination
+   - Added sorting capabilities
+   - Optimized re-renders
 
-### About Inertia.js
+2. **Modal Management**
+   - Lazy loading of modal content
+   - Proper cleanup on modal close
+   - State reset between operations
 
-Inertia.js lets you quickly build modern single-page React, Vue and Svelte apps using classic server-side routing and
-controllers.
+### Code Organization
+1. **Component Structure**
+   - Feature-based organization
+   - Shared components in common directory
+   - Clear separation of concerns
 
-### About Typescript
+2. **Type Safety**
+   - Comprehensive TypeScript interfaces
+   - Proper type checking
+   - Improved development experience
 
-Typescript is a strict syntactical superset of JavaScript and adds optional static typing to the language.
+### Future Improvements
+1. **Features**
+   - Advanced filtering
+   - Bulk operations for all entities
+   - Enhanced image management
+   - Role-based access control
 
-### Available scripts
+2. **Technical**
+   - Unit test coverage
+   - E2E testing
+   - Performance monitoring
+   - Enhanced error tracking
 
-Feel free to use someting like [pnpm](https://pnpm.io/) or [yarn](https://yarnpkg.com/). It just node package manager I
-have, so make yours.
+## Getting Started
 
-```bash
-# Format with prettier
-bun run format
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   composer install
+   npm install
+   ```
+3. Set up environment:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+4. Run migrations and seeders:
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+5. Start development servers:
+   ```bash
+   php artisan serve
+   npm run dev
+   ```
 
-# Start development
-bun run dev
+## Contributing
 
-# Build the app
-bun run build
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
 
-# Testing for SSR
-bun run preview
-```
+## License
 
-### Update profile information
-
-Of course it is not just about authentication, but also about updating user profile information, password, and deleting
-account.
-
-### Dashboard Layout
-
-This project has 3 layout:
-
-1. Guest Layout
-2. App Layout (Default)
-3. User Layout
-
-User layout will make a layout side by side, it has a sidebar. So this is will be useful when you need an admin panel or
-something like that.
-
-If you like making new features, feel free to make a [pull request](https://github.com/irsyadadl/inertia.ts/pulls). I'll
-be happy to review it.
-
-### Learn More
-
-Everything you need to understand is clearly can be found
-in: [UI / UX with Laravel and React](https://parsinta.com/series/ui-laravel-dan-react-nqp6j)
-
-### Thanks to
-
--   [Laravel](https://github.com/laravel/framework)
--   [Inertia](https://github.com/inertiajs/inertia) with [React](https://github.com/facebook/react)
-    and [Typescript](https://github.com/microsoft/TypeScript)
--   [Vite](https://vitejs.dev/) with [Vite plugin](https://github.com/laravel/vite-plugin) and friends
--   [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) and friends
--   [Shadcn](https://ui.shadcn.com/)
--   [Paranoid](https://irsyad.co/paranoid)
--   [parsinta.com](https://parsinta.com/)
--   [irsyad.co](https://irsyad.co/)
--   [karteil.com](https://karteil.com/)
--   [ayoseh.at](https://ayoseh.at/)
--   [perkebunan.org](https://perkebunan.org/)
-
-### Premium Partners
-
--   **[jetbrains.com](https://jetbrains.com/)**
+This project is licensed under the MIT License.

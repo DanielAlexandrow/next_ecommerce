@@ -1,13 +1,6 @@
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
+import { BaseModal, DefaultModalFooter } from '@/components/ui/modal/BaseModal';
 import { navigationStore } from '@/stores/productlist/navigation/navigationstore';
+import { useState } from 'react';
 
 const DeleteHeaderNavigationModal = () => {
     const [headers, setHeaders, selectedHeader, open, setOpen] = navigationStore((state) => [
@@ -18,30 +11,46 @@ const DeleteHeaderNavigationModal = () => {
         state.setOpenDeleteHeaderModal,
     ]);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     if (!selectedHeader) {
         return null;
     }
 
-    const deleteNavigationHeader = () => {
-        const items = Array.from(headers);
-        const index = items.findIndex((header) => header.id === selectedHeader.id);
-        items.splice(index, 1);
-        items.forEach((header, index) => {
-            header.order_num = index + 1;
-        });
-        setHeaders(items);
-        setOpen(false);
+    const handleDelete = () => {
+        setIsLoading(true);
+        try {
+            const items = Array.from(headers);
+            const index = items.findIndex((header) => header.id === selectedHeader.id);
+            items.splice(index, 1);
+            items.forEach((header, index) => {
+                header.order_num = index + 1;
+            });
+            setHeaders(items);
+            setOpen(false);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-                <DialogTitle>Delete Header {selectedHeader?.name}?</DialogTitle>
-                <DialogFooter className='mt-10'>
-                    <Button onClick={deleteNavigationHeader}>Delete</Button>{' '}
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+        <BaseModal
+            open={open}
+            onOpenChange={setOpen}
+            title={`Delete Header ${selectedHeader.name}`}
+            variant="destructive"
+            testId="delete-header-modal"
+            footer={
+                <DefaultModalFooter
+                    onCancel={() => setOpen(false)}
+                    onConfirm={handleDelete}
+                    confirmText="Delete"
+                    confirmVariant="destructive"
+                />
+            }
+        >
+            <></>
+        </BaseModal>
     );
 };
 

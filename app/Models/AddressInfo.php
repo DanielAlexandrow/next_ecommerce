@@ -5,21 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AddressInfo extends Model
-{
+class AddressInfo extends Model {
 	use HasFactory;
 
 	protected $fillable = [
 		'name',
 		'email',
-		'postcode',
+		'address',
 		'city',
+		'postal_code',
 		'country',
-		'street',
+		'phone'
 	];
 
-	public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
+	public function user(): \Illuminate\Database\Eloquent\Relations\HasOne {
 		return $this->hasOne(User::class, 'id_address_info');
 	}
 }

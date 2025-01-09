@@ -129,6 +129,7 @@ export default function CartPage() {
 											size="icon"
 											variant="ghost"
 											onClick={() => handleDecrementItem(item)}
+											aria-label="Decrement quantity"
 										>
 											<MinusIcon className="w-4 h-4" />
 										</Button>
@@ -138,6 +139,7 @@ export default function CartPage() {
 											size="icon"
 											variant="ghost"
 											onClick={() => handleIncrementItem(item)}
+											aria-label="Increment quantity"
 										>
 											<PlusIcon className="w-4 h-4" />
 										</Button>

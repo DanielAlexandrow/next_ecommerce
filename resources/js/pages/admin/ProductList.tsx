@@ -100,67 +100,74 @@ export default function ProductsList(): React.ReactNode {
 	);
 	return (
 		<>
-			<div style={{ width: '700px', margin: 'auto' }}>
-				<h1 className='text-center'>Products List</h1>
+			<div className="container mx-auto px-4 py-8">
+				<h1 className="text-3xl font-bold text-center mb-8">Products List</h1>
 
-				<div className='mt-10'>{<Paginate links={links} />}</div>
+				<div className="max-w-6xl mx-auto space-y-6">
+					<div className="bg-card rounded-lg shadow-sm p-6">
+						<Table className="w-full text-center">
+							<TableHeader>{tableFields}</TableHeader>
+							<TableBody>
+								{products?.map((product: any, index: any) => (
+									<TableRow key={index}>
+										<TableCell className="text-center">{product.name}</TableCell>
+										<TableCell className="text-center">{product.description}</TableCell>
+										<TableCell className="text-center">{product.available == true ? 'Yes' : 'No'}</TableCell>
+										<TableCell className="text-center">{moment(product.created_at).format('HH:mm DD.MM.YYYY')}</TableCell>
 
-				<Table className='text-center'>
-					<TableHeader>{tableFields}</TableHeader>
-					<TableBody>
-						{products?.map((product: any, index: any) => (
-							<TableRow key={index}>
-								<TableCell>{product.name}</TableCell>
-								<TableCell>{product.description}</TableCell>
-								<TableCell>{product.available == true ? 'Yes' : 'No'}</TableCell>
-								<TableCell>{moment(product.created_at).format('HH:mm DD.MM.YYYY')}</TableCell>
+										<TableCell className="text-center">
+											<DropdownMenu>
+												<DropdownMenuTrigger className="flex items-center gap-2">
+													Open
+												</DropdownMenuTrigger>
+												<DropdownMenuContent>
+													<DropdownMenuItem
+														onClick={() => {
+															setSelectedProduct(product);
+															setOpenDeleteProductModal(true);
+														}}>
+														Delete
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => {
+															setSelectedProduct(product);
+															setOpenEditProductModal(true);
+														}}>
+														Edit Product
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => {
+															setSelectedProduct(product);
+															setOpenNewSubproductModal(true);
+														}}>
+														Add option
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => {
+															setSelectedProduct(product);
+															setSubproductsModal(true);
+														}}>
+														View options
+													</DropdownMenuItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</div>
 
-								<TableCell className='grid auto-rows-fr content-stretch justify-evenly text-center'>
-									<DropdownMenu>
-										<DropdownMenuTrigger>Open</DropdownMenuTrigger>
-										<DropdownMenuContent>
-											<DropdownMenuItem
-												onClick={() => {
-													setSelectedProduct(product);
-													setOpenDeleteProductModal(true);
-												}}>
-												Delete
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => {
-													setSelectedProduct(product);
-													setOpenEditProductModal(true);
-												}}>
-												Edit Product
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => {
-													setSelectedProduct(product);
-													setOpenNewSubproductModal(true);
-												}}>
-												Add option
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => {
-													setSelectedProduct(product);
-													setSubproductsModal(true);
-												}}>
-												View options
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-					{tableFields}
-				</Table>
-				<div>{<Paginate links={links} />}</div>
+					<div className="flex justify-center mt-4">
+						<Paginate links={links} />
+					</div>
+				</div>
+
+				{openSubproductsModal ? <SubproductsModal /> : null}
+				{openNewSubproductModal ? <NewSubproductModal /> : null}
+				{openDeleteProductModal ? <DeleteProductModal /> : null}
+				{openEditProductModal ? <EditProductModal /> : null}
 			</div>
-			{openSubproductsModal ? <SubproductsModal /> : null}
-			{openNewSubproductModal ? <NewSubproductModal /> : null}
-			{openDeleteProductModal ? <DeleteProductModal /> : null}
-			{openEditProductModal ? <EditProductModal /> : null}
 		</>
 	);
 }

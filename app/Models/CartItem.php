@@ -7,12 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Subproduct;
 use App\Models\User;
 
+class CartItem extends Model {
+	use HasFactory;
 
-class CartItem extends Model
-{
-
-	protected $table = 'cart_item';
-
+	protected $table = 'cart_items';
 
 	protected $fillable = [
 		'cart_id',
@@ -20,9 +18,7 @@ class CartItem extends Model
 		'quantity'
 	];
 
-
-	public function subproduct()
-	{
+	public function subproduct() {
 		return $this->belongsTo(Subproduct::class);
 	}
 }

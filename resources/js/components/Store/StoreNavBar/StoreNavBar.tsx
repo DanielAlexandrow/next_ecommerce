@@ -43,7 +43,7 @@ const StoreNavBar = () => {
 	}
 
 	if (isLoading) {
-		return <div className="w-full h-16 bg-gray-100 animate-pulse"></div>;
+		return <div role="status" aria-label="loading" className="w-full h-16 bg-gray-100 animate-pulse"></div>;
 	}
 
 	if (error) {
@@ -79,7 +79,7 @@ const StoreNavBar = () => {
 														className={cn(
 															'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gray-900'
 														)}
-														href={'productsnav/' + item.id.toString()}
+														href={'/productsnav/' + item.id.toString()}
 													>
 														<div className="text-sm font-medium leading-none">{item.name}</div>
 														<p className="line-clamp-2 text-sm leading-snug text-gray-500">

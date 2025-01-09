@@ -11,10 +11,8 @@ import { cartApi } from "@/api/cartApi";
 
 export default function ProductPage() {
 	const pageProps: any = usePage().props;
-	const [product, setProduct] = useState<StoreProduct>(pageProps.product);
-	const [selectedOption, setSelectedOption] = useState(pageProps.product.subproducts[0]);
-
-	console.log(product);
+	const [product, setProduct] = useState<StoreProduct | null>(pageProps.product || null);
+	const [selectedOption, setSelectedOption] = useState(pageProps.product?.subproducts?.[0] || null);
 
 	const handleAddToCart = async () => {
 		try {
@@ -24,6 +22,23 @@ export default function ProductPage() {
 			toast.error('Failed to add item to cart');
 			console.error('Add to cart error:', error);
 		}
+	}
+
+	if (!product) {
+		return (
+			<div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
+				<div className="max-w-md mx-auto text-center space-y-6">
+					<h2 className="text-3xl font-bold tracking-tighter">Product not found</h2>
+					<p className="text-gray-500 dark:text-gray-400">The product you're looking for doesn't exist or has been removed.</p>
+					<Button
+						onClick={() => window.location.href = '/productsearch'}
+						className="bg-primary hover:bg-primary/90 text-white"
+					>
+						Back to Products
+					</Button>
+				</div>
+			</div>
+		);
 	}
 
 	return (

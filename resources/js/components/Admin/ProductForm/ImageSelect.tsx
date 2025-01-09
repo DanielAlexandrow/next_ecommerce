@@ -133,11 +133,13 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 							<TableRow key={image.id}>
 								<TableCell>
 									<div
+										data-testid={`move-up-${image.id}`}
 										className='text-lg hover:border hover:border-white rounded-sm'
 										onClick={() => handleOrderUp(index)}>
 										<IoArrowUp className='m-auto' />
 									</div>
 									<div
+										data-testid={`move-down-${image.id}`}
 										className='text-lg hover:border hover:border-white rounded-sm'
 										onClick={() => handleOrderDown(index)}>
 										<IoArrowDown className='m-auto' />
@@ -145,6 +147,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 								</TableCell>
 								<TableCell>
 									<Button
+										data-testid={`remove-image-${image.id}`}
 										className='text-m hover:border hover:border-white rounded-sm'
 										onClick={() => handleRemoveImage(image)}
 										variant='outline'>
@@ -153,6 +156,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 								</TableCell>
 								<TableCell style={{ userSelect: 'none', pointerEvents: 'none' }}>
 									<img
+										data-testid={`selected-image-${image.id}`}
 										className='mx-auto'
 										style={{
 											width: '50px',
@@ -163,7 +167,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 										src={image.full_path}
 										alt={image.name}
 									/>
-									<div className='text-center' style={{ userSelect: 'none' }}>
+									<div data-testid={`selected-image-name-${image.id}`} className='text-center' style={{ userSelect: 'none' }}>
 										{image.name}
 									</div>
 								</TableCell>
@@ -172,7 +176,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 					</TableBody>
 				</Table>
 			) : (
-				<div className='italic text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5'>
+				<div data-testid="no-images-message" className='italic text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5'>
 					No images selected
 				</div>
 			)}
@@ -182,6 +186,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 			</div>
 
 			<Input
+				data-testid="image-upload-input"
 				type='text'
 				placeholder='Search images...'
 				value={searchTerm}
@@ -192,6 +197,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 			<div className='grid grid-cols-4 gap-4' style={{ overflow: 'auto' }}>
 				{availableImages.map((image) => (
 					<div
+						data-testid={`image-option-${image.id}`}
 						key={image.id}
 						onClick={() => handleImageClick(image, productImages.length + 1)}
 						title={image.name}
@@ -205,6 +211,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 						}}
 						className='p-2'>
 						<img
+							data-testid={`image-preview-${image.id}`}
 							style={{
 								width: '75px',
 								height: '75px',
@@ -214,7 +221,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 							src={'/storage/' + image.path}
 							alt={image?.name}
 						/>
-						<div className='text-center overflow-hidden text-overflow ellipsis whitespace-nowrap'>
+						<div data-testid={`image-name-${image.id}`} className='text-center overflow-hidden text-overflow ellipsis whitespace-nowrap'>
 							{image.name}
 						</div>
 					</div>
