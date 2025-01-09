@@ -5,6 +5,7 @@ import ProductForm from '@/components/Admin/ProductForm/ProductForm';
 import { useForm } from 'react-hook-form';
 import type { UseFormReturn, FieldValues } from 'react-hook-form';
 import type { Product } from '@/types';
+import axios from 'axios';
 
 // Mock child components
 vi.mock('@/components/Admin/ProductForm/BrandSelect', () => ({
@@ -222,6 +223,167 @@ describe('ProductForm Edge Cases', () => {
 
         await waitFor(() => {
             expect(mockSetValue).toHaveBeenCalledWith('available', false);
+        });
+    });
+
+    it('handles form validation errors', async () => {
+        const mockSetError = vi.fn();
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            setError: mockSetError,
+            formState: {
+                ...createBasicMockFormContext().formState,
+                errors: {
+                    name: { type: 'required', message: 'Name is required' },
+                    description: { type: 'maxLength', message: 'Description is too long' }
+                }
+            }
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+        render(<ProductForm mode="new" product={mockProduct} />);
+
+        expect(screen.getByTestId('name-error')).toHaveTextContent('Name is required');
+        expect(screen.getByTestId('description-error')).toHaveTextContent('Description is too long');
+    });
+
+    it('handles API errors during submission', async () => {
+        const mockSetError = vi.fn();
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            setError: mockSetError,
+            handleSubmit: vi.fn((fn) => async (e?: React.BaseSyntheticEvent) => {
+                e?.preventDefault?.();
+                try {
+                    await fn(mockProduct);
+                } catch (error) {
+                    mockSetError('root', { type: 'manual', message: 'Failed to submit form' });
+                }
+            })
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+        vi.mocked(axios.post).mockRejectedValueOnce(new Error('API Error'));
+
+        render(<ProductForm mode="new" product={mockProduct} />);
+
+        const submitButton = screen.getByTestId('submit-button');
+        await act(async () => {
+            fireEvent.click(submitButton);
+        });
+
+        expect(mockSetError).toHaveBeenCalledWith('root', {
+            type: 'manual',
+            message: 'Failed to submit form'
+        });
+        expect(screen.getByTestId('form-error')).toBeInTheDocument();
+    });
+
+    it('handles form reset after successful submission', async () => {
+        const mockReset = vi.fn();
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            reset: mockReset
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+        vi.mocked(axios.post).mockResolvedValueOnce({ data: mockProduct });
+
+        render(<ProductForm mode="new" product={null} />);
+
+        const submitButton = screen.getByTestId('submit-button');
+        await act(async () => {
+            fireEvent.click(submitButton);
+        });
+
+        expect(mockReset).toHaveBeenCalledWith({
+            name: '',
+            description: '',
+            available: true
+        });
+    });
+
+    it('handles form state during submission', async () => {
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            formState: {
+                ...createBasicMockFormContext().formState,
+                isSubmitting: true
+            }
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+        render(<ProductForm mode="new" product={mockProduct} />);
+
+        const submitButton = screen.getByTestId('submit-button');
+        expect(submitButton).toBeDisabled();
+        expect(submitButton).toHaveTextContent('Submitting...');
+    });
+
+    it('handles edit mode with existing product data', () => {
+        const existingProduct = {
+            ...mockProduct,
+            name: 'Existing Product',
+            description: 'Existing Description',
+            available: false
+        };
+
+        render(<ProductForm mode="edit" product={existingProduct} />);
+
+        const nameInput = screen.getByTestId('product-name-input');
+        const descriptionInput = screen.getByTestId('product-description-input');
+        const availableCheckbox = screen.getByTestId('product-available-checkbox');
+
+        expect(nameInput).toHaveValue('Existing Product');
+        expect(descriptionInput).toHaveValue('Existing Description');
+        expect(availableCheckbox).not.toBeChecked();
+    });
+
+    it('handles long text input values', async () => {
+        const mockSetValue = vi.fn();
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            setValue: mockSetValue
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+        render(<ProductForm mode="new" product={mockProduct} />);
+
+        const longText = 'a'.repeat(100);
+        const descriptionInput = screen.getByTestId('product-description-input');
+
+        await act(async () => {
+            fireEvent.change(descriptionInput, { target: { value: longText } });
+        });
+
+        await waitFor(() => {
+            expect(mockSetValue).toHaveBeenCalledWith('description', longText);
+        });
+    });
+
+    it('handles special characters in input values', async () => {
+        const mockSetValue = vi.fn();
+        const mockFormContext = {
+            ...createBasicMockFormContext(),
+            setValue: mockSetValue
+        };
+
+        vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
+
+        render(<ProductForm mode="new" product={mockProduct} />);
+
+        const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+        const nameInput = screen.getByTestId('product-name-input');
+
+        await act(async () => {
+            fireEvent.change(nameInput, { target: { value: specialChars } });
+        });
+
+        await waitFor(() => {
+            expect(mockSetValue).toHaveBeenCalledWith('name', specialChars);
         });
     });
 }); 

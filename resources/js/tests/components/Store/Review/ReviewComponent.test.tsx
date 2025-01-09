@@ -172,4 +172,218 @@ describe('ReviewComponent', () => {
             expect(reviewsContainer?.parentElement).not.toHaveClass('opacity-50');
         });
     });
+
+    it('handles pagination correctly', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        const paginatedReviews = {
+            ...mockProps.reviews,
+            current_page: 2,
+            links: [
+                { url: 'http://localhost/reviews?page=1', label: 'Previous', active: false },
+                { url: 'http://localhost/reviews?page=1', label: '1', active: false },
+                { url: 'http://localhost/reviews?page=2', label: '2', active: true },
+                { url: null, label: 'Next', active: false }
+            ]
+        };
+
+        vi.mocked(reviewApi.getReviews).mockResolvedValueOnce({
+            reviews: paginatedReviews,
+            average: 4.5
+        });
+
+        render(<ReviewComponent {...mockProps} reviews={paginatedReviews} />);
+
+        // Click on page 1
+        const page1Link = screen.getByText('1');
+        await act(async () => {
+            fireEvent.click(page1Link);
+        });
+
+        expect(reviewApi.getReviews).toHaveBeenCalledWith(
+            mockProps.productId,
+            1,
+            'created_at',
+            'desc'
+        );
+    });
+
+    it('handles multiple sort directions', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        vi.mocked(reviewApi.getReviews).mockResolvedValue({
+            reviews: mockProps.reviews,
+            average: 4.5
+        });
+
+        render(<ReviewComponent {...mockProps} />);
+
+        // Click rating sort button twice to toggle direction
+        const ratingSort = screen.getByText('Rating');
+        await act(async () => {
+            fireEvent.click(ratingSort); // First click - desc
+            fireEvent.click(ratingSort); // Second click - asc
+        });
+
+        expect(reviewApi.getReviews).toHaveBeenCalledWith(
+            mockProps.productId,
+            mockProps.reviews.current_page,
+            'rating',
+            'asc'
+        );
+    });
+
+    it('displays review dates in correct format', () => {
+        render(<ReviewComponent {...mockProps} />);
+
+        const reviewDates = screen.getAllByText(/202\d-\d{2}-\d{2}/);
+        expect(reviewDates).toHaveLength(2);
+        expect(reviewDates[0]).toHaveTextContent('2024-01-01');
+        expect(reviewDates[1]).toHaveTextContent('2024-01-02');
+    });
+
+    it('shows correct average rating display', () => {
+        render(<ReviewComponent {...mockProps} />);
+
+        expect(screen.getByText('4.5')).toBeInTheDocument();
+        const stars = screen.getAllByTestId('star-rating-star');
+        const filledStars = stars.filter(star => star.classList.contains('fill-yellow-400'));
+        expect(filledStars).toHaveLength(5); // Should round up to 5 stars
+    });
+
+    it('handles review form character limits', async () => {
+        render(<ReviewComponent {...mockProps} />);
+
+        fireEvent.click(screen.getByText('Write a Review'));
+
+        const titleInput = screen.getByPlaceholderText('Review title');
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+
+        await act(async () => {
+            fireEvent.change(titleInput, { target: { value: 'a'.repeat(101) } }); // Over 100 char limit
+            fireEvent.change(contentInput, { target: { value: 'a'.repeat(1001) } }); // Over 1000 char limit
+        });
+
+        expect(titleInput).toHaveValue('a'.repeat(100)); // Should be truncated
+        expect(contentInput).toHaveValue('a'.repeat(1000)); // Should be truncated
+    });
+
+    it('handles review submission with minimum required fields', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        vi.mocked(reviewApi.createReview).mockResolvedValueOnce({});
+        vi.mocked(reviewApi.getReviews).mockResolvedValueOnce({
+            reviews: mockProps.reviews,
+            average: 4.5
+        });
+
+        render(<ReviewComponent {...mockProps} />);
+
+        fireEvent.click(screen.getByText('Write a Review'));
+
+        // Only fill required fields (rating and content)
+        const stars = screen.getAllByTestId('star-rating-star');
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+
+        await act(async () => {
+            fireEvent.click(stars[4]); // 5-star rating
+            fireEvent.change(contentInput, { target: { value: 'Minimum review' } });
+            fireEvent.submit(contentInput.closest('form')!);
+        });
+
+        await waitFor(() => {
+            expect(reviewApi.createReview).toHaveBeenCalledWith(mockProps.productId, {
+                rating: 5,
+                content: 'Minimum review',
+                title: '' // Optional field
+            });
+        });
+    });
+
+    it('handles network errors during review submission', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        vi.mocked(reviewApi.createReview).mockRejectedValueOnce(new Error('Network Error'));
+
+        render(<ReviewComponent {...mockProps} />);
+
+        fireEvent.click(screen.getByText('Write a Review'));
+
+        const stars = screen.getAllByTestId('star-rating-star');
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+
+        await act(async () => {
+            fireEvent.click(stars[4]);
+            fireEvent.change(contentInput, { target: { value: 'Test review' } });
+            fireEvent.submit(contentInput.closest('form')!);
+        });
+
+        await waitFor(() => {
+            expect(toast.error).toHaveBeenCalledWith('Failed to submit review');
+        });
+    });
+
+    it('maintains sort state between page navigations', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        vi.mocked(reviewApi.getReviews).mockResolvedValue({
+            reviews: {
+                ...mockProps.reviews,
+                current_page: 2
+            },
+            average: 4.5
+        });
+
+        render(<ReviewComponent {...mockProps} />);
+
+        // Change sort to rating desc
+        const ratingSort = screen.getByText('Rating');
+        await act(async () => {
+            fireEvent.click(ratingSort);
+        });
+
+        // Navigate to next page
+        const nextPage = screen.getByText('2');
+        await act(async () => {
+            fireEvent.click(nextPage);
+        });
+
+        // Should maintain sort settings
+        expect(reviewApi.getReviews).toHaveBeenLastCalledWith(
+            mockProps.productId,
+            2,
+            'rating',
+            'desc'
+        );
+    });
+
+    it('disables submit button during review submission', async () => {
+        const { reviewApi } = await import('@/api/reviewApi');
+        let resolveSubmission: (value: unknown) => void;
+        const submissionPromise = new Promise(resolve => {
+            resolveSubmission = resolve;
+        });
+
+        vi.mocked(reviewApi.createReview).mockImplementationOnce(() => submissionPromise as Promise<any>);
+
+        render(<ReviewComponent {...mockProps} />);
+
+        fireEvent.click(screen.getByText('Write a Review'));
+
+        const stars = screen.getAllByTestId('star-rating-star');
+        const contentInput = screen.getByPlaceholderText('Write your review here...');
+        const submitButton = screen.getByText('Submit Review');
+
+        await act(async () => {
+            fireEvent.click(stars[4]);
+            fireEvent.change(contentInput, { target: { value: 'Test review' } });
+            fireEvent.submit(contentInput.closest('form')!);
+        });
+
+        expect(submitButton).toBeDisabled();
+        expect(submitButton).toHaveTextContent('Submitting...');
+
+        // Resolve the submission
+        resolveSubmission!({});
+
+        await waitFor(() => {
+            expect(submitButton).not.toBeDisabled();
+            expect(submitButton).toHaveTextContent('Submit Review');
+        });
+    });
 }); 
