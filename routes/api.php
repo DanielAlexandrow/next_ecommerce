@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Subproduct;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,9 +40,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Products API endpoints
     Route::get('/products', [ProductSearchController::class, 'index']);
+    Route::get('/products/with-reviews', [ProductController::class, 'getWithReviews']);
+    Route::get('/products/stats', [ProductController::class, 'getStats']);
+    Route::get('/products/search', [ProductSearchController::class, 'search']);
     Route::post('/products', [ProductController::class, 'store']);
     Route::put('/products/{id}', [ProductController::class, 'update']);
+    Route::put('/products/bulk', [ProductController::class, 'bulkUpdate']);
     Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+
+    // Categories API endpoints
+    Route::get('/categories/{category}/products', [CategoryController::class, 'getProducts']);
+    Route::get('/categories/with-stats', [CategoryController::class, 'getWithStats']);
 
     // Chat routes
     Route::post('/chat/messages', [ChatController::class, 'sendMessage']);

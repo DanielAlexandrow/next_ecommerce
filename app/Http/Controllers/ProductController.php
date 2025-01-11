@@ -89,4 +89,43 @@ class ProductController extends Controller {
 			], 500);
 		}
 	}
+
+	public function getWithReviews() {
+		$products = Product::with(['reviews', 'reviews.user'])
+			->withAvg('reviews', 'rating')
+			->paginate(10);
+
+		return response()->json(['products' => $products]);
+	}
+
+	public function getStats() {
+		$stats = Product::withCount('reviews')
+			->withAvg('reviews', 'rating')
+			->withSum('subproducts', 'stock')
+			->get()
+			->map(function ($product) {
+				return [
+					'id' => $product->id,
+					'name' => $product->name,
+					'reviews_count' => $product->reviews_count,
+					'average_rating' => $product->reviews_avg_rating,
+					'total_stock' => $product->subproducts_sum_stock
+				];
+			});
+
+		return response()->json(['stats' => $stats]);
+	}
+
+	public function bulkUpdate(Request $request) {
+		$request->validate([
+			'ids' => 'required|array',
+			'ids.*' => 'exists:products,id',
+			'data' => 'required|array'
+		]);
+
+		Product::whereIn('id', $request->ids)
+			->update($request->data);
+
+		return response()->json(['message' => 'Products updated successfully']);
+	}
 }

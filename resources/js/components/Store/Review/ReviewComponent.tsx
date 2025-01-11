@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/Textarea';
 import { Star } from 'lucide-react';
 import Paginate from '@/components/pagination';
 import { toast } from 'react-toastify';
@@ -61,6 +61,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
     readOnly = false,
     size = 'md'
 }) => {
+    const roundedRating = Math.round(rating);
     const sizes = {
         sm: 'w-4 h-4',
         md: 'w-5 h-5',
@@ -75,7 +76,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
                     data-testid="star-rating-star"
                     className={cn(
                         sizes[size],
-                        star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300',
+                        star <= roundedRating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300',
                         readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-110 transition-transform'
                     )}
                     onClick={() => !readOnly && onRatingChange(star)}
@@ -83,6 +84,10 @@ export const StarRating: React.FC<StarRatingProps> = ({
             ))}
         </div>
     );
+};
+
+const formatDate = (date: string) => {
+    return new Date(date).toISOString().split('T')[0];
 };
 
 const ReviewForm: React.FC<{
@@ -95,6 +100,17 @@ const ReviewForm: React.FC<{
         rating: 0
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        maxLength: number
+    ) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value.slice(0, maxLength)
+        }));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -111,50 +127,76 @@ const ReviewForm: React.FC<{
         try {
             await onSubmit(formData);
             onClose();
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            toast.error('Failed to submit review');
+            throw error;
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="review-form">
             <div className="space-y-2">
                 <label htmlFor="title" className="text-sm font-medium">Title</label>
                 <Input
                     id="title"
+                    name="title"
                     placeholder="Review title"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) => handleInputChange(e, 100)}
                     maxLength={100}
+                    disabled={isSubmitting}
                 />
+                <div className="text-xs text-gray-500 text-right">
+                    {formData.title.length}/100
+                </div>
             </div>
 
             <div className="space-y-2">
                 <label htmlFor="content" className="text-sm font-medium">Review</label>
                 <Textarea
                     id="content"
+                    name="content"
                     placeholder="Write your review here..."
                     value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    onChange={(e) => handleInputChange(e, 1000)}
                     maxLength={1000}
                     required
+                    disabled={isSubmitting}
                 />
+                <div className="text-xs text-gray-500 text-right">
+                    {formData.content.length}/1000
+                </div>
             </div>
 
             <div className="space-y-2">
                 <label className="text-sm font-medium">Rating</label>
                 <StarRating
                     rating={formData.rating}
-                    onRatingChange={(rating) => setFormData({ ...formData, rating })}
+                    onRatingChange={(rating) => !isSubmitting && setFormData(prev => ({ ...prev, rating }))}
                     size="lg"
+                    readOnly={isSubmitting}
                 />
             </div>
 
             <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={onClose}>
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={onClose}
+                    disabled={isSubmitting}
+                >
                     Cancel
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
+                <Button
+                    type="submit"
+                    disabled={isSubmitting}
+                    data-testid="submit-review-button"
+                    aria-disabled={isSubmitting}
+                    aria-label={isSubmitting ? 'Submitting review...' : 'Submit review'}
+                >
                     {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </Button>
             </div>
@@ -175,6 +217,23 @@ const ReviewComponent: React.FC<ReviewProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const { auth } = usePage().props as any;
 
+    // Store sort state in session storage
+    useEffect(() => {
+        const savedSort = sessionStorage.getItem(`review-sort-${productId}`);
+        if (savedSort) {
+            const { key, direction } = JSON.parse(savedSort);
+            setSortKey(key);
+            setSortDirection(direction);
+        }
+    }, [productId]);
+
+    useEffect(() => {
+        sessionStorage.setItem(`review-sort-${productId}`, JSON.stringify({
+            key: sortKey,
+            direction: sortDirection
+        }));
+    }, [sortKey, sortDirection, productId]);
+
     const [links, setLinks] = useState(updateLinks(reviews.links, sortKey, sortDirection));
 
     useEffect(() => {
@@ -184,8 +243,8 @@ const ReviewComponent: React.FC<ReviewProps> = ({
     const handleSubmitReview = async (formData: ReviewFormData) => {
         try {
             await reviewApi.createReview(productId, formData);
-            // Refresh reviews
-            const response = await reviewApi.getReviews(productId);
+            // Refresh reviews with current sort settings
+            const response = await reviewApi.getReviews(productId, 1, sortKey, sortDirection);
             setReviews(response.reviews);
             setAverageRating(response.average);
             toast.success('Review submitted successfully');
@@ -197,11 +256,11 @@ const ReviewComponent: React.FC<ReviewProps> = ({
     };
 
     const handleSort = async (key: 'created_at' | 'rating') => {
+        setIsLoading(true);
         const newDirection = sortDirection === 'asc' || sortKey !== key ? 'desc' : 'asc';
         setSortKey(key);
         setSortDirection(newDirection);
 
-        setIsLoading(true);
         try {
             const response = await reviewApi.getReviews(productId, reviews.current_page, key, newDirection);
             setReviews(response.reviews);
@@ -213,9 +272,17 @@ const ReviewComponent: React.FC<ReviewProps> = ({
         }
     };
 
-    const SortIcon = ({ active, direction }: { active: boolean; direction: 'asc' | 'desc' }) => {
-        if (!active) return null;
-        return direction === 'asc' ? <FaArrowUp className="ml-1" /> : <FaArrowDown className="ml-1" />;
+    const handlePageChange = async (page: number) => {
+        setIsLoading(true);
+        try {
+            const response = await reviewApi.getReviews(productId, page, 'created_at', 'desc');
+            setReviews(response.reviews);
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+            toast.error('Failed to load reviews');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -224,92 +291,79 @@ const ReviewComponent: React.FC<ReviewProps> = ({
                 <div>
                     <h2 className="text-2xl font-bold">Product Reviews</h2>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="text-lg font-medium">{averageRating.toFixed(1)}</span>
-                        <StarRating rating={Math.round(averageRating)} onRatingChange={() => { }} readOnly size="sm" />
+                        <span className="text-lg font-medium">{averageRating}</span>
+                        <StarRating rating={averageRating} onRatingChange={() => { }} readOnly />
                         <span className="text-sm text-gray-500">
                             ({reviews.data.length} {reviews.data.length === 1 ? 'review' : 'reviews'})
                         </span>
                     </div>
                 </div>
-
-                {auth.user && (
-                    <Button onClick={() => setIsModalOpen(true)}>Write a Review</Button>
-                )}
+                <Button onClick={() => setIsModalOpen(true)}>
+                    Write a Review
+                </Button>
             </div>
 
-            {reviews.data.length > 0 ? (
-                <>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b">
-                                    <th className="py-3 px-4 text-left">
-                                        <button
-                                            onClick={() => handleSort('created_at')}
-                                            className="flex items-center font-medium hover:text-primary"
-                                        >
-                                            Date
-                                            <SortIcon
-                                                active={sortKey === 'created_at'}
-                                                direction={sortDirection}
-                                            />
-                                        </button>
-                                    </th>
-                                    <th className="py-3 px-4 text-left">
-                                        <button
-                                            onClick={() => handleSort('rating')}
-                                            className="flex items-center font-medium hover:text-primary"
-                                        >
-                                            Rating
-                                            <SortIcon
-                                                active={sortKey === 'rating'}
-                                                direction={sortDirection}
-                                            />
-                                        </button>
-                                    </th>
-                                    <th className="py-3 px-4 text-left">Review</th>
-                                    <th className="py-3 px-4 text-left">By</th>
+            <div className={cn("overflow-x-auto", isLoading && "opacity-50")}>
+                <table className="w-full">
+                    <thead>
+                        <tr className="border-b">
+                            <th className="text-left py-4">
+                                <button
+                                    onClick={() => handleSort('created_at')}
+                                    className="flex items-center gap-2"
+                                >
+                                    Date
+                                    {sortKey === 'created_at' && (
+                                        sortDirection === 'desc' ? <FaArrowDown /> : <FaArrowUp />
+                                    )}
+                                </button>
+                            </th>
+                            <th className="text-left py-4">Review</th>
+                            <th className="text-left py-4">
+                                <button
+                                    onClick={() => handleSort('rating')}
+                                    className="flex items-center gap-2"
+                                >
+                                    Rating
+                                    {sortKey === 'rating' && (
+                                        sortDirection === 'desc' ? <FaArrowDown /> : <FaArrowUp />
+                                    )}
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {reviews.data.length === 0 ? (
+                            <tr>
+                                <td colSpan={3} className="text-center py-8 text-gray-500">
+                                    No reviews yet. Be the first to write one!
+                                </td>
+                            </tr>
+                        ) : (
+                            reviews.data.map((review) => (
+                                <tr key={review.id} className="border-b">
+                                    <td className="py-4 text-sm text-gray-500">
+                                        {formatDate(review.created_at)}
+                                    </td>
+                                    <td className="py-4">
+                                        <div className="space-y-2">
+                                            <div className="font-medium">{review.title}</div>
+                                            <div className="text-sm text-gray-600">{review.content}</div>
+                                            <div className="text-sm text-gray-500">By {review.user.name}</div>
+                                        </div>
+                                    </td>
+                                    <td className="py-4">
+                                        <StarRating rating={review.rating} onRatingChange={() => { }} readOnly size="sm" />
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody className={cn(isLoading && 'opacity-50')}>
-                                {reviews.data.map((review) => (
-                                    <tr key={review.id} className="border-b">
-                                        <td className="py-4 px-4">
-                                            {new Date(review.created_at).toLocaleDateString()}
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <StarRating
-                                                rating={review.rating}
-                                                onRatingChange={() => { }}
-                                                readOnly
-                                                size="sm"
-                                            />
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            {review.title && (
-                                                <div className="font-medium">{review.title}</div>
-                                            )}
-                                            <div className="text-gray-600">{review.content}</div>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <span className="text-sm text-gray-600">
-                                                {review.user.name}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
 
-                    <div className="mt-4">
-                        {Paginate(links)}
-                    </div>
-                </>
-            ) : (
-                <div className="text-center py-8 text-gray-500">
-                    No reviews yet. Be the first to review this product!
-                </div>
+            {reviews.data.length > 0 && (
+                <Paginate links={links} onPageChange={handlePageChange} />
             )}
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -318,10 +372,7 @@ const ReviewComponent: React.FC<ReviewProps> = ({
                     <DialogDescription>
                         Share your thoughts about this product with other customers
                     </DialogDescription>
-                    <ReviewForm
-                        onSubmit={handleSubmitReview}
-                        onClose={() => setIsModalOpen(false)}
-                    />
+                    <ReviewForm onSubmit={handleSubmitReview} onClose={() => setIsModalOpen(false)} />
                 </DialogContent>
             </Dialog>
         </div>

@@ -3,8 +3,16 @@
 namespace Tests\Unit\Services;
 
 use Tests\TestCase;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\Brand;
+use App\Models\Review;
+use App\Models\SearchHistory;
+use App\Models\PopularSearch;
 use App\Services\ProductService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 
 class ProductServiceTest extends TestCase {
     use RefreshDatabase;
@@ -13,17 +21,80 @@ class ProductServiceTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
-        $this->productService = app(ProductService::class);
+        $this->productService = new ProductService();
     }
 
-    public function test_it_throws_exception_when_deleting_non_existent_product() {
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-        $this->productService->delete(999);
-    }
-
-    public function test_it_deletes_product_without_relations() {
+    /** @test */
+    public function it_creates_product_with_categories_and_subproducts() {
         // Arrange
-        $product = \App\Models\Product::factory()->create();
+        $brand = Brand::factory()->create();
+        $category = Category::factory()->create();
+
+        $data = [
+            'name' => 'Test Product',
+            'description' => 'Test Description',
+            'brand_id' => $brand->id,
+            'categories' => [$category->id],
+            'subproducts' => [
+                [
+                    'name' => 'Variant 1',
+                    'sku' => 'TEST-001',
+                    'price' => 99.99,
+                    'stock' => 10,
+                    'weight' => 1.5,
+                    'dimensions' => ['length' => 10, 'width' => 5, 'height' => 2],
+                    'metadata' => ['color' => 'red']
+                ]
+            ],
+            'metadata' => ['featured' => true]
+        ];
+
+        // Act
+        $product = $this->productService->create($data);
+
+        // Assert
+        $this->assertInstanceOf(Product::class, $product);
+        $this->assertEquals('Test Product', $product->name);
+        $this->assertCount(1, $product->categories);
+        $this->assertCount(1, $product->subproducts);
+        $this->assertEquals($category->id, $product->categories->first()->id);
+        $this->assertEquals('Variant 1', $product->subproducts->first()->name);
+        $this->assertEquals(['featured' => true], $product->metadata);
+    }
+
+    /** @test */
+    public function it_updates_product_with_relationships() {
+        // Arrange
+        $product = Product::factory()->create();
+        $newCategory = Category::factory()->create();
+
+        $updateData = [
+            'name' => 'Updated Product',
+            'description' => 'Updated Description',
+            'categories' => [$newCategory->id],
+            'images' => []
+        ];
+
+        // Act
+        $updatedProduct = $this->productService->update($updateData, $product->id);
+
+        // Assert
+        $this->assertEquals('Updated Product', $updatedProduct->name);
+        $this->assertEquals('Updated Description', $updatedProduct->description);
+        $this->assertCount(1, $updatedProduct->categories);
+        $this->assertEquals($newCategory->id, $updatedProduct->categories->first()->id);
+    }
+
+    /** @test */
+    public function it_throws_exception_when_updating_non_existent_product() {
+        $this->expectException(ModelNotFoundException::class);
+        $this->productService->update(['name' => 'Test'], 999);
+    }
+
+    /** @test */
+    public function it_deletes_product() {
+        // Arrange
+        $product = Product::factory()->create();
 
         // Act
         $result = $this->productService->delete($product->id);
@@ -33,13 +104,134 @@ class ProductServiceTest extends TestCase {
         $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
 
-    public function test_it_handles_concurrent_deletion() {
+    /** @test */
+    public function it_gets_paginated_products() {
         // Arrange
-        $product = \App\Models\Product::factory()->create();
-        $product->delete();
+        Product::factory()->count(15)->create();
 
-        // Act & Assert
-        $this->expectException(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
-        $this->productService->delete($product->id);
+        // Act
+        $result = $this->productService->getPaginatedProducts('created_at', 'desc', 10);
+
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertCount(10, $result['data']);
+        $this->assertEquals(15, $result['total']);
+    }
+
+    /** @test */
+    public function it_tracks_search_history_for_user() {
+        // Arrange
+        $userId = 1;
+        $searchTerm = 'test product';
+
+        // Act
+        $this->productService->trackSearchHistory($searchTerm, $userId);
+
+        // Assert
+        $this->assertDatabaseHas('search_histories', [
+            'user_id' => $userId,
+            'search_term' => $searchTerm
+        ]);
+
+        $this->assertDatabaseHas('popular_searches', [
+            'search_term' => $searchTerm
+        ]);
+    }
+
+    /** @test */
+    public function it_gets_popular_search_terms() {
+        // Arrange
+        PopularSearch::create(['search_term' => 'popular1', 'count' => 10]);
+        PopularSearch::create(['search_term' => 'popular2', 'count' => 5]);
+
+        // Act
+        $result = $this->productService->getPopularSearchTerms(2);
+
+        // Assert
+        $this->assertCount(2, $result);
+        $this->assertEquals('popular1', $result[0]);
+    }
+
+    /** @test */
+    public function it_gets_related_products() {
+        // Arrange
+        $category = Category::factory()->create();
+        $product = Product::factory()->create();
+        $product->categories()->attach($category->id);
+
+        $relatedProducts = Product::factory()->count(5)->create();
+        foreach ($relatedProducts as $related) {
+            $related->categories()->attach($category->id);
+        }
+
+        // Act
+        $result = $this->productService->getRelatedProducts($product->id, 3);
+
+        // Assert
+        $this->assertCount(3, $result);
+        $this->assertNotContains($product->id, array_column($result, 'id'));
+    }
+
+    /** @test */
+    public function it_gets_paginated_store_products_with_filters() {
+        // Arrange
+        $brand = Brand::factory()->create();
+        $category = Category::factory()->create();
+        $products = Product::factory()->count(5)->create(['brand_id' => $brand->id]);
+
+        foreach ($products as $product) {
+            $product->categories()->attach($category->id);
+            Review::factory()->create([
+                'product_id' => $product->id,
+                'rating' => 4
+            ]);
+        }
+
+        $filters = [
+            'name' => $products[0]->name,
+            'category' => $category->id,
+            'brand' => $brand->id,
+            'rating' => 4,
+            'inStock' => true,
+            'sortKey' => 'average_rating',
+            'sortDirection' => 'desc',
+            'limit' => 10
+        ];
+
+        // Act
+        $result = $this->productService->getPaginatedStoreProducts($filters);
+
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertArrayHasKey('meta', $result);
+        $this->assertGreaterThan(0, count($result['data']));
+    }
+
+    /** @test */
+    public function it_handles_price_range_filters() {
+        // Arrange
+        $product = Product::factory()->create();
+        $product->subproducts()->create([
+            'name' => 'Test Subproduct',
+            'price' => 100,
+            'stock' => 10,
+            'available' => true
+        ]);
+
+        $filters = [
+            'minPrice' => 50,
+            'maxPrice' => 150,
+            'limit' => 10
+        ];
+
+        // Act
+        $result = $this->productService->getPaginatedStoreProducts($filters);
+
+        // Assert
+        $this->assertIsArray($result);
+        $this->assertGreaterThan(0, count($result['data']));
+        $this->assertGreaterThanOrEqual(50, $result['data'][0]['price']);
+        $this->assertLessThanOrEqual(150, $result['data'][0]['price']);
     }
 }

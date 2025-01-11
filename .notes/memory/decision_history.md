@@ -15,14 +15,25 @@
   - Component isolation
   - Proper async testing
 
-## Package Manager Selection (2024-04-04)
-- **Decision**: Adopted pnpm for dependency management
-- **Rationale**: Faster installation, better disk space usage
-- **Impact**: Improved CI/CD pipeline speed and development workflow
-- **Alternatives Considered**: npm, yarn
+## Performance Testing Strategy (2024-04-04)
+- **Decision**: Removed QueryOptimizationTest and plan for new approach
+- **Rationale**: Current implementation caused architectural conflicts and test instability
+- **Impact**: Temporarily reduced test coverage but improved overall test reliability
+- **Next Steps**:
+  - Design isolated performance test suite
+  - Implement proper database setup
+  - Create dedicated performance monitoring
+  - Use separate test database for performance tests
 
 ## Current Test Issues (2024-04-04)
-- ResizeObserver not defined in test environment
-- Module import issues with ES modules
-- API mocking inconsistencies
-- Test data synchronization problems 
+1. Frontend Issues
+   - ResizeObserver not defined in test environment
+   - Module import issues with ES modules
+   - API mocking inconsistencies
+   - Test data synchronization problems
+
+2. Test Environment
+   - Need proper performance test isolation
+   - Database setup for performance testing
+   - Test data generation strategy
+   - Monitoring and metrics collection 

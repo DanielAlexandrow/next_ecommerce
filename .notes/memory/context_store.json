@@ -21,12 +21,87 @@
             "implementation_details": "Mock all exports including FormProvider and Controller"
         }
     },
-    "last_test_state": {
+    "frontend_test_state": {
         "timestamp": "2024-04-04",
-        "total_tests": 25,
-        "passed": 20,
-        "failed": 5,
-        "coverage": "80%"
+        "summary": {
+            "test_files": {
+                "total": 23,
+                "passed": 19,
+                "failed": 4
+            },
+            "individual_tests": {
+                "total": 139,
+                "passed": 113,
+                "failed": 26
+            },
+            "execution_times": {
+                "total": "10.54s",
+                "transform": "3.40s",
+                "setup": "10.55s",
+                "collect": "12.84s",
+                "tests": "18.89s",
+                "environment": "19.58s",
+                "prepare": "3.73s"
+            }
+        },
+        "integration_tests": {
+            "product_flow": {
+                "file": "resources/js/tests/integration/ProductFlow.test.tsx",
+                "tests": [
+                    "should search for products and add to cart",
+                    "should update cart quantities and total",
+                    "should filter products by category",
+                    "should show loading states during search"
+                ],
+                "components_tested": [
+                    "ProductSearch",
+                    "ProductList",
+                    "Cart"
+                ]
+            },
+            "checkout_flow": {
+                "file": "resources/js/tests/integration/CheckoutFlow.test.tsx",
+                "tests": [
+                    "should complete checkout flow with address and payment",
+                    "should show validation errors in address form",
+                    "should show payment validation errors",
+                    "should handle payment processing error"
+                ],
+                "components_tested": [
+                    "Cart",
+                    "AddressForm",
+                    "PaymentForm"
+                ]
+            },
+            "admin_product_flow": {
+                "file": "resources/js/tests/integration/AdminProductFlow.test.tsx",
+                "tests": [
+                    "should create new product with images",
+                    "should edit existing product",
+                    "should delete product with confirmation",
+                    "should show validation errors in product form",
+                    "should handle image upload errors"
+                ],
+                "components_tested": [
+                    "ProductForm",
+                    "ProductList",
+                    "ImageUpload"
+                ]
+            }
+        },
+        "failing_components": {
+            "ReviewComponent": {
+                "file": "resources/js/tests/components/Store/Review/ReviewComponent.test.tsx",
+                "issues": [
+                    {
+                        "test": "disables submit button during review submission",
+                        "error": "Button not disabled during submission",
+                        "expected": "Button should be disabled with 'Submitting...' text",
+                        "received": "Button not disabled"
+                    }
+                ]
+            }
+        }
     },
     "php_test_state": {
         "timestamp": "2024-04-04",
@@ -50,49 +125,83 @@
                 "ExampleTest"
             ],
             "total_tests": 47,
-            "all_passing": true
+            "all_passing": true,
+            "execution_times": {
+                "fastest": "0.01s (ExampleTest)",
+                "slowest": "0.73s (ProductControllerTest)",
+                "average": "0.05s"
+            }
         },
-        "removed_tests": [
-            "OrderTest",
-            "ProductTest",
-            "AccessibilityTest",
-            "KeyboardNavigationTest",
-            "ScreenReaderTest",
-            "RateLimitingTest",
-            "AuthenticationTest",
-            "ChatTest",
-            "CacheStrategyTest",
-            "MemoryLeakTest",
-            "PerformanceTest"
-        ],
         "test_categories": {
             "unit": {
-                "controllers": [
-                    "ProductControllerTest"
-                ],
-                "models": [
-                    "NavigationItemTest",
-                    "ProductCategoryTest",
-                    "ProductOrderTest",
-                    "OrderTest"
-                ],
-                "services": [
-                    "CartServiceTest",
-                    "CategoryServiceTest",
-                    "CheckoutServiceTest",
-                    "OrderServiceTest",
-                    "ProductServiceTest"
-                ]
+                "controllers": {
+                    "ProductControllerTest": {
+                        "tests": 6,
+                        "avg_time": "0.18s"
+                    }
+                },
+                "models": {
+                    "NavigationItemTest": {
+                        "tests": 10,
+                        "avg_time": "0.045s"
+                    },
+                    "ProductCategoryTest": {
+                        "tests": 4,
+                        "avg_time": "0.045s"
+                    },
+                    "ProductOrderTest": {
+                        "tests": 4,
+                        "avg_time": "0.05s"
+                    },
+                    "OrderTest": {
+                        "tests": 7,
+                        "avg_time": "0.043s"
+                    }
+                },
+                "services": {
+                    "CartServiceTest": {
+                        "tests": 1,
+                        "avg_time": "0.04s"
+                    },
+                    "CategoryServiceTest": {
+                        "tests": 1,
+                        "avg_time": "0.05s"
+                    },
+                    "CheckoutServiceTest": {
+                        "tests": 2,
+                        "avg_time": "0.055s"
+                    },
+                    "OrderServiceTest": {
+                        "tests": 1,
+                        "avg_time": "0.04s"
+                    },
+                    "ProductServiceTest": {
+                        "tests": 3,
+                        "avg_time": "0.037s"
+                    }
+                }
             },
             "feature": {
-                "auth": [
-                    "EmailVerificationTest",
-                    "PasswordResetTest",
-                    "RegistrationTest"
-                ],
-                "api": [
-                    "ApiVisitTest"
-                ]
+                "auth": {
+                    "EmailVerificationTest": {
+                        "tests": 1,
+                        "avg_time": "0.07s"
+                    },
+                    "PasswordResetTest": {
+                        "tests": 4,
+                        "avg_time": "0.053s"
+                    },
+                    "RegistrationTest": {
+                        "tests": 2,
+                        "avg_time": "0.04s"
+                    }
+                },
+                "api": {
+                    "ApiVisitTest": {
+                        "tests": 2,
+                        "avg_time": "0.045s"
+                    }
+                }
             }
         }
     }

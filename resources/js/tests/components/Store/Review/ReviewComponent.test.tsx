@@ -24,7 +24,10 @@ vi.mock('@inertiajs/react', () => ({
                 user: { id: 1, name: 'Test User' }
             }
         }
-    })
+    }),
+    Link: ({ href, children, preserveScroll, preserveState, ...props }) => (
+        <a href={href} {...props}>{children}</a>
+    )
 }));
 
 describe('ReviewComponent', () => {
@@ -50,7 +53,12 @@ describe('ReviewComponent', () => {
                 }
             ],
             current_page: 1,
-            links: []
+            links: [
+                { url: '?page=1', label: 'Previous', active: false },  // Previous
+                { url: '?page=1', label: '1', active: true },   // Page 1
+                { url: '?page=2', label: '2', active: false },  // Page 2
+                { url: '?page=2', label: 'Next', active: false }   // Next
+            ]
         },
         setReviews: vi.fn(),
         averageRating: 4.5,
@@ -363,24 +371,38 @@ describe('ReviewComponent', () => {
 
         render(<ReviewComponent {...mockProps} />);
 
-        fireEvent.click(screen.getByText('Write a Review'));
+        // Open modal
+        await act(async () => {
+            fireEvent.click(screen.getByText('Write a Review'));
+        });
 
         const stars = screen.getAllByTestId('star-rating-star');
         const contentInput = screen.getByPlaceholderText('Write your review here...');
-        const submitButton = screen.getByText('Submit Review');
+        const submitButton = screen.getByTestId('submit-review-button');
 
+        // Fill form
         await act(async () => {
             fireEvent.click(stars[4]);
             fireEvent.change(contentInput, { target: { value: 'Test review' } });
+        });
+
+        // Submit form
+        await act(async () => {
             fireEvent.submit(contentInput.closest('form')!);
         });
 
-        expect(submitButton).toBeDisabled();
-        expect(submitButton).toHaveTextContent('Submitting...');
+        // Check disabled state immediately after submission
+        await waitFor(() => {
+            expect(submitButton).toBeDisabled();
+            expect(submitButton).toHaveTextContent('Submitting...');
+        });
 
         // Resolve the submission
-        resolveSubmission!({});
+        await act(async () => {
+            resolveSubmission!({});
+        });
 
+        // Check enabled state after submission completes
         await waitFor(() => {
             expect(submitButton).not.toBeDisabled();
             expect(submitButton).toHaveTextContent('Submit Review');

@@ -1,5 +1,31 @@
 # Edge Cases Registry
 
+## Query Optimization
+
+### Database Performance
+- **Case**: Query count exceeding threshold
+- **Issue**: Too many queries executed for related data
+- **Solution**: Implement eager loading and proper indexing
+- **Implementation**: Use `with()` for relationships and add database indexes
+
+### Query Logging
+- **Case**: SQL query logging in tests
+- **Issue**: Missing query information in log
+- **Solution**: Enable query logging and proper DB facade usage
+- **Implementation**: Use `DB::enableQueryLog()` and `DB::getQueryLog()`
+
+### Bulk Operations
+- **Case**: Performance of mass updates
+- **Issue**: Individual updates causing performance issues
+- **Solution**: Use bulk update operations
+- **Implementation**: Implement chunked updates for large datasets
+
+### Complex Joins
+- **Case**: Multiple table joins performance
+- **Issue**: Inefficient join operations
+- **Solution**: Optimize join queries and use proper indexes
+- **Implementation**: Use subqueries or efficient join strategies
+
 ## ReviewComponent
 
 ### Form Submission
@@ -35,9 +61,10 @@
 ## Lessons Learned
 1. Always wrap form submissions in try-catch blocks
 2. Use proper state management for loading indicators
-3. Implement comprehensive error boundaries
-4. Maintain state in URL for shareable links
-5. Add proper aria-labels for accessibility
+3. Enable query logging before performance tests
+4. Use chunked operations for bulk updates
+5. Implement proper database indexes
+6. Monitor query execution times
 
 ## Recent Fixes
 1. Implemented proper loading state classes
@@ -48,5 +75,5 @@
 ## Known Issues
 1. Submit button disabled state inconsistent
 2. Form validation needs enhancement
-3. Error handling could be more user-friendly
-4. Loading states need visual polish 
+3. Query optimization needs improvement
+4. Bulk operations need optimization 
