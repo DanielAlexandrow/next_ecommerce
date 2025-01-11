@@ -1,9 +1,8 @@
-import { test as setup, expect, chromium } from '@playwright/test';
+import { chromium } from '@playwright/test';
 
 async function globalSetup() {
     const browser = await chromium.launch();
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const page = await browser.newPage();
 
     // Navigate to login page
     await page.goto('http://localhost:8000/login');
@@ -11,16 +10,16 @@ async function globalSetup() {
     // Fill in login form
     await page.fill('input[type="email"]', 'admin@example.com');
     await page.fill('input[type="password"]', 'password123');
-
-    // Click login button
     await page.click('button[type="submit"]');
 
-    // Wait for navigation and verify login
+    // Wait for navigation to dashboard
     await page.waitForURL('http://localhost:8000/dashboard');
-    await expect(page.locator('text=Dashboard')).toBeVisible();
+    await page.waitForSelector('.dashboard-content', { timeout: 10000 });
 
     // Save signed-in state to 'playwright/.auth/admin.json'
-    await page.context().storageState({ path: 'playwright/.auth/admin.json' });
+    await page.context().storageState({
+        path: 'playwright/.auth/admin.json'
+    });
 
     await browser.close();
 }

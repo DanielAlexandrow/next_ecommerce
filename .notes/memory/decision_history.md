@@ -1,39 +1,40 @@
-# Decision History
+# Development Configuration History
 
-## Testing Framework Selection (2024-04-04)
-- **Decision**: Adopted Vitest as primary testing framework
-- **Rationale**: Better ESM support, faster execution, and better integration with React
-- **Impact**: Improved test execution speed and developer experience
-- **Alternatives Considered**: Jest, Mocha
+## Vite Configuration Issues (2025-01-11)
 
-## Test Pattern Standardization (2024-04-04)
-- **Decision**: Standardized component test structure with proper mocking
-- **Rationale**: Consistent testing approach across all components
-- **Impact**: Reduced test flakiness and improved maintainability
-- **Key Patterns**:
-  - Complete form library mocking
-  - Component isolation
-  - Proper async testing
+### Current Issue
+- Hot reloading broken
+- Connection refused errors on port 5174
+- IPv6 address invalid errors
 
-## Performance Testing Strategy (2024-04-04)
-- **Decision**: Removed QueryOptimizationTest and plan for new approach
-- **Rationale**: Current implementation caused architectural conflicts and test instability
-- **Impact**: Temporarily reduced test coverage but improved overall test reliability
-- **Next Steps**:
-  - Design isolated performance test suite
-  - Implement proper database setup
-  - Create dedicated performance monitoring
-  - Use separate test database for performance tests
+### Working Configuration (Initial Commit 09c391f1493e31447b181f1dea5d606c26cc4e81)
+- Original working state for hot reloading
+- Key differences found:
+  1. Server configuration with host: '0.0.0.0'
+  2. HMR host set to 'localhost'
+  3. Path aliases configured in resolve section
 
-## Current Test Issues (2024-04-04)
-1. Frontend Issues
-   - ResizeObserver not defined in test environment
-   - Module import issues with ES modules
-   - API mocking inconsistencies
-   - Test data synchronization problems
+### Changes Made
+1. Restored original server configuration
+2. Kept current enhancements:
+   - CSS input file
+   - TypeScript path resolution
+   - Test configuration
+3. Maintained path aliases
 
-2. Test Environment
-   - Need proper performance test isolation
-   - Database setup for performance testing
-   - Test data generation strategy
-   - Monitoring and metrics collection 
+### Action Items
+- [x] Compare current vite.config.ts with initial commit
+- [ ] Check package.json changes
+- [ ] Verify environment variables
+- [ ] Test store and admin menu functionality
+
+### Resolution Steps
+1. ✓ Retrieved initial configuration
+2. ✓ Applied necessary updates
+3. [ ] Verify functionality
+4. [ ] Document working setup
+
+### Key Learnings
+- Original server configuration was essential for Docker environment
+- HMR host configuration is critical for hot reloading
+- Need to maintain both IPv4 and IPv6 compatibility 

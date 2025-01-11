@@ -86,11 +86,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
     );
 };
 
-const formatDate = (date: string) => {
-    return new Date(date).toISOString().split('T')[0];
-};
-
-const ReviewForm: React.FC<{
+export const ReviewForm: React.FC<{
     onSubmit: (data: ReviewFormData) => Promise<void>;
     onClose: () => void;
 }> = ({ onSubmit, onClose }) => {
@@ -105,6 +101,7 @@ const ReviewForm: React.FC<{
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         maxLength: number
     ) => {
+        if (isSubmitting) return;
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -114,6 +111,8 @@ const ReviewForm: React.FC<{
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isSubmitting) return;
+
         if (!formData.rating) {
             toast.error('Please select a rating');
             return;
@@ -130,7 +129,6 @@ const ReviewForm: React.FC<{
         } catch (error) {
             console.error('Error submitting review:', error);
             toast.error('Failed to submit review');
-            throw error;
         } finally {
             setIsSubmitting(false);
         }
@@ -148,6 +146,7 @@ const ReviewForm: React.FC<{
                     onChange={(e) => handleInputChange(e, 100)}
                     maxLength={100}
                     disabled={isSubmitting}
+                    data-testid="review-title-input"
                 />
                 <div className="text-xs text-gray-500 text-right">
                     {formData.title.length}/100
@@ -165,6 +164,7 @@ const ReviewForm: React.FC<{
                     maxLength={1000}
                     required
                     disabled={isSubmitting}
+                    data-testid="review-content-input"
                 />
                 <div className="text-xs text-gray-500 text-right">
                     {formData.content.length}/1000
@@ -187,6 +187,7 @@ const ReviewForm: React.FC<{
                     variant="outline"
                     onClick={onClose}
                     disabled={isSubmitting}
+                    data-testid="cancel-review-button"
                 >
                     Cancel
                 </Button>
@@ -196,6 +197,7 @@ const ReviewForm: React.FC<{
                     data-testid="submit-review-button"
                     aria-disabled={isSubmitting}
                     aria-label={isSubmitting ? 'Submitting review...' : 'Submit review'}
+                    className={isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}
                 >
                     {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </Button>

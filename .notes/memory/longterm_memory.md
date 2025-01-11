@@ -138,3 +138,43 @@ Ticket: #XXX-123
    - Issue: Inconsistent form validation
    - Fix: Centralize validation logic
    - Impact: More reliable form handling 
+
+# Long-term Memory
+
+## Docker Testing Strategy
+- **Decision**: Avoid using `sudo pkill` in Docker containers
+- **Rationale**: Can stop the entire container and disrupt the testing environment
+- **Impact**: Need safer process management approaches
+- **Next Steps**: Use port management and wait conditions instead of process killing
+
+## E2E Testing Strategy
+- **Decision**: Implemented robust e2e test configuration with wait conditions
+- **Rationale**: Previous approach was unstable due to timing and port conflicts
+- **Changes Made**:
+  - Removed webServer configuration when server is already running
+  - Used existing Laravel server on port 8000
+  - Set appropriate timeouts for actions and navigation
+  - Added retry logic for flaky tests
+- **Impact**: More stable and reliable e2e testing process
+- **Next Steps**:
+  - Monitor test stability
+  - Add more comprehensive e2e test coverage
+  - Consider adding visual regression tests
+- **Lessons Learned**:
+  - Running multiple Laravel servers can cause port conflicts
+  - Playwright's webServer configuration can conflict with existing servers
+  - Using an existing server is more reliable than starting a new one
+  - Headed mode helps debug test issues
+
+## Current Test Issues
+- **Frontend Issues**:
+  - ResizeObserver not defined in test environment
+  - Module import issues with ES modules
+  - API mocking inconsistencies
+  - Test data synchronization
+
+- **Test Environment**:
+  - Need proper test isolation
+  - Database setup for testing
+  - Test data generation strategy
+  - Monitoring and metrics collection 

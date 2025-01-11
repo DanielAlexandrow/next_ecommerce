@@ -128,4 +128,18 @@ class ProductController extends Controller {
 
 		return response()->json(['message' => 'Products updated successfully']);
 	}
+
+	public function index(Request $request): JsonResponse {
+		try {
+			$sortKey = $request->input('sort_key', 'created_at');
+			$sortDirection = $request->input('sort_direction', 'desc');
+			$limit = $request->input('limit', 10);
+
+			$products = $this->productService->getPaginatedProducts($sortKey, $sortDirection, $limit);
+			return response()->json($products);
+		} catch (\Exception $e) {
+			\Log::error('Failed to fetch products: ' . $e->getMessage());
+			return response()->json(['message' => 'Failed to fetch products'], 500);
+		}
+	}
 }

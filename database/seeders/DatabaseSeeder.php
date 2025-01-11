@@ -143,6 +143,7 @@ class DatabaseSeeder extends Seeder {
                 'name' => 'Standard',
                 'price' => $product['price'],
                 'available' => true,
+                'sku' => strtoupper(Str::random(8)),
             ]);
         }
 

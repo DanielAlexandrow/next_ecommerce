@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import ReviewComponent from '@/components/Store/Review/ReviewComponent';
+import ReviewComponent, { ReviewForm } from '@/components/Store/Review/ReviewComponent';
 import { toast } from 'react-toastify';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('react-toastify', () => ({
     toast: {
@@ -406,6 +407,133 @@ describe('ReviewComponent', () => {
         await waitFor(() => {
             expect(submitButton).not.toBeDisabled();
             expect(submitButton).toHaveTextContent('Submit Review');
+        });
+    });
+});
+
+describe('ReviewForm', () => {
+    it('should handle form submission correctly', async () => {
+        const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
+        const mockOnClose = vi.fn();
+        const user = userEvent.setup();
+
+        render(
+            <ReviewForm
+                onSubmit={mockOnSubmit}
+                onClose={mockOnClose}
+            />
+        );
+
+        // Fill in form data
+        await act(async () => {
+            await user.type(screen.getByTestId('review-title-input'), 'Great Product');
+            await user.type(screen.getByTestId('review-content-input'), 'This is an amazing product!');
+
+            // Set rating
+            const stars = screen.getAllByRole('button', { name: /star/i });
+            await user.click(stars[4]); // 5-star rating
+        });
+
+        // Submit form
+        await act(async () => {
+            const submitButton = screen.getByTestId('submit-review-button');
+            await user.click(submitButton);
+        });
+
+        // Check if button is disabled during submission
+        const submitButton = screen.getByTestId('submit-review-button');
+        expect(submitButton).toBeDisabled();
+        expect(submitButton).toHaveTextContent('Submitting...');
+
+        // Verify form inputs are disabled during submission
+        expect(screen.getByTestId('review-title-input')).toBeDisabled();
+        expect(screen.getByTestId('review-content-input')).toBeDisabled();
+        expect(screen.getByTestId('cancel-review-button')).toBeDisabled();
+
+        // Wait for submission to complete
+        await waitFor(() => {
+            expect(mockOnSubmit).toHaveBeenCalledWith({
+                title: 'Great Product',
+                content: 'This is an amazing product!',
+                rating: 5
+            });
+        });
+
+        // Verify form is closed
+        expect(mockOnClose).toHaveBeenCalled();
+    });
+
+    it('should handle submission errors correctly', async () => {
+        const mockError = new Error('Submission failed');
+        const mockOnSubmit = vi.fn().mockRejectedValue(mockError);
+        const mockOnClose = vi.fn();
+        const user = userEvent.setup();
+
+        render(
+            <ReviewForm
+                onSubmit={mockOnSubmit}
+                onClose={mockOnClose}
+            />
+        );
+
+        // Fill in form data
+        await act(async () => {
+            await user.type(screen.getByTestId('review-title-input'), 'Test Review');
+            await user.type(screen.getByTestId('review-content-input'), 'Test Content');
+            const stars = screen.getAllByRole('button', { name: /star/i });
+            await user.click(stars[3]); // 4-star rating
+        });
+
+        // Submit form
+        await act(async () => {
+            const submitButton = screen.getByTestId('submit-review-button');
+            await user.click(submitButton);
+        });
+
+        // Check error handling
+        await waitFor(() => {
+            expect(screen.getByText('Failed to submit review')).toBeInTheDocument();
+        });
+
+        // Verify form remains open and interactive
+        expect(mockOnClose).not.toHaveBeenCalled();
+        const submitButton = screen.getByTestId('submit-review-button');
+        expect(submitButton).not.toBeDisabled();
+        expect(submitButton).toHaveTextContent('Submit Review');
+        expect(screen.getByTestId('review-title-input')).not.toBeDisabled();
+    });
+
+    it('should prevent multiple submissions while submitting', async () => {
+        const mockOnSubmit = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+        const mockOnClose = vi.fn();
+        const user = userEvent.setup();
+
+        render(
+            <ReviewForm
+                onSubmit={mockOnSubmit}
+                onClose={mockOnClose}
+            />
+        );
+
+        // Fill in form data
+        await act(async () => {
+            await user.type(screen.getByTestId('review-title-input'), 'Test');
+            await user.type(screen.getByTestId('review-content-input'), 'Content');
+            const stars = screen.getAllByRole('button', { name: /star/i });
+            await user.click(stars[2]); // 3-star rating
+        });
+
+        // Submit form multiple times
+        const submitButton = screen.getByTestId('submit-review-button');
+        await act(async () => {
+            await user.click(submitButton);
+            await user.click(submitButton);
+            await user.click(submitButton);
+        });
+
+        // Wait for submission to complete
+        await waitFor(() => {
+            expect(mockOnSubmit).toHaveBeenCalledTimes(1);
         });
     });
 }); 
