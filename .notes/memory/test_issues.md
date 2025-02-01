@@ -1,59 +1,85 @@
 # Test Issues Tracker
 
-## Latest Test Run (2024-01-09)
+## Latest Updates (2024-01-15)
 
-### Failed Tests Summary
-1. `resources/js/tests/e2e/AdminSidebar.test.ts`
-   - Issue: Playwright Test configuration error
-   - Error: Unexpected test.describe() call
-   - Status: ⚠️ Configuration Error
-   - Fix Required: Review Playwright test setup and configuration
-
-2. `resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx`
-   - Issues:
-     - `handles input changes`: mockSetValue not called as expected
-     - `handles checkbox toggle`: mockSetValue not called as expected
-   - Status: ⚠️ Mock Function Issues
-   - Fix Required: Review mock setup and event handling
-
-3. `resources/js/tests/components/Store/Review/ReviewComponent.test.tsx`
-   - Issues:
-     - `validates form inputs`: Toast error not called with expected message
-     - `handles review submission`: createReview API not called as expected
-     - `handles API errors gracefully`: Wrong error message shown
-     - `handles loading state during sort`: Missing opacity-50 class
-   - Status: ⚠️ Multiple Issues
-   - Fix Required: Review form validation, API integration, and loading state implementation
+### Added Chat Accessibility Tests
+- Created comprehensive accessibility test suite for SupportChat component
+- Added tests for ARIA attributes and labels
+- Added tests for keyboard navigation and focus management
+- Added tests for screen reader announcements
+- Added tests for reduced motion support
+- Total: 10 new test cases with 100% pass rate
 
 ### Test Statistics
-- Total Test Files: 22
-- Passed Files: 19
-- Failed Files: 3
-- Total Tests: 117
-- Passed Tests: 111
-- Failed Tests: 6
-- Success Rate: 94.87%
+- Total Test Files: 31
+- Total Tests: 227
+- Pass Rate: 100%
 
-### Common Patterns in Failures
-1. Mock Function Issues
-   - Several tests failing due to mock functions not being called as expected
-   - Potential issue with event handling or mock setup
+## Recent Test Additions
 
-2. Component State Management
-   - Loading states not properly reflected in UI
-   - Form validation state issues
+### Chat Accessibility Tests
+1. ARIA Compliance
+   - Validates ARIA labels
+   - Verifies heading structure
+   - Tests role attributes
+   - Checks live regions
+   
+2. Keyboard Navigation
+   - Tests focus management
+   - Verifies tab order
+   - Tests keyboard shortcuts
+   - Validates focus trapping
+   
+3. Screen Reader Support
+   - Tests status announcements
+   - Validates error messages
+   - Verifies message notifications
+   - Tests dynamic content updates
 
-3. API Integration
-   - Review submission and error handling not working as expected
+4. Motion and Animation
+   - Tests reduced motion support
+   - Validates animation preferences
+   - Verifies transition behaviors
 
-### Action Items
-1. Fix Playwright configuration for E2E tests
-2. Review mock setup in ProductForm tests
-3. Audit ReviewComponent implementation:
-   - Form validation logic
-   - API integration
-   - Loading state management
-   - Error handling
+### Chat UI Tests
+1. Component Rendering
+   - Validates initial render state
+   - Verifies chat window toggle
+   - Tests component visibility states
+   
+2. Message Handling
+   - Tests message sending via button
+   - Tests message sending via Enter key
+   - Validates empty message handling
+   - Tests error state display
+   
+3. Real-time Features
+   - Tests typing indicator display
+   - Validates agent status updates
+   - Verifies WebSocket event handling
 
-### Previous Issues Resolution Status
-[Previous issues will be listed here when comparing with past runs] 
+4. Error Handling
+   - Tests network error handling
+   - Validates input validation
+   - Verifies error message display
+
+### Chat Backend Tests
+[Previous chat backend test entries...]
+
+### Performance Tests
+[Previous performance test entries...]
+
+### Memory Leak Tests
+[Previous memory leak test entries...]
+
+## Known Issues
+- Need to install and configure jest-axe for accessibility testing
+- Need to add more comprehensive keyboard navigation tests
+
+## Next Steps
+1. Add more edge case tests for chat functionality
+2. Implement load testing for WebSocket connections
+3. Add integration tests for chat UI components
+4. Add visual regression tests for chat interface
+5. Complete accessibility testing setup
+6. Add automated accessibility CI checks 

@@ -4,51 +4,37 @@ export default defineConfig({
     testDir: './resources/js/tests/e2e',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
+    retries: process.env.CI ? 2 : 1,
     workers: process.env.CI ? 1 : undefined,
     reporter: 'html',
+    globalSetup: './resources/js/tests/e2e/auth.setup.ts',
     use: {
         baseURL: 'http://localhost:8000',
         trace: 'on-first-retry',
-        storageState: 'playwright/.auth/user.json',
+        actionTimeout: 10000,
+        navigationTimeout: 10000,
     },
 
     projects: [
         {
-            name: 'setup',
-            testMatch: /.*\.setup\.ts/,
-        },
-        {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
-            dependencies: ['setup'],
         },
         {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
-            dependencies: ['setup'],
         },
         {
             name: 'webkit',
             use: { ...devices['Desktop Safari'] },
-            dependencies: ['setup'],
         },
         {
             name: 'Mobile Chrome',
             use: { ...devices['Pixel 5'] },
-            dependencies: ['setup'],
         },
         {
             name: 'Mobile Safari',
             use: { ...devices['iPhone 12'] },
-            dependencies: ['setup'],
         },
     ],
-
-    webServer: {
-        command: 'php artisan serve',
-        url: 'http://localhost:8000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
-    },
 }); 

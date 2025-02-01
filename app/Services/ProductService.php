@@ -82,11 +82,13 @@ class ProductService implements ProductServiceInterface {
 	}
 
 	public function getPaginatedProducts($sortKey, $sortDirection, $limit): array {
-		return Product::with('images')
-			->with('categories')
-			->with('brand')
-			->orderBy($sortKey, $sortDirection)
-			->paginate($limit)->toArray();
+		$query = Product::with(['images', 'categories', 'brand', 'subproducts']);
+
+		// Apply sorting
+		$query->orderBy($sortKey, $sortDirection);
+
+		// Get paginated results
+		return $query->paginate($limit)->toArray();
 	}
 
 	/**

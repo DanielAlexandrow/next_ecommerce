@@ -49,4 +49,18 @@ class CategoryController extends Controller {
 		$categories = $this->categoryService->getHierarchicalCategories();
 		return response()->json(['success' => true, 'categories' => $categories], 200);
 	}
+
+	public function getProducts($id) {
+		$category = $this->categoryService->findById($id);
+		$products = $category->products()
+			->with(['brand', 'subproducts'])
+			->paginate(10);
+
+		return response()->json(['products' => $products]);
+	}
+
+	public function getWithStats() {
+		$categories = $this->categoryService->getAllWithStats();
+		return response()->json(['categories' => $categories]);
+	}
 }

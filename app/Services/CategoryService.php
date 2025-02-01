@@ -69,4 +69,29 @@ class CategoryService implements CategoryServiceInterface {
 
 		return Category::whereIn('id', array_unique($allIds))->delete();
 	}
+
+	public function findById(int $id): Category {
+		return Category::findOrFail($id);
+	}
+
+	public function getAllWithStats(): Collection {
+		return Category::withCount(['products', 'children'])
+			->with(['products' => function ($query) {
+				$query->withCount('reviews')
+					->withAvg('reviews', 'rating')
+					->withSum('subproducts', 'stock');
+			}])
+			->get()
+			->map(function ($category) {
+				return [
+					'id' => $category->id,
+					'name' => $category->name,
+					'products_count' => $category->products_count,
+					'children_count' => $category->children_count,
+					'total_reviews' => $category->products->sum('reviews_count'),
+					'average_rating' => $category->products->avg('reviews_avg_rating'),
+					'total_stock' => $category->products->sum('subproducts_sum_stock')
+				];
+			});
+	}
 }

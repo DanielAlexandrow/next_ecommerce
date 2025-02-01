@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from 'path';
 
 export default defineConfig({
 	plugins: [
@@ -12,6 +13,21 @@ export default defineConfig({
 		react(),
 		tsconfigPaths(),
 	],
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, './resources/js'),
+			'@/types': path.resolve(__dirname, './resources/js/types'),
+		},
+	},
+	server: {
+		host: '0.0.0.0',
+		hmr: {
+			host: 'localhost',
+		},
+		watch: {
+			usePolling: true,
+		},
+	},
 	test: {
 		globals: true,
 		environment: 'jsdom',
