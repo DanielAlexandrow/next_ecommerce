@@ -1,0 +1,13 @@
+┌  [38;2;195;145;230m⚡ [1mMillion Lint[22m [2m[22m[39m
+[?25l│
+◆  Do you want to use Million Lint in Visual Studio Code?
+│  ● Yes / ○ No
+└
+[999D[4A[2B[2K[G│  ○ Yes / ● No[2B[999D[4A[2B[2K[G│  ● Yes / ○ No[2B[999D[4A[2B[2K[G│  ○ Yes / ● No[2B[999D[4A[2B[2K[G│  ● Yes / ○ No[2B[999D[4A[1B[J◇  Do you want to use Million Lint in Visual Studio Code?
+│  Yes
+[?25h[?25l│
+[1D[0K[999D[J◒  Checking if Million Lint is installed[999D[J◐  Checking if Million Lint is installed[999D[J◓  Checking if Million Lint is installed[999D[J◑  Checking if Million Lint is installed[1A[0K[999D[J◒  Checking if Million Lint is installed[999D[J◐  Checking if Million Lint is installed[999D[J◓  Checking if Million Lint is installed[999D[J◑  Checking if Million Lint is installed[999D[J◒  Checking if Million Lint is installed.[999D[J◐  Checking if Million Lint is installed.[999D[J◓  Checking if Million Lint is installed.[999D[J◑  Checking if Million Lint is installed.[999D[J◒  Checking if Million Lint is installed.[999D[J◐  Checking if Million Lint is installed.[999D[J◓  Checking if Million Lint is installed.[999D[J◑  Checking if Million Lint is installed.[999D[J◒  Checking if Million Lint is installed..[999D[J◐  Checking if Million Lint is installed..[999D[J◓  Checking if Million Lint is installed..[999D[J◑  Checking if Million Lint is installed..[999D[J◒  Checking if Million Lint is installed..[999D[J◇  [38;2;246;193;119m⚠️ Failed to install extension. Try install via the marketplace: https://marketplace.visualstudio.com/items?itemName=million.million-lint[39m
+[?25h[?25l│
+◆  Would you like to continue with setup?
+│  ● Yes / ○ No
+└

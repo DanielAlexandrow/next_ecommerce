@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 
 class ProductServiceTest extends TestCase {
-    use RefreshDatabase;
 
     private ProductService $productService;
 
@@ -69,6 +68,7 @@ class ProductServiceTest extends TestCase {
         $newCategory = Category::factory()->create();
 
         $updateData = [
+            'name' => 'Updated Product',
             'name' => 'Updated Product',
             'description' => 'Updated Description',
             'categories' => [$newCategory->id],
@@ -124,10 +124,13 @@ class ProductServiceTest extends TestCase {
         $userId = 1;
         $searchTerm = 'test product';
 
+        \App\Models\User::factory()->create(['id' => $userId]);
+
         // Act
         $this->productService->trackSearchHistory($searchTerm, $userId);
 
         // Assert
+        $this->assertTrue(\Schema::hasTable('search_histories'));
         $this->assertDatabaseHas('search_histories', [
             'user_id' => $userId,
             'search_term' => $searchTerm
@@ -177,13 +180,25 @@ class ProductServiceTest extends TestCase {
         // Arrange
         $brand = Brand::factory()->create();
         $category = Category::factory()->create();
+        $brand = Brand::factory()->create();
+        $category = Category::factory()->create();
+        $user = \App\Models\User::factory()->create(['id' => 3]);
+
         $products = Product::factory()->count(5)->create(['brand_id' => $brand->id]);
 
         foreach ($products as $product) {
             $product->categories()->attach($category->id);
             Review::factory()->create([
                 'product_id' => $product->id,
+                'user_id' => $user->id,
                 'rating' => 4
+            ]);
+            $product->subproducts()->create([
+                'name' => 'Test Subproduct',
+                'price' => 100,
+                'stock' => 10,
+                'available' => true,
+                'sku' => 'TEST-SKU-001'
             ]);
         }
 
@@ -216,7 +231,8 @@ class ProductServiceTest extends TestCase {
             'name' => 'Test Subproduct',
             'price' => 100,
             'stock' => 10,
-            'available' => true
+            'available' => true,
+            'sku' => 'TEST-SKU-001'
         ]);
 
         $filters = [

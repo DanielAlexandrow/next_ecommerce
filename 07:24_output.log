@@ -1,0 +1,16 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run "-t" "ProductForm Edge Cases > Advanced Input Validation > handles rapid input changes"
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+
+
+ Test Files  14 failed | 21 skipped (35)
+      Tests  142 skipped (142)
+   Start at  07:23:57
+   Duration  96.79s (transform 3.45s, setup 17.63s, collect 10.14s, tests 0ms, environment 31.48s, prepare 5.21s)
+
+ HTML  Report is generated
+       You can run npx vite preview --outDir test-results/html to see the test results.
+ ELIFECYCLE  Test failed. See above for more details.

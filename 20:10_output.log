@@ -1,0 +1,1899 @@
+
+  [44;1m INFO [49;22m namespace Tests\Unit\Controllers;
+
+
+use Tests\TestCase;
+use App\Models\Category;
+use App\Services\CategoryService;
+use App\Http\Controllers\CategoryController;
+use App\Http\Requests\CategoryRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Mockery;
+
+class CategoryControllerTest extends TestCase {
+use RefreshDatabase;
+
+private CategoryController $controller;
+private $categoryService;
+
+protected function setUp(): void {
+parent::setUp();
+$this->categoryService = Mockery::mock(CategoryService::class);
+$this->controller = new CategoryController($this->categoryService);
+}
+
+protected function tearDown(): void {
+Mockery::close();
+parent::tearDown();
+}
+
+public function test_index_returns_categories() {
+// Arrange
+$categories = [
+['id' => 1, 'name' => 'Category 1'],
+['id' => 2, 'name' => 'Category 2']
+];
+$this->categoryService->shouldReceive('getAllWithProductCount')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->index();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories, $response->getData()->categories);
+}
+
+public function test_store_creates_new_category() {
+// Arrange
+$categoryData = [
+'name' => 'New Category',
+'description' => 'Description'
+];
+$category = new Category($categoryData);
+$category->id = 1;
+
+$request = new CategoryRequest($categoryData);
+
+$this->categoryService->shouldReceive('store')
+->once()
+->with($categoryData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->store($request);
+
+// Assert
+$this->assertEquals(201, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_update_modifies_category() {
+// Arrange
+$categoryId = 1;
+$updateData = [
+'name' => 'Updated Category',
+'description' => 'Updated Description'
+];
+$category = new Category($updateData);
+$category->id = $categoryId;
+
+$request = new CategoryRequest($updateData);
+
+$this->categoryService->shouldReceive('update')
+->once()
+->with($categoryId, $updateData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->update($request, $categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_destroy_deletes_category() {
+// Arrange
+$categoryId = 1;
+$this->categoryService->shouldReceive('delete')
+->once()
+->with($categoryId)
+->andReturn(true);
+
+// Act
+$response = $this->controller->destroy($categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_search_finds_categories() {
+// Arrange
+$query = 'test';
+$categories = collect([
+new Category(['name' => 'Test Category']),
+new Category(['name' => 'Another Test'])
+]);
+
+$request = new Request(['query' => $query]);
+
+$this->categoryService->shouldReceive('search')
+->once()
+->with($query)
+->andReturn($categories);
+
+// Act
+$response = $this->controller->search($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+
+public function test_bulk_delete_removes_multiple_categories() {
+// Arrange
+$ids = [1, 2, 3];
+$request = new Request(['ids' => $ids]);
+
+$this->categoryService->shouldReceive('bulkDelete')
+->once()
+->with($ids)
+->andReturn(true);
+
+// Act
+$response = $this->controller->bulkDelete($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_get_hierarchy_returns_hierarchical_categories() {
+// Arrange
+$categories = collect([
+new Category([
+'id' => 1,
+'name' => 'Parent',
+'children' => collect([
+new Category(['id' => 2, 'name' => 'Child'])
+])
+])
+]);
+
+$this->categoryService->shouldReceive('getHierarchicalCategories')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->getHierarchy();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+}.
+
+   FAIL  Tests\Unit\ChatControllerTest
+  ⨯ send message
+  ⨯ get messages
+  ⨯ agent typing
+  ⨯ agent status change
+  ⨯ initiate chat
+
+   FAIL  Tests\Unit\Controllers\ProductControllerTest
+  ⨯ destroy product as admin
+  ⨯ destroy product as non admin
+  ⨯ destroy non existent product
+  ⨯ destroy product with invalid id
+  ⨯ destroy product with service error
+  ⨯ destroy product with related orders
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                                                                 0.05s  
+
+   FAIL  Tests\Unit\Models\NavigationItemTest
+  ⨯ navigation item belongs to header
+  ⨯ navigation item belongs to header variant
+  ⨯ navigation item can have multiple categories
+  ⨯ navigation item can have multiple categories variant
+  ⨯ navigation item can update name and order
+  ⨯ navigation item can update name and order variant
+  ⨯ navigation item can detach categories
+  ⨯ navigation item can detach categories variant
+  ⨯ navigation item can sync categories
+  ⨯ navigation item can sync categories variant
+
+   FAIL  Tests\Unit\Models\ProductCategoryTest
+  ⨯ product can be assigned to category
+  ⨯ category can have multiple products
+  ⨯ product can be assigned to multiple categories
+  ⨯ product can be detached from categories
+
+   FAIL  Tests\Unit\Models\ProductOrderTest
+  ⨯ product can be ordered through subproduct
+  ⨯ product can be ordered through subproduct variant
+  ⨯ order total matches order items sum
+  ⨯ order total matches order items sum variant
+
+   FAIL  Tests\Unit\OrderTest
+  ⨯ order belongs to user
+  ⨯ order can belong to guest
+  ⨯ items are cast to array
+  ⨯ addresses are cast to array
+  ⨯ total is cast to float
+  ⨯ order can be created with minimum required fields
+  ⨯ order attributes can be updated
+
+   FAIL  Tests\Unit\Services\CartServiceTest
+  ⨯ get or create cart for guest
+
+   FAIL  Tests\Unit\Services\CategoryServiceTest
+  ⨯ it gets all categories with relationships
+  ⨯ it gets all categories with product count
+  ⨯ it gets hierarchical categories
+  ⨯ it stores new category
+  ⨯ it updates existing category
+  ⨯ it throws exception when updating non existent category
+  ⨯ it deletes category and its children
+  ⨯ it searches categories
+  ⨯ it bulk deletes categories
+  ⨯ it finds category by id
+  ⨯ it throws exception when finding non existent category
+  ⨯ it gets all categories with stats
+
+   FAIL  Tests\Unit\Services\CheckoutServiceTest
+  ⨯ process checkout with invalid cart id
+  ⨯ process checkout for authenticated user
+
+   FAIL  Tests\Unit\Services\OrderServiceTest
+  ⨯ get orders for driver with no orders
+
+   FAIL  Tests\Unit\Services\ProductServiceTest
+  ⨯ it creates product with categories and subproducts
+  ⨯ it updates product with relationships
+  ⨯ it throws exception when updating non existent product
+  ⨯ it deletes product
+  ⨯ it gets paginated products
+  ⨯ it tracks search history for user
+  ⨯ it gets popular search terms
+  ⨯ it gets related products
+  ⨯ it gets paginated store products with filters
+  ⨯ it handles price range filters
+
+   FAIL  Tests\Feature\ApiVisitTest
+  ⨯ invalid endpoint returns 404
+  ⨯ successful authentication
+
+   FAIL  Tests\Feature\Auth\EmailVerificationTest
+  ⨯ email verification screen can be rendered
+
+   FAIL  Tests\Feature\Auth\PasswordResetTest
+  ⨯ reset password link screen can be rendered
+  ⨯ reset password link can be requested
+  ⨯ reset password screen can be rendered
+  ⨯ password can be reset with valid token
+
+   FAIL  Tests\Feature\Auth\RegistrationTest
+  ⨯ registration screen can be rendered
+  ⨯ new users can register
+
+   FAIL  Tests\Feature\ExampleTest
+  ⨯ it returns a successful response
+
+   FAIL  Tests\Feature\ProductCreationTest
+  ⨯ creates product with maximum length fields
+  ⨯ handles special characters in product fields
+  ⨯ handles large number of subproducts
+  ⨯ handles concurrent product creation
+  ⨯ validates unique sku across subproducts
+  ⨯ handles zero and negative values
+  ⨯ handles product creation with all optional fields
+  ⨯ prevents xss in product fields
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > send message                                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > get messages                                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > agent typing                                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > agent status change                                      BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > initiate chat                                            BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product as admin                  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product as non admin              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy non existent product              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with invalid id           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with service error        BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with related orders       BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item belongs to header                 BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item belongs to header variant         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can have multiple categories      BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can have multiple categories va…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can update name and order         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can update name and order varia…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can detach categories             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can detach categories variant     BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can sync categories               BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can sync categories variant       BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be assigned to category              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > category can have multiple products              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be assigned to multiple categories   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be detached from categories          BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > product can be ordered through subproduct           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > product can be ordered through subproduct variant   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > order total matches order items sum                 BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > order total matches order items sum variant         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order belongs to user                                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order can belong to guest                                         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > items are cast to array                                           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > addresses are cast to array                                       BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > total is cast to float                                            BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order can be created with minimum required fields                 BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order attributes can be updated                                   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CartServiceTest > get or create cart for guest                       BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with relationships      BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with product count      BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets hierarchical categories                BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it stores new category                         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it updates existing category                   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it throws exception when updating non existe…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it deletes category and its children           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it searches categories                         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it bulk deletes categories                     BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it finds category by id                        BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it throws exception when finding non existen…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with stats              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CheckoutServiceTest > process checkout with invalid cart id          BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CheckoutServiceTest > process checkout for authenticated user        BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\OrderServiceTest > get orders for driver with no orders              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it creates product with categories and subpro…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it updates product with relationships           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it throws exception when updating non existen…  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it deletes product                              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets paginated products                      BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it tracks search history for user               BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets popular search terms                    BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets related products                        BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets paginated store products with filters   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it handles price range filters                  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ApiVisitTest > invalid endpoint returns 404                                BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ApiVisitTest > successful authentication                                   BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\EmailVerificationTest > email verification screen can be rendered     BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\PasswordResetTest > reset password link screen can be rendered        BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\PasswordResetTest > reset password link can be requested              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\PasswordResetTest > reset password screen can be rendered             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\PasswordResetTest > password can be reset with valid token            BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\RegistrationTest > registration screen can be rendered                BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\Auth\RegistrationTest > new users can register                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ExampleTest > it returns a successful response                             BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > creates product with maximum length fields           BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > handles special characters in product fields         BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > handles large number of subproducts                  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > handles concurrent product creation                  BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > validates unique sku across subproducts              BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > handles zero and negative values                     BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > handles product creation with all optional fields    BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Feature\ProductCreationTest > prevents xss in product fields                       BadMethodCallException   
+  Method Illuminate\Database\Schema\SQLiteBuilder::createIfNotExists does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Macroable/Traits/Macroable.php:112
+    108▕      */
+    109▕     public function __call($method, $parameters)
+    110▕     {
+    111▕         if (! static::hasMacro($method)) {
+  ➜ 112▕             throw new BadMethodCallException(sprintf(
+    113▕                 'Method %s::%s does not exist.', static::class, $method
+    114▕             ));
+    115▕         }
+    116▕
+
+      [2m+2 vendor frames [22m
+  3   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  29  tests/TestCase.php:14
+
+
+  Tests:    80 failed, 1 passed (1 assertions)
+  Duration: 11.90s
+

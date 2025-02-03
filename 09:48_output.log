@@ -1,0 +1,8 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run "resources/js/components/Chat/SupportChat.tsx"
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+
+ ELIFECYCLE  Test failed. See above for more details.

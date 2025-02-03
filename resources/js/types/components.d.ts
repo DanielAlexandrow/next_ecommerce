@@ -38,7 +38,7 @@ export interface NewProductFormProps extends BaseProductFormProps {
 
 export interface EditProductFormProps extends BaseProductFormProps {
     mode: 'edit';
-    product: Product;
+    product?: Product;
 }
 
 export type ProductFormProps = NewProductFormProps | EditProductFormProps;
@@ -55,4 +55,4 @@ export interface ImageUploadProps {
     maxFiles?: number;
     accept?: string[];
     multiple?: boolean;
-} 
+}

@@ -12,6 +12,11 @@ import { updateLinks } from '@/lib/utils';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import { cn } from '@/lib/utils';
 
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+};
+
 interface Review {
     id: number;
     title: string;

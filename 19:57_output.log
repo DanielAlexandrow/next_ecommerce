@@ -1,0 +1,1509 @@
+
+  [44;1m INFO [49;22m namespace Tests\Unit\Controllers;
+
+
+use Tests\TestCase;
+use App\Models\Category;
+use App\Services\CategoryService;
+use App\Http\Controllers\CategoryController;
+use App\Http\Requests\CategoryRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Mockery;
+
+class CategoryControllerTest extends TestCase {
+use RefreshDatabase;
+
+private CategoryController $controller;
+private $categoryService;
+
+protected function setUp(): void {
+parent::setUp();
+$this->categoryService = Mockery::mock(CategoryService::class);
+$this->controller = new CategoryController($this->categoryService);
+}
+
+protected function tearDown(): void {
+Mockery::close();
+parent::tearDown();
+}
+
+public function test_index_returns_categories() {
+// Arrange
+$categories = [
+['id' => 1, 'name' => 'Category 1'],
+['id' => 2, 'name' => 'Category 2']
+];
+$this->categoryService->shouldReceive('getAllWithProductCount')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->index();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories, $response->getData()->categories);
+}
+
+public function test_store_creates_new_category() {
+// Arrange
+$categoryData = [
+'name' => 'New Category',
+'description' => 'Description'
+];
+$category = new Category($categoryData);
+$category->id = 1;
+
+$request = new CategoryRequest($categoryData);
+
+$this->categoryService->shouldReceive('store')
+->once()
+->with($categoryData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->store($request);
+
+// Assert
+$this->assertEquals(201, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_update_modifies_category() {
+// Arrange
+$categoryId = 1;
+$updateData = [
+'name' => 'Updated Category',
+'description' => 'Updated Description'
+];
+$category = new Category($updateData);
+$category->id = $categoryId;
+
+$request = new CategoryRequest($updateData);
+
+$this->categoryService->shouldReceive('update')
+->once()
+->with($categoryId, $updateData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->update($request, $categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_destroy_deletes_category() {
+// Arrange
+$categoryId = 1;
+$this->categoryService->shouldReceive('delete')
+->once()
+->with($categoryId)
+->andReturn(true);
+
+// Act
+$response = $this->controller->destroy($categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_search_finds_categories() {
+// Arrange
+$query = 'test';
+$categories = collect([
+new Category(['name' => 'Test Category']),
+new Category(['name' => 'Another Test'])
+]);
+
+$request = new Request(['query' => $query]);
+
+$this->categoryService->shouldReceive('search')
+->once()
+->with($query)
+->andReturn($categories);
+
+// Act
+$response = $this->controller->search($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+
+public function test_bulk_delete_removes_multiple_categories() {
+// Arrange
+$ids = [1, 2, 3];
+$request = new Request(['ids' => $ids]);
+
+$this->categoryService->shouldReceive('bulkDelete')
+->once()
+->with($ids)
+->andReturn(true);
+
+// Act
+$response = $this->controller->bulkDelete($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_get_hierarchy_returns_hierarchical_categories() {
+// Arrange
+$categories = collect([
+new Category([
+'id' => 1,
+'name' => 'Parent',
+'children' => collect([
+new Category(['id' => 2, 'name' => 'Child'])
+])
+])
+]);
+
+$this->categoryService->shouldReceive('getHierarchicalCategories')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->getHierarchy();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+}.
+
+   FAIL  Tests\Unit\ChatControllerTest
+  ⨯ send message
+  ⨯ get messages
+  ⨯ agent typing
+  ⨯ agent status change
+  ⨯ initiate chat
+
+   FAIL  Tests\Unit\Controllers\ProductControllerTest
+  ⨯ destroy product as admin
+  ⨯ destroy product as non admin
+  ⨯ destroy non existent product
+  ⨯ destroy product with invalid id
+  ⨯ destroy product with service error
+  ⨯ destroy product with related orders
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                                                                 0.03s  
+
+   FAIL  Tests\Unit\Models\NavigationItemTest
+  ⨯ navigation item belongs to header
+  ⨯ navigation item belongs to header variant
+  ⨯ navigation item can have multiple categories
+  ⨯ navigation item can have multiple categories variant
+  ⨯ navigation item can update name and order
+  ⨯ navigation item can update name and order variant
+  ⨯ navigation item can detach categories
+  ⨯ navigation item can detach categories variant
+  ⨯ navigation item can sync categories
+  ⨯ navigation item can sync categories variant
+
+   FAIL  Tests\Unit\Models\ProductCategoryTest
+  ⨯ product can be assigned to category
+  ⨯ category can have multiple products
+  ⨯ product can be assigned to multiple categories
+  ⨯ product can be detached from categories
+
+   FAIL  Tests\Unit\Models\ProductOrderTest
+  ⨯ product can be ordered through subproduct
+  ⨯ product can be ordered through subproduct variant
+  ⨯ order total matches order items sum
+  ⨯ order total matches order items sum variant
+
+   FAIL  Tests\Unit\OrderTest
+  ⨯ order belongs to user
+  ⨯ order can belong to guest
+  ⨯ items are cast to array
+  ⨯ addresses are cast to array
+  ⨯ total is cast to float
+  ⨯ order can be created with minimum required fields
+  ⨯ order attributes can be updated
+
+   FAIL  Tests\Unit\Services\CartServiceTest
+  ⨯ get or create cart for guest
+
+   FAIL  Tests\Unit\Services\CategoryServiceTest
+  ⨯ it gets all categories with relationships
+  ⨯ it gets all categories with product count
+  ⨯ it gets hierarchical categories
+  ⨯ it stores new category
+  ⨯ it updates existing category
+  ⨯ it throws exception when updating non existent category
+  ⨯ it deletes category and its children
+  ⨯ it searches categories
+  ⨯ it bulk deletes categories
+  ⨯ it finds category by id
+  ⨯ it throws exception when finding non existent category
+  ⨯ it gets all categories with stats
+
+   FAIL  Tests\Unit\Services\CheckoutServiceTest
+  ⨯ process checkout with invalid cart id
+  ⨯ process checkout for authenticated user
+
+   FAIL  Tests\Unit\Services\OrderServiceTest
+  ⨯ get orders for driver with no orders
+
+   FAIL  Tests\Unit\Services\ProductServiceTest
+  ⨯ it creates product with categories and subproducts
+  ⨯ it updates product with relationships
+  ⨯ it throws exception when updating non existent product
+  ⨯ it deletes product
+  ⨯ it gets paginated products
+  ⨯ it tracks search history for user
+  ⨯ it gets popular search terms
+  ⨯ it gets related products
+  ⨯ it gets paginated store products with filters
+  ⨯ it handles price range filters
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > send message                                                     QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > get messages                                                     QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > agent typing                                                     QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > agent status change                                              QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > initiate chat                                                    QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product as admin                          QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product as non admin                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy non existent product                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with invalid id                   QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with service error                QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Controllers\ProductControllerTest > destroy product with related orders               QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item belongs to header                         QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item belongs to header variant                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can have multiple categories              QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can have multiple categories variant      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can update name and order                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can update name and order variant         QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can detach categories                     QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can detach categories variant             QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can sync categories                       QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\NavigationItemTest > navigation item can sync categories variant               QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be assigned to category                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > category can have multiple products                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be assigned to multiple categories           QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductCategoryTest > product can be detached from categories                  QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > product can be ordered through subproduct                   QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > product can be ordered through subproduct variant           QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > order total matches order items sum                         QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Models\ProductOrderTest > order total matches order items sum variant                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order belongs to user                                                     QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order can belong to guest                                                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > items are cast to array                                                   QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > addresses are cast to array                                               QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > total is cast to float                                                    QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order can be created with minimum required fields                         QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\OrderTest > order attributes can be updated                                           QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CartServiceTest > get or create cart for guest                               QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with relationships              QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with product count              QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets hierarchical categories                        QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it stores new category                                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it updates existing category                           QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it throws exception when updating non existent categ…  QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it deletes category and its children                   QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it searches categories                                 QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it bulk deletes categories                             QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it finds category by id                                QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it throws exception when finding non existent catego…  QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CategoryServiceTest > it gets all categories with stats                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CheckoutServiceTest > process checkout with invalid cart id                  QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\CheckoutServiceTest > process checkout for authenticated user                QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\OrderServiceTest > get orders for driver with no orders                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it creates product with categories and subproducts      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it updates product with relationships                   QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it throws exception when updating non existent produc…  QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it deletes product                                      QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets paginated products                              QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it tracks search history for user                       QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets popular search terms                            QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets related products                                QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets paginated store products with filters           QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+  ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it handles price range filters                          QueryException   
+  SQLSTATE[HY000]: General error: 1 table "chat_messages" already exists (Connection: sqlite, SQL: create table "chat_messages" ("id" integer primary key autoincrement not null, "chat_id" integer, "sender_id" integer not null, "receiver_id" integer not null, "message_content" text not null, "timestamp" datetime not null, "created_at" datetime, "updated_at" datetime))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+8 vendor frames [22m
+  9   database/migrations/2025_02_02_090142_create_chat_messages_table.php:14
+      [2m+25 vendor frames [22m
+  35  tests/TestCase.php:14
+
+
+  Tests:    62 failed, 1 passed (1 assertions)
+  Duration: 4.85s
+

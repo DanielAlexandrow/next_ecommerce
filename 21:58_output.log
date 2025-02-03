@@ -1,0 +1,49 @@
+
+   FAIL  Tests\Unit\ChatControllerTest
+  ⨯ send message                                                                     0.28s  
+  ⨯ get messages                                                                     0.09s  
+  ✓ agent typing                                                                     0.06s  
+  ✓ agent status change                                                              0.06s  
+  ✓ initiate chat                                                                    0.05s  
+  ────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > send message               ValidationException   
+  The content field is required. (and 1 more error)
+
+  at vendor/laravel/framework/src/Illuminate/Support/helpers.php:330
+    326▕     function throw_if($condition, $exception = 'RuntimeException', ...$parameters)
+    327▕     {
+    328▕         if ($condition) {
+    329▕             if (is_string($exception) && class_exists($exception)) {
+  ➜ 330▕                 $exception = new $exception(...$parameters);
+    331▕             }
+    332▕ 
+    333▕             throw is_string($exception) ? new RuntimeException($exception) : $exception;
+    334▕         }
+
+      [2m+4 vendor frames [22m
+  5   app/Http/Controllers/ChatController.php:14
+  6   tests/Unit/ChatControllerTest.php:31
+
+  ────────────────────────────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\ChatControllerTest > get messages               ValidationException   
+  The selected chat id is invalid.
+
+  at vendor/laravel/framework/src/Illuminate/Support/helpers.php:330
+    326▕     function throw_if($condition, $exception = 'RuntimeException', ...$parameters)
+    327▕     {
+    328▕         if ($condition) {
+    329▕             if (is_string($exception) && class_exists($exception)) {
+  ➜ 330▕                 $exception = new $exception(...$parameters);
+    331▕             }
+    332▕ 
+    333▕             throw is_string($exception) ? new RuntimeException($exception) : $exception;
+    334▕         }
+
+      [2m+4 vendor frames [22m
+  5   app/Http/Controllers/ChatController.php:33
+  6   tests/Unit/ChatControllerTest.php:57
+
+
+  Tests:    2 failed, 3 passed (5 assertions)
+  Duration: 0.61s
+

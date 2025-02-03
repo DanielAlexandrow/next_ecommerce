@@ -70,18 +70,26 @@ export interface Brand {
     products_count?: number;
 }
 
+export interface ProductCategory {
+    id: number;
+    name: string;
+}
+
+export interface Subproduct {
+    id: number;
+    name: string;
+    product_id: number;
+    price: number;
+    available: boolean;
+}
+
 export interface Product {
     id: number;
     name: string;
     description: string;
     available: boolean;
     brand_id: number;
-    subproducts?: Array<{
-        id: number;
-        name: string;
-        price: number;
-        available: boolean;
-    }>;
+    subproducts?: Subproduct[];
     reviews?: Array<{
         id: number;
         rating: number;
@@ -89,4 +97,4 @@ export interface Product {
     }>;
     created_at?: string;
     updated_at?: string;
-} 
+}

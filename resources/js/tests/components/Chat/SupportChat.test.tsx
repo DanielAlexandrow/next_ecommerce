@@ -15,16 +15,15 @@ vi.mock('../../../hooks/useAuth', () => ({
 
 // Mock Echo
 vi.mock('laravel-echo', () => {
+    const listenMock = vi.fn().mockReturnThis();
+    const privateMock = vi.fn(() => ({
+        listen: listenMock,
+    }));
     return function () {
         return {
-            private: () => ({
-                listen: () => ({
-                    listen: () => ({
-                        listen: () => ({})
-                    })
-                })
-            }),
-            disconnect: vi.fn()
+            private: privateMock,
+            listen: listenMock, // Include listenMock here as well if you use listen directly
+            disconnect: vi.fn(),
         };
     };
 });
@@ -185,4 +184,4 @@ describe('SupportChat', () => {
             expect(screen.getByText('Agent is typing...')).toBeInTheDocument();
         });
     });
-}); 
+});

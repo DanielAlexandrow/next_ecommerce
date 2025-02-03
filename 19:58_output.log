@@ -1,0 +1,346 @@
+
+  [44;1m INFO [49;22m namespace Tests\Unit\Controllers;
+
+
+use Tests\TestCase;
+use App\Models\Category;
+use App\Services\CategoryService;
+use App\Http\Controllers\CategoryController;
+use App\Http\Requests\CategoryRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Mockery;
+
+class CategoryControllerTest extends TestCase {
+use RefreshDatabase;
+
+private CategoryController $controller;
+private $categoryService;
+
+protected function setUp(): void {
+parent::setUp();
+$this->categoryService = Mockery::mock(CategoryService::class);
+$this->controller = new CategoryController($this->categoryService);
+}
+
+protected function tearDown(): void {
+Mockery::close();
+parent::tearDown();
+}
+
+public function test_index_returns_categories() {
+// Arrange
+$categories = [
+['id' => 1, 'name' => 'Category 1'],
+['id' => 2, 'name' => 'Category 2']
+];
+$this->categoryService->shouldReceive('getAllWithProductCount')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->index();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories, $response->getData()->categories);
+}
+
+public function test_store_creates_new_category() {
+// Arrange
+$categoryData = [
+'name' => 'New Category',
+'description' => 'Description'
+];
+$category = new Category($categoryData);
+$category->id = 1;
+
+$request = new CategoryRequest($categoryData);
+
+$this->categoryService->shouldReceive('store')
+->once()
+->with($categoryData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->store($request);
+
+// Assert
+$this->assertEquals(201, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_update_modifies_category() {
+// Arrange
+$categoryId = 1;
+$updateData = [
+'name' => 'Updated Category',
+'description' => 'Updated Description'
+];
+$category = new Category($updateData);
+$category->id = $categoryId;
+
+$request = new CategoryRequest($updateData);
+
+$this->categoryService->shouldReceive('update')
+->once()
+->with($categoryId, $updateData)
+->andReturn($category);
+
+// Act
+$response = $this->controller->update($request, $categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($category, $response->getData()->category);
+}
+
+public function test_destroy_deletes_category() {
+// Arrange
+$categoryId = 1;
+$this->categoryService->shouldReceive('delete')
+->once()
+->with($categoryId)
+->andReturn(true);
+
+// Act
+$response = $this->controller->destroy($categoryId);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_search_finds_categories() {
+// Arrange
+$query = 'test';
+$categories = collect([
+new Category(['name' => 'Test Category']),
+new Category(['name' => 'Another Test'])
+]);
+
+$request = new Request(['query' => $query]);
+
+$this->categoryService->shouldReceive('search')
+->once()
+->with($query)
+->andReturn($categories);
+
+// Act
+$response = $this->controller->search($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+
+public function test_bulk_delete_removes_multiple_categories() {
+// Arrange
+$ids = [1, 2, 3];
+$request = new Request(['ids' => $ids]);
+
+$this->categoryService->shouldReceive('bulkDelete')
+->once()
+->with($ids)
+->andReturn(true);
+
+// Act
+$response = $this->controller->bulkDelete($request);
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertTrue($response->getData()->success);
+}
+
+public function test_get_hierarchy_returns_hierarchical_categories() {
+// Arrange
+$categories = collect([
+new Category([
+'id' => 1,
+'name' => 'Parent',
+'children' => collect([
+new Category(['id' => 2, 'name' => 'Child'])
+])
+])
+]);
+
+$this->categoryService->shouldReceive('getHierarchicalCategories')
+->once()
+->andReturn($categories);
+
+// Act
+$response = $this->controller->getHierarchy();
+
+// Assert
+$this->assertEquals(200, $response->status());
+$this->assertEquals($categories->toArray(), $response->getData()->categories);
+}
+}.
+
+   PASS  Tests\Unit\Controllers\ProductControllerTest
+  ✓ destroy product as admin                                    0.35s  
+  ✓ destroy product as non admin                                0.08s  
+  ✓ destroy non existent product                                0.07s  
+  ✓ destroy product with invalid id                             0.08s  
+  ✓ destroy product with service error                          0.08s  
+  ✓ destroy product with related orders                         0.07s  
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                           0.01s  
+
+   PASS  Tests\Unit\Models\NavigationItemTest
+  ✓ navigation item belongs to header                           0.07s  
+  ✓ navigation item belongs to header variant                   0.10s  
+  ✓ navigation item can have multiple categories                0.07s  
+  ✓ navigation item can have multiple categories variant        0.06s  
+  ✓ navigation item can update name and order                   0.05s  
+  ✓ navigation item can update name and order variant           0.05s  
+  ✓ navigation item can detach categories                       0.06s  
+  ✓ navigation item can detach categories variant               0.06s  
+  ✓ navigation item can sync categories                         0.06s  
+  ✓ navigation item can sync categories variant                 0.07s  
+
+   PASS  Tests\Unit\Models\ProductCategoryTest
+  ✓ product can be assigned to category                         0.08s  
+  ✓ category can have multiple products                         0.06s  
+  ✓ product can be assigned to multiple categories              0.06s  
+  ✓ product can be detached from categories                     0.06s  
+
+   PASS  Tests\Unit\Models\ProductOrderTest
+  ✓ product can be ordered through subproduct                   0.07s  
+  ✓ product can be ordered through subproduct variant           0.08s  
+  ✓ order total matches order items sum                         0.07s  
+  ✓ order total matches order items sum variant                 0.07s  
+
+   PASS  Tests\Unit\OrderTest
+  ✓ order belongs to user                                       0.06s  
+  ✓ order can belong to guest                                   0.06s  
+  ✓ items are cast to array                                     0.05s  
+  ✓ addresses are cast to array                                 0.05s  
+  ✓ total is cast to float                                      0.06s  
+  ✓ order can be created with minimum required fields           0.06s  
+  ✓ order attributes can be updated                             0.06s  
+
+   PASS  Tests\Unit\Services\CartServiceTest
+  ✓ get or create cart for guest                                0.07s  
+
+   PASS  Tests\Unit\Services\CategoryServiceTest
+  ✓ it gets all categories with relationships                   0.06s  
+  ✓ it gets all categories with product count                   0.05s  
+  ✓ it gets hierarchical categories                             0.06s  
+  ✓ it stores new category                                      0.05s  
+  ✓ it updates existing category                                0.05s  
+  ✓ it throws exception when updating non existent category     0.05s  
+  ✓ it deletes category and its children                        0.05s  
+  ✓ it searches categories                                      0.05s  
+  ✓ it bulk deletes categories                                  0.05s  
+  ✓ it finds category by id                                     0.06s  
+  ✓ it throws exception when finding non existent category      0.05s  
+  ✓ it gets all categories with stats                           0.06s  
+
+   PASS  Tests\Unit\Services\CheckoutServiceTest
+  ✓ process checkout with invalid cart id                       0.07s  
+  ✓ process checkout for authenticated user                     0.06s  
+
+   PASS  Tests\Unit\Services\OrderServiceTest
+  ✓ get orders for driver with no orders                        0.06s  
+
+   FAIL  Tests\Unit\Services\ProductServiceTest
+  ✓ it creates product with categories and subproducts          0.07s  
+  ✓ it updates product with relationships                       0.05s  
+  ✓ it throws exception when updating non existent product      0.07s  
+  ✓ it deletes product                                          0.05s  
+  ✓ it gets paginated products                                  0.07s  
+  ⨯ it tracks search history for user                           0.06s  
+  ✓ it gets popular search terms                                0.05s  
+  ⨯ it gets related products                                    0.07s  
+  ⨯ it gets paginated store products with filters               0.06s  
+  ✓ it handles price range filters                              0.06s  
+
+   PASS  Tests\Feature\ApiVisitTest
+  ✓ invalid endpoint returns 404                                0.08s  
+  ✓ successful authentication                                   0.07s  
+
+   PASS  Tests\Feature\Auth\EmailVerificationTest
+  ✓ email verification screen can be rendered                   0.09s  
+
+   PASS  Tests\Feature\Auth\PasswordResetTest
+  ✓ reset password link screen can be rendered                  0.06s  
+  ✓ reset password link can be requested                        0.07s  
+  ✓ reset password screen can be rendered                       0.06s  
+  ✓ password can be reset with valid token                      0.07s  
+
+   PASS  Tests\Feature\Auth\RegistrationTest
+  ✓ registration screen can be rendered                         0.09s  
+  ✓ new users can register                                      0.06s  
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ it returns a successful response                            0.06s  
+
+   PASS  Tests\Feature\ProductCreationTest
+  ✓ creates product with maximum length fields                  0.09s  
+  ✓ handles special characters in product fields                0.07s  
+  ✓ handles large number of subproducts                         0.18s  
+  ✓ handles concurrent product creation                         0.08s  
+  ✓ validates unique sku across subproducts                     0.06s  
+  ✓ handles zero and negative values                            0.06s  
+  ✓ handles product creation with all optional fields           0.08s  
+  ✓ prevents xss in product fields                              0.08s  
+  ───────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest >…  QueryException   
+  SQLSTATE[HY000]: General error: 1 no such column: count (Connection: sqlite, SQL: insert into "popular_searches" ("search_term", "count", "updated_at", "created_at") values (test product, count + 1, 2025-02-01 19:58:09, 2025-02-01 19:58:09))
+
+  at vendor/laravel/framework/src/Illuminate/Database/Connection.php:581
+    577▕             if ($this->pretending()) {
+    578▕                 return true;
+    579▕             }
+    580▕ 
+  ➜ 581▕             $statement = $this->getPdo()->prepare($query);
+    582▕ 
+    583▕             $this->bindValues($statement, $this->prepareBindings($bindings));
+    584▕ 
+    585▕             $this->recordsHaveBeenModified();
+
+      [2m+22 vendor frames [22m
+  23  app/Services/ProductService.php:106
+  24  tests/Unit/Services/ProductServiceTest.php:130
+
+  ───────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it g…  TypeError   
+  App\Services\ProductService::getRelatedProducts(): Return value must be of type array, Illuminate\Database\Eloquent\Builder returned
+
+  at app/Services/ProductService.php:151
+    147▕ 				$query->limit($limit);
+    148▕ 				
+    149▕ 				$relatedProductsArray = $query->get()->toArray();
+    150▕             return $relatedProductsArray;
+  ➜ 151▕ 		});
+    152▕ 	}
+    153▕ 
+    154▕ 	/**
+    155▕ 	 * Get paginated products for the store with transition optimization
+
+  1   app/Services/ProductService.php:151
+  2   tests/Unit/Services/ProductServiceTest.php:171
+
+  ───────────────────────────────────────────────────────────────────  
+   FAILED  Tests\Unit\Services\ProductServiceTest > it gets paginat…   
+  Failed asserting that 0 is greater than 0.
+
+  at tests/Unit/Services/ProductServiceTest.php:213
+    209▕         // Assert
+    210▕         $this->assertIsArray($result);
+    211▕         $this->assertArrayHasKey('data', $result);
+    212▕         $this->assertArrayHasKey('meta', $result);
+  ➜ 213▕         $this->assertGreaterThan(0, count($result['data']));
+    214▕     }
+    215▕ 
+    216▕     /** @test */
+    217▕     public function it_handles_price_range_filters() {
+
+  1   tests/Unit/Services/ProductServiceTest.php:213
+
+
+  Tests:    3 failed, 73 passed (223 assertions)
+  Duration: 5.44s
+

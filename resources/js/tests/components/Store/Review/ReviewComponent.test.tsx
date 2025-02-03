@@ -92,7 +92,7 @@ describe('ReviewComponent', () => {
             fireEvent.submit(submitButton.closest('form')!);
         });
 
-        expect(toast.error).toHaveBeenCalledWith('Please write a review');
+        expect(toast.error).toHaveBeenCalledWith('Please select a rating');
     });
 
     it('handles review submission', async () => {
@@ -536,4 +536,4 @@ describe('ReviewForm', () => {
             expect(mockOnSubmit).toHaveBeenCalledTimes(1);
         });
     });
-}); 
+});

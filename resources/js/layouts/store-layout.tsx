@@ -2,7 +2,8 @@ import StoreNavBar from '@/components/Store/StoreNavBar/StoreNavBar';
 import React, { PropsWithChildren, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SupportChat } from '@/components/Chat/SupportChat';
 
 
 export function StoreLayout({ children }: PropsWithChildren) {
@@ -27,6 +28,7 @@ export function StoreLayout({ children }: PropsWithChildren) {
 
 						{children}
 					</div>
+					<SupportChat />
 				</div>
 			</div >
 		</QueryClientProvider>

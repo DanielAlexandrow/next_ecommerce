@@ -48,6 +48,7 @@ export interface Subproduct extends BaseModel {
 	product_id: number;
 	sku?: string;
 	stock?: number;
+    available?: boolean; // make available property optional
 }
 
 // Form Types

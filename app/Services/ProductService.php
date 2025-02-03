@@ -94,7 +94,7 @@ class ProductService implements ProductServiceInterface {
 	/**
 	 * Track search history for a user
 	 */
-	private function trackSearchHistory(string $searchTerm, ?int $userId): void {
+	public function trackSearchHistory(string $searchTerm, ?int $userId): void {
 		if ($userId) {
 			SearchHistory::create([
 				'user_id' => $userId,
@@ -105,7 +105,10 @@ class ProductService implements ProductServiceInterface {
 			// Update popular searches
 			PopularSearch::updateOrCreate(
 				['search_term' => $searchTerm],
-				['count' => DB::raw('count + 1')]
+				[
+					'count' => DB::raw('count + 1') // Increment count if exists
+				],
+				['count' => 1] // Initialize count to 1 if new record
 			);
 		}
 	}
@@ -133,11 +136,17 @@ class ProductService implements ProductServiceInterface {
 				->whereHas('categories', function ($query) use ($product) {
 					$query->whereIn('categories.id', $product->categories->pluck('id'));
 				})
-				->where('id', '!=', $product->id)
-				->orderBy(DB::raw('RAND()'))
-				->limit($limit)
-				->get()
-				->toArray();
+				->where('id', '!=', $product->id);
+
+				if (DB::connection()->getDriverName() == 'sqlite') {
+					$query->orderBy(DB::raw('RANDOM()'));
+				} else {
+					$query->orderBy(DB::raw('RAND()'));
+				}
+
+				$query->limit($limit);
+				
+            return $query->get()->toArray();
 		});
 	}
 

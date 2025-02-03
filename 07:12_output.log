@@ -1,0 +1,16 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run "-t" "ProductForm Edge Cases > handles special characters in input values"
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+
+
+ Test Files  14 failed | 21 skipped (35)
+      Tests  142 skipped (142)
+   Start at  07:12:13
+   Duration  153.27s (transform 4.97s, setup 25.82s, collect 15.71s, tests 0ms, environment 48.48s, prepare 9.12s)
+
+ HTML  Report is generated
+       You can run npx vite preview --outDir test-results/html to see the test results.
+ ELIFECYCLE  Test failed. See above for more details.

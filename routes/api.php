@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/chat/messages', [ChatController::class, 'getMessages']);
     Route::post('/chat/typing', [ChatController::class, 'agentTyping']);
     Route::post('/chat/status', [ChatController::class, 'agentStatusChange']);
+    Route::post('/chat/initiate', [ChatController::class, 'initiateChat']); // New route for initiateChat
 });
 
 // Test routes

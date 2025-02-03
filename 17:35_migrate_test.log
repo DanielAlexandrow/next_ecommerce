@@ -1,0 +1,13 @@
+
+In Connection.php line 829:
+                                                                                                          
+  SQLSTATE[08006] [7] could not translate host name "postgres" to address: Name or service not known (Co  
+  nnection: pgsql, SQL: select * from information_schema.tables where table_catalog = postgres and table  
+  _schema = public and table_name = migrations and table_type = 'BASE TABLE')                             
+                                                                                                          
+
+In Connector.php line 65:
+                                                                                                      
+  SQLSTATE[08006] [7] could not translate host name "postgres" to address: Name or service not known  
+                                                                                                      
+

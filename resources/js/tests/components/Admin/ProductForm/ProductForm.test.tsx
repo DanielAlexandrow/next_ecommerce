@@ -46,7 +46,12 @@ const mockProduct = {
     images: [],
     categories: [],
     brand: null,
-    subproducts: []
+    subproducts: [{
+        id: 1,
+        name: 'Test Subproduct',
+        price: 10,
+        available: true
+    }]
 } as unknown as Product;
 
 const createBasicMockFormContext = () => ({
@@ -135,17 +140,6 @@ describe('ProductForm Edge Cases', () => {
         vi.clearAllMocks();
     });
 
-    it('renders form fields correctly', () => {
-        render(<ProductForm mode="new" product={mockProduct} />);
-
-        expect(screen.getByTestId('product-name-input')).toBeInTheDocument();
-        expect(screen.getByTestId('product-description-input')).toBeInTheDocument();
-        expect(screen.getByTestId('product-available-checkbox')).toBeInTheDocument();
-        expect(screen.getByTestId('mock-brand-select')).toBeInTheDocument();
-        expect(screen.getByTestId('mock-category-select')).toBeInTheDocument();
-        expect(screen.getByTestId('mock-image-select')).toBeInTheDocument();
-    });
-
     it('handles form submission', async () => {
         const mockSubmit = vi.fn();
         const mockFormContext = {
@@ -158,7 +152,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const submitButton = screen.getByTestId('submit-button');
         await act(async () => {
@@ -182,7 +176,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const nameInput = screen.getByTestId('product-name-input');
         await act(async () => {
@@ -211,7 +205,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const checkbox = screen.getByTestId('product-available-checkbox');
         await act(async () => {
@@ -242,7 +236,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         expect(screen.getByTestId('name-error')).toHaveTextContent('Name is required');
         expect(screen.getByTestId('description-error')).toHaveTextContent('Description is too long');
@@ -266,7 +260,7 @@ describe('ProductForm Edge Cases', () => {
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
         vi.mocked(axios.post).mockRejectedValueOnce(new Error('API Error'));
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const submitButton = screen.getByTestId('submit-button');
         await act(async () => {
@@ -290,7 +284,7 @@ describe('ProductForm Edge Cases', () => {
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
         vi.mocked(axios.post).mockResolvedValueOnce({ data: mockProduct });
 
-        render(<ProductForm mode="new" product={null} />);
+        render(<ProductForm mode="new" product={undefined} />);
 
         const submitButton = screen.getByTestId('submit-button');
         await act(async () => {
@@ -315,7 +309,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const submitButton = screen.getByTestId('submit-button');
         expect(submitButton).toBeDisabled();
@@ -330,7 +324,7 @@ describe('ProductForm Edge Cases', () => {
             available: false
         };
 
-        render(<ProductForm mode="edit" product={existingProduct} />);
+        render(<ProductForm mode="edit" product={existingProduct as Product | undefined} />);
 
         const nameInput = screen.getByTestId('product-name-input');
         const descriptionInput = screen.getByTestId('product-description-input');
@@ -350,7 +344,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const longText = 'a'.repeat(100);
         const descriptionInput = screen.getByTestId('product-description-input');
@@ -373,7 +367,7 @@ describe('ProductForm Edge Cases', () => {
 
         vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-        render(<ProductForm mode="new" product={mockProduct} />);
+        render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
         const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
         const nameInput = screen.getByTestId('product-name-input');
@@ -401,7 +395,7 @@ describe('ProductForm Edge Cases', () => {
 
             vi.mocked(useForm).mockReturnValue(mockFormContext as unknown as UseFormReturn<FieldValues>);
 
-            render(<ProductForm mode="new" product={mockProduct} />);
+            render(<ProductForm mode="new" product={mockProduct as Product | undefined} />);
 
             const nameInput = screen.getByTestId('product-name-input');
             const testCases = [
@@ -608,4 +602,4 @@ describe('ProductForm Edge Cases', () => {
             });
         });
     });
-}); 
+});

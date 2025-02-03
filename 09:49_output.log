@@ -1,0 +1,16 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run "resources/js/tests/components/Chat"
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+
+
+ Test Files  2 failed (2)
+      Tests  no tests
+   Start at  09:47:51
+   Duration  9.26s (transform 559ms, setup 2.13s, collect 0ms, tests 0ms, environment 3.48s, prepare 660ms)
+
+ HTML  Report is generated
+       You can run npx vite preview --outDir test-results/html to see the test results.
+ ELIFECYCLE  Test failed. See above for more details.

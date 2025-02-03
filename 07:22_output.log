@@ -1,0 +1,7 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run "-t" "ProductForm Edge Cases > handles special characters in input values"
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+

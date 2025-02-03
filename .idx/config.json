@@ -1,0 +1,30 @@
+{
+  "runtime": {
+    "name": "php",
+    "version": "8.2"
+  },
+  "php": {
+    "extensions": [
+      "mbstring",
+      "pdo_mysql",
+      "openssl",
+      "tokenizer",
+      "xml",
+      "ctype",
+      "json",
+      "bcmath"
+    ]
+  },
+  "setup": {
+    "commands": [
+      "composer install",
+      "npm install",
+      "cp .env.example .env",
+      "php artisan key:generate"
+    ]
+  },
+  "dev": {
+    "command": "php artisan serve --port=8080 --host=0.0.0.0",
+    "port": 8080
+  }
+}

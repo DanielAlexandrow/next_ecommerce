@@ -1,0 +1,3159 @@
+
+> html@1.0.0 test /home/user/next_ecommerce
+> vitest run
+
+
+ RUN  v2.1.8 /home/user/next_ecommerce
+
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > renders form fields correctly
+   → Unable to find an element by: [data-testid="product-description-input"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles form submission
+   → Unable to find an element by: [data-testid="submit-button"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles input changes
+   → Cannot read properties of null (reading 'querySelector')
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles checkbox toggle
+   → Unable to find an element by: [data-testid="product-available-checkbox"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles form validation errors
+   → Unable to find an element by: [data-testid="name-error"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-red-500 text-sm"[39m
+        [36m>[39m
+          [0mName is required[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles API errors during submission
+   → Unable to find an element by: [data-testid="submit-button"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles form reset after successful submission
+   → Unable to find an element by: [data-testid="submit-button"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles form state during submission
+   → Unable to find an element by: [data-testid="submit-button"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles edit mode with existing product data
+   → Unable to find an element by: [data-testid="product-description-input"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles long text input values
+   → Unable to find an element by: [data-testid="product-description-input"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > handles special characters in input values 1053ms
+   → expected "spy" to be called with arguments: [ Array(2) ]
+
+Received: 
+
+
+
+Number of calls: 0
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"space-y-4"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"name"[39m
+          [36m>[39m
+            [0mName[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"name"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mdata-testid[39m=[32m"product-name-input"[39m
+            [33mid[39m=[32m"name"[39m
+            [33mname[39m=[32m"name"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"description"[39m
+          [36m>[39m
+            [0mDescription[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33maria-label[39m=[32m"description"[39m
+            [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+            [33mid[39m=[32m"description"[39m
+            [33mname[39m=[32m"description"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"price"[39m
+          [36m>[39m
+            [0mPrice[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"price"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"price"[39m
+            [33mname[39m=[32m"price"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"category"[39m
+          [36m>[39m
+            [0mCategory[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"category"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"category"[39m
+            [33mname[39m=[32m"category_id"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex justify-end gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mSave[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</form>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles empty spaces in input values 1021ms
+   → expected last "spy" call to have been called with [ 'name', 'Leading spaces' ]
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"space-y-4"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"name"[39m
+          [36m>[39m
+            [0mName[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"name"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mdata-testid[39m=[32m"product-name-input"[39m
+            [33mid[39m=[32m"name"[39m
+            [33mname[39m=[32m"name"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"description"[39m
+          [36m>[39m
+            [0mDescription[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33maria-label[39m=[32m"description"[39m
+            [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+            [33mid[39m=[32m"description"[39m
+            [33mname[39m=[32m"description"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"price"[39m
+          [36m>[39m
+            [0mPrice[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"price"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"price"[39m
+            [33mname[39m=[32m"price"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"category"[39m
+          [36m>[39m
+            [0mCategory[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"category"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"category"[39m
+            [33mname[39m=[32m"category_id"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex justify-end gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mSave[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</form>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles HTML tags in input values
+   → Unable to find an element by: [data-testid="product-description-input"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles SQL injection attempts in input values 1022ms
+   → expected last "spy" call to have been called with [ 'name', StringMatching /^[^;'"]*$/ ]
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"space-y-4"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"name"[39m
+          [36m>[39m
+            [0mName[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"name"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mdata-testid[39m=[32m"product-name-input"[39m
+            [33mid[39m=[32m"name"[39m
+            [33mname[39m=[32m"name"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"description"[39m
+          [36m>[39m
+            [0mDescription[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33maria-label[39m=[32m"description"[39m
+            [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+            [33mid[39m=[32m"description"[39m
+            [33mname[39m=[32m"description"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"price"[39m
+          [36m>[39m
+            [0mPrice[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"price"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"price"[39m
+            [33mname[39m=[32m"price"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"category"[39m
+          [36m>[39m
+            [0mCategory[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"category"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"category"[39m
+            [33mname[39m=[32m"category_id"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex justify-end gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mSave[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</form>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles unicode and emoji characters 1072ms
+   → expected last "spy" call to have been called with [ 'name', '🌟 Star Product' ]
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<form[39m
+        [33mclass[39m=[32m"space-y-4"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"name"[39m
+          [36m>[39m
+            [0mName[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"name"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mdata-testid[39m=[32m"product-name-input"[39m
+            [33mid[39m=[32m"name"[39m
+            [33mname[39m=[32m"name"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"description"[39m
+          [36m>[39m
+            [0mDescription[0m
+          [36m</label>[39m
+          [36m<textarea[39m
+            [33maria-label[39m=[32m"description"[39m
+            [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+            [33mid[39m=[32m"description"[39m
+            [33mname[39m=[32m"description"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"price"[39m
+          [36m>[39m
+            [0mPrice[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"price"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"price"[39m
+            [33mname[39m=[32m"price"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+            [33mfor[39m=[32m"category"[39m
+          [36m>[39m
+            [0mCategory[0m
+          [36m</label>[39m
+          [36m<input[39m
+            [33maria-label[39m=[32m"category"[39m
+            [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+            [33mid[39m=[32m"category"[39m
+            [33mname[39m=[32m"category_id"[39m
+            [33mtype[39m=[32m"number"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex justify-end gap-2"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mSave[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</form>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles rapid input changes
+   → expected "spy" to be called 5 times, but got 0 times
+ × resources/js/tests/components/Admin/ProductForm/ProductForm.test.tsx > ProductForm Edge Cases > Advanced Input Validation > handles paste events with mixed content
+   → Unable to find an element by: [data-testid="product-description-input"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+    [36m>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"name"[39m
+        [36m>[39m
+          [0mName[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"name"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"product-name-input"[39m
+          [33mid[39m=[32m"name"[39m
+          [33mname[39m=[32m"name"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"description"[39m
+        [36m>[39m
+          [0mDescription[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33maria-label[39m=[32m"description"[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mid[39m=[32m"description"[39m
+          [33mname[39m=[32m"description"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"price"[39m
+        [36m>[39m
+          [0mPrice[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"price"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"price"[39m
+          [33mname[39m=[32m"price"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"[39m
+          [33mfor[39m=[32m"category"[39m
+        [36m>[39m
+          [0mCategory[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"category"[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mid[39m=[32m"category"[39m
+          [33mname[39m=[32m"category_id"[39m
+          [33mtype[39m=[32m"number"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSave[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > validates form inputs 374ms
+   → expected "spy" to be called with arguments: [ 'Please write a review' ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+-   "Please write a review",
++   "Please select a rating",
+  ]
+
+  2nd spy call:
+
+  Array [
+-   "Please write a review",
++   "Please select a rating",
+  ]
+
+
+Number of calls: 2
+
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles review submission 1353ms
+   → expected "spy" to be called with arguments: [ 1, { rating: 5, …(2) } ]
+
+Received: 
+
+
+
+Number of calls: 0
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-scroll-locked[39m=[32m"1"[39m
+    [33mstyle[39m=[32m"pointer-events: none;"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+      [33mdata-radix-focus-guard[39m=[32m""[39m
+      [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-2xl font-bold"[39m
+            [36m>[39m
+              [0mProduct Reviews[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-lg font-medium"[39m
+              [36m>[39m
+                [0m4.5[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-gray-500"[39m
+              [36m>[39m
+                [0m([0m
+                [0m2[0m
+                [0m [0m
+                [0mreviews[0m
+                [0m)[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rou...
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles API errors gracefully 1328ms
+   → expected "spy" to be called with arguments: [ 'Failed to submit review' ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+-   "Failed to submit review",
++   "Please select a rating",
+  ]
+
+
+Number of calls: 1
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-scroll-locked[39m=[32m"1"[39m
+    [33mstyle[39m=[32m"pointer-events: none;"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+      [33mdata-radix-focus-guard[39m=[32m""[39m
+      [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-2xl font-bold"[39m
+            [36m>[39m
+              [0mProduct Reviews[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-lg font-medium"[39m
+              [36m>[39m
+                [0m4.5[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-gray-500"[39m
+              [36m>[39m
+                [0m([0m
+                [0m2[0m
+                [0m [0m
+                [0mreviews[0m
+                [0m)[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rou...
+ ✓ resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > shows empty state when no reviews
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles loading state during sort
+   → expect(element).toHaveClass("opacity-50")
+
+Expected the element to have class:
+  opacity-50
+Received:
+  space-y-6
+ ✓ resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles pagination correctly
+ ✓ resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles multiple sort directions
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > displays review dates in correct format
+   → Unable to find an element with the text: /202\d-\d{2}-\d{2}/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"space-y-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-2xl font-bold"[39m
+          [36m>[39m
+            [0mProduct Reviews[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-lg font-medium"[39m
+            [36m>[39m
+              [0m4.5[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex gap-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                [33mdata-testid[39m=[32m"star-rating-star"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<polygon[39m
+                  [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                [33mdata-testid[39m=[32m"star-rating-star"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<polygon[39m
+                  [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                [33mdata-testid[39m=[32m"star-rating-star"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<polygon[39m
+                  [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                [33mdata-testid[39m=[32m"star-rating-star"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<polygon[39m
+                  [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                [33mdata-testid[39m=[32m"star-rating-star"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<polygon[39m
+                  [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-sm text-gray-500"[39m
+            [36m>[39m
+              [0m([0m
+              [0m2[0m
+              [0m [0m
+              [0mreviews[0m
+              [0m)[0m
+            [36m</span>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+        [36m>[39m
+          [0mWrite a Review[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"overflow-x-auto"[39m
+      [36m>[39m
+        [36m<table[39m
+          [33mclass[39m=[32m"w-full"[39m
+        [36m>[39m
+          [36m<thead>[39m
+            [36m<tr[39m
+              [33mclass[39m=[32m"border-b"[39m
+            [36m>[39m
+              [36m<th...
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > shows correct average rating display 305ms
+   → expected [ SVGSVGElement{ …(2), …(2) }, …(13) ] to have a length of 5 but got 14
+ ✓ resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles review form character limits 355ms
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles review submission with minimum required fields 1376ms
+   → expected "spy" to be called with arguments: [ 1, { rating: 5, …(2) } ]
+
+Received: 
+
+
+
+Number of calls: 0
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-scroll-locked[39m=[32m"1"[39m
+    [33mstyle[39m=[32m"pointer-events: none;"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+      [33mdata-radix-focus-guard[39m=[32m""[39m
+      [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-2xl font-bold"[39m
+            [36m>[39m
+              [0mProduct Reviews[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-lg font-medium"[39m
+              [36m>[39m
+                [0m4.5[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-gray-500"[39m
+              [36m>[39m
+                [0m([0m
+                [0m2[0m
+                [0m [0m
+                [0mreviews[0m
+                [0m)[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rou...
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > handles network errors during review submission 1247ms
+   → expected "spy" to be called with arguments: [ 'Failed to submit review' ]
+
+Received: 
+
+  1st spy call:
+
+  Array [
+-   "Failed to submit review",
++   "Please select a rating",
+  ]
+
+
+Number of calls: 1
+
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-scroll-locked[39m=[32m"1"[39m
+    [33mstyle[39m=[32m"pointer-events: none;"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+      [33mdata-radix-focus-guard[39m=[32m""[39m
+      [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-2xl font-bold"[39m
+            [36m>[39m
+              [0mProduct Reviews[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-lg font-medium"[39m
+              [36m>[39m
+                [0m4.5[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-gray-500"[39m
+              [36m>[39m
+                [0m([0m
+                [0m2[0m
+                [0m [0m
+                [0mreviews[0m
+                [0m)[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rou...
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > maintains sort state between page navigations
+   → expected last "spy" call to have been called with [ 1, 2, 'rating', 'desc' ]
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewComponent > disables submit button during review submission 1348ms
+   → expect(element).toBeDisabled()
+
+Received element is not disabled:
+  <button
+  aria-disabled="false"
+  aria-label="Submit review"
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+  data-testid="submit-review-button"
+  type="submit"
+/>
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mdata-scroll-locked[39m=[32m"1"[39m
+    [33mstyle[39m=[32m"pointer-events: none;"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+      [33mdata-radix-focus-guard[39m=[32m""[39m
+      [33mstyle[39m=[32m"outline: none; opacity: 0; position: fixed; pointer-events: none;"[39m
+      [33mtabindex[39m=[32m"0"[39m
+    [36m/>[39m
+    [36m<div[39m
+      [33maria-hidden[39m=[32m"true"[39m
+      [33mdata-aria-hidden[39m=[32m"true"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"text-2xl font-bold"[39m
+            [36m>[39m
+              [0mProduct Reviews[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-lg font-medium"[39m
+              [36m>[39m
+                [0m4.5[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-star w-5 h-5 fill-yellow-400 text-yellow-400 cursor-default"[39m
+                  [33mdata-testid[39m=[32m"star-rating-star"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<polygon[39m
+                    [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-gray-500"[39m
+              [36m>[39m
+                [0m([0m
+                [0m2[0m
+                [0m [0m
+                [0mreviews[0m
+                [0m)[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rou...
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewForm > should handle form submission correctly 2446ms
+   → Unable to find an accessible element with the role "button" and name `/star/i`
+
+Here are the accessible roles:
+
+  textbox:
+
+  Name "Title":
+  [36m<input[39m
+    [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+    [33mdata-testid[39m=[32m"review-title-input"[39m
+    [33mid[39m=[32m"title"[39m
+    [33mmaxlength[39m=[32m"100"[39m
+    [33mname[39m=[32m"title"[39m
+    [33mplaceholder[39m=[32m"Review title"[39m
+    [33mvalue[39m=[32m"Great Product"[39m
+  [36m/>[39m
+
+  Name "Review":
+  [36m<textarea[39m
+    [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+    [33mdata-testid[39m=[32m"review-content-input"[39m
+    [33mid[39m=[32m"content"[39m
+    [33mmaxlength[39m=[32m"1000"[39m
+    [33mname[39m=[32m"content"[39m
+    [33mplaceholder[39m=[32m"Write your review here..."[39m
+    [33mrequired[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Cancel":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"cancel-review-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Submit review":
+  [36m<button[39m
+    [33maria-disabled[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"Submit review"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"submit-review-button"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+      [33mdata-testid[39m=[32m"review-form"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"title"[39m
+        [36m>[39m
+          [0mTitle[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"review-title-input"[39m
+          [33mid[39m=[32m"title"[39m
+          [33mmaxlength[39m=[32m"100"[39m
+          [33mname[39m=[32m"title"[39m
+          [33mplaceholder[39m=[32m"Review title"[39m
+          [33mvalue[39m=[32m"Great Product"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m13[0m
+          [0m/100[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"content"[39m
+        [36m>[39m
+          [0mReview[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mdata-testid[39m=[32m"review-content-input"[39m
+          [33mid[39m=[32m"content"[39m
+          [33mmaxlength[39m=[32m"1000"[39m
+          [33mname[39m=[32m"content"[39m
+          [33mplaceholder[39m=[32m"Write your review here..."[39m
+          [33mrequired[39m=[32m""[39m
+        [36m>[39m
+          [0mThis is an amazing product![0m
+        [36m</textarea>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m27[0m
+          [0m/1000[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+        [36m>[39m
+          [0mRating[0m
+        [36m</label>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"cancel-review-button"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mCancel[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-disabled[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"Submit review"[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"submit-review-button"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSubmit Review[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewForm > should handle submission errors correctly 1017ms
+   → Unable to find an accessible element with the role "button" and name `/star/i`
+
+Here are the accessible roles:
+
+  textbox:
+
+  Name "Title":
+  [36m<input[39m
+    [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+    [33mdata-testid[39m=[32m"review-title-input"[39m
+    [33mid[39m=[32m"title"[39m
+    [33mmaxlength[39m=[32m"100"[39m
+    [33mname[39m=[32m"title"[39m
+    [33mplaceholder[39m=[32m"Review title"[39m
+    [33mvalue[39m=[32m"Test Review"[39m
+  [36m/>[39m
+
+  Name "Review":
+  [36m<textarea[39m
+    [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+    [33mdata-testid[39m=[32m"review-content-input"[39m
+    [33mid[39m=[32m"content"[39m
+    [33mmaxlength[39m=[32m"1000"[39m
+    [33mname[39m=[32m"content"[39m
+    [33mplaceholder[39m=[32m"Write your review here..."[39m
+    [33mrequired[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Cancel":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"cancel-review-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Submit review":
+  [36m<button[39m
+    [33maria-disabled[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"Submit review"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"submit-review-button"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+      [33mdata-testid[39m=[32m"review-form"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"title"[39m
+        [36m>[39m
+          [0mTitle[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"review-title-input"[39m
+          [33mid[39m=[32m"title"[39m
+          [33mmaxlength[39m=[32m"100"[39m
+          [33mname[39m=[32m"title"[39m
+          [33mplaceholder[39m=[32m"Review title"[39m
+          [33mvalue[39m=[32m"Test Review"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m11[0m
+          [0m/100[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"content"[39m
+        [36m>[39m
+          [0mReview[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mdata-testid[39m=[32m"review-content-input"[39m
+          [33mid[39m=[32m"content"[39m
+          [33mmaxlength[39m=[32m"1000"[39m
+          [33mname[39m=[32m"content"[39m
+          [33mplaceholder[39m=[32m"Write your review here..."[39m
+          [33mrequired[39m=[32m""[39m
+        [36m>[39m
+          [0mTest Content[0m
+        [36m</textarea>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m12[0m
+          [0m/1000[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+        [36m>[39m
+          [0mRating[0m
+        [36m</label>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"cancel-review-button"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mCancel[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-disabled[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"Submit review"[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"submit-review-button"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSubmit Review[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ × resources/js/tests/components/Store/Review/ReviewComponent.test.tsx > ReviewForm > should prevent multiple submissions while submitting 1120ms
+   → Unable to find an accessible element with the role "button" and name `/star/i`
+
+Here are the accessible roles:
+
+  textbox:
+
+  Name "Title":
+  [36m<input[39m
+    [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+    [33mdata-testid[39m=[32m"review-title-input"[39m
+    [33mid[39m=[32m"title"[39m
+    [33mmaxlength[39m=[32m"100"[39m
+    [33mname[39m=[32m"title"[39m
+    [33mplaceholder[39m=[32m"Review title"[39m
+    [33mvalue[39m=[32m"Test"[39m
+  [36m/>[39m
+
+  Name "Review":
+  [36m<textarea[39m
+    [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+    [33mdata-testid[39m=[32m"review-content-input"[39m
+    [33mid[39m=[32m"content"[39m
+    [33mmaxlength[39m=[32m"1000"[39m
+    [33mname[39m=[32m"content"[39m
+    [33mplaceholder[39m=[32m"Write your review here..."[39m
+    [33mrequired[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "Cancel":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"cancel-review-button"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "Submit review":
+  [36m<button[39m
+    [33maria-disabled[39m=[32m"false"[39m
+    [33maria-label[39m=[32m"Submit review"[39m
+    [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+    [33mdata-testid[39m=[32m"submit-review-button"[39m
+    [33mtype[39m=[32m"submit"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<form[39m
+      [33mclass[39m=[32m"space-y-4"[39m
+      [33mdata-testid[39m=[32m"review-form"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"title"[39m
+        [36m>[39m
+          [0mTitle[0m
+        [36m</label>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"[39m
+          [33mdata-testid[39m=[32m"review-title-input"[39m
+          [33mid[39m=[32m"title"[39m
+          [33mmaxlength[39m=[32m"100"[39m
+          [33mname[39m=[32m"title"[39m
+          [33mplaceholder[39m=[32m"Review title"[39m
+          [33mvalue[39m=[32m"Test"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m4[0m
+          [0m/100[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+          [33mfor[39m=[32m"content"[39m
+        [36m>[39m
+          [0mReview[0m
+        [36m</label>[39m
+        [36m<textarea[39m
+          [33mclass[39m=[32m"flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"[39m
+          [33mdata-testid[39m=[32m"review-content-input"[39m
+          [33mid[39m=[32m"content"[39m
+          [33mmaxlength[39m=[32m"1000"[39m
+          [33mname[39m=[32m"content"[39m
+          [33mplaceholder[39m=[32m"Write your review here..."[39m
+          [33mrequired[39m=[32m""[39m
+        [36m>[39m
+          [0mContent[0m
+        [36m</textarea>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs text-gray-500 text-right"[39m
+        [36m>[39m
+          [0m7[0m
+          [0m/1000[0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<label[39m
+          [33mclass[39m=[32m"text-sm font-medium"[39m
+        [36m>[39m
+          [0mRating[0m
+        [36m</label>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-star w-6 h-6 text-gray-300 cursor-pointer hover:scale-110 transition-transform"[39m
+            [33mdata-testid[39m=[32m"star-rating-star"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<polygon[39m
+              [33mpoints[39m=[32m"12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex justify-end gap-2"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"cancel-review-button"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0mCancel[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-disabled[39m=[32m"false"[39m
+          [33maria-label[39m=[32m"Submit review"[39m
+          [33mclass[39m=[32m"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"[39m
+          [33mdata-testid[39m=[32m"submit-review-button"[39m
+          [33mtype[39m=[32m"submit"[39m
+        [36m>[39m
+          [0mSubmit Review[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</form>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > displays cart items and total correctly 436ms
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles increment quantity
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles decrement quantity
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > shows empty cart message when no items
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles increment error
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles decrement error
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles checkout for guest user
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > shows correct number of items
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > displays product image correctly
+ ✓ resources/js/tests/components/Store/Cart/CartPage.test.tsx > CartPage > handles successful checkout
+stdout | resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > renders product list correctly
+Loading products...
+Products loaded: [
+  {
+    id: 1,
+    name: 'Test Product 1',
+    description: 'Test Description 1',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: true,
+    brand: null
+  },
+  {
+    id: 2,
+    name: 'Test Product 2',
+    description: 'Test Description 2',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: false,
+    brand: null
+  }
+]
+
+stdout | resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > shows loading state
+Loading products...
+Products loaded: [
+  {
+    id: 1,
+    name: 'Test Product 1',
+    description: 'Test Description 1',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: true,
+    brand: null
+  },
+  {
+    id: 2,
+    name: 'Test Product 2',
+    description: 'Test Description 2',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: false,
+    brand: null
+  }
+]
+
+stdout | resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > shows empty state when no products found
+Loading products...
+Products loaded: [
+  {
+    id: 1,
+    name: 'Test Product 1',
+    description: 'Test Description 1',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: true,
+    brand: null
+  },
+  {
+    id: 2,
+    name: 'Test Product 2',
+    description: 'Test Description 2',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: false,
+    brand: null
+  }
+]
+
+stdout | resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > loads products when filters change
+Loading products...
+Products loaded: [
+  {
+    id: 1,
+    name: 'Test Product 1',
+    description: 'Test Description 1',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: true,
+    brand: null
+  },
+  {
+    id: 2,
+    name: 'Test Product 2',
+    description: 'Test Description 2',
+    images: [ [Object] ],
+    subproducts: [ [Object] ],
+    categories: [],
+    available: false,
+    brand: null
+  }
+]
+
+ ✓ resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > renders product list correctly 382ms
+ ✓ resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > shows loading state
+ ✓ resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > shows empty state when no products found
+ ✓ resources/js/tests/components/Store/ProductSearch.test.tsx > ProductSearch > loads products when filters change
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > renders financial overview title 579ms
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > renders all financial metrics 314ms
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > displays revenue trend chart
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > displays revenue by category chart
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > displays payment methods chart
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > renders recent transactions table 364ms
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > formats currency values correctly
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > shows percentage changes with correct colors
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > handles date range selection
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > renders export report button
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > displays correct transaction status badges
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > shows correct metric icons
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > maintains responsive layout classes
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > Marketing ROI Section > renders marketing analytics section
+ ✓ resources/js/tests/pages/Admin/Finance/FinancePage.test.tsx > FinancePage > Marketing ROI Section > displays channel performance chart
+ ✓ resources/js/tests/components/Admin/ProductForm/ImageSelect.test.tsx > ImageSelect > displays "No images selected" when no images are selected 377ms
+ ✓ resources/js/tests/components/Admin/ProductForm/ImageSelect.test.tsx > ImageSelect > displays available images from the API
+ ✓ resources/js/tests/components/Admin/ProductForm/ImageSelect.test.tsx > ImageSelect > allows searching for images
+ ✓ resources/js/tests/components/Admin/ProductForm/ImageSelect.test.tsx > ImageSelect > allows selecting and deselecting images
+ ✓ resources/js/tests/components/Admin/ProductForm/ImageSelect.test.tsx > ImageSelect > allows reordering selected images
+ ✓ resources/js/tests/components/Admin/AddNewBrandModal.test.tsx > AddNewBrandDialog > renders add brand form correctly 642ms
+ ✓ resources/js/tests/components/Admin/AddNewBrandModal.test.tsx > AddNewBrandDialog > handles brand creation successfully
+ ✓ resources/js/tests/components/Admin/AddNewBrandModal.test.tsx > AddNewBrandDialog > shows validation error for short brand name
+ ✓ resources/js/tests/components/Admin/AddNewBrandModal.test.tsx > AddNewBrandDialog > handles API errors gracefully 348ms
+ ✓ resources/js/tests/components/Admin/AddNewBrandModal.test.tsx > AddNewBrandDialog > handles brand update mode correctly
+stdout | resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > renders brand list correctly
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+
+stdout | resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > opens add brand modal when clicking add button
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+
+stdout | resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > shows modals when their state is true
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+[
+  { url: null, label: '&laquo; Previous', active: false },
+  {
+    url: 'http://localhost:3000/?page=1&sortkey=name&sortdirection=asc',
+    label: '1',
+    active: true
+  },
+  { url: null, label: 'Next &raquo;', active: false }
+]
+
+ ✓ resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > renders brand list correctly 318ms
+ ✓ resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > opens add brand modal when clicking add button
+ ✓ resources/js/tests/components/Admin/BrandsPage.test.tsx > BrandPage > shows modals when their state is true
+ ✓ resources/js/tests/components/Admin/ProductForm/CategorySelect.test.tsx > CategorySelect > displays available categories
+ ✓ resources/js/tests/components/Admin/ProductForm/CategorySelect.test.tsx > CategorySelect > allows selecting categories
+ ✓ resources/js/tests/components/Admin/ProductForm/CategorySelect.test.tsx > CategorySelect > allows creating new categories
+ ✓ resources/js/tests/components/Admin/ProductForm/CategorySelect.test.tsx > CategorySelect > shows selected categories
+ ✓ resources/js/tests/components/Admin/NavigationMaker/DeleteNavigationHeaderModal.test.tsx > DeleteHeaderNavigationModal > renders delete header modal correctly
+ ✓ resources/js/tests/components/Admin/NavigationMaker/DeleteNavigationHeaderModal.test.tsx > DeleteHeaderNavigationModal > deletes header and reorders remaining headers
+ ✓ resources/js/tests/components/Admin/NavigationMaker/DeleteNavigationHeaderModal.test.tsx > DeleteHeaderNavigationModal > closes modal when cancel is clicked
+ ✓ resources/js/tests/components/Admin/NavigationMaker/DeleteNavigationHeaderModal.test.tsx > DeleteHeaderNavigationModal > returns null when no header is selected
+ ✓ resources/js/tests/components/Admin/NavigationMaker/DeleteNavigationHeaderModal.test.tsx > DeleteHeaderNavigationModal > maintains header order after deletion
+ ✓ resources/js/tests/components/Admin/NavigationMaker/NewHeaderModal.test.tsx > NewHeaderModal > renders new header modal correctly
+ ✓ resources/js/tests/components/Admin/NavigationMaker/NewHeaderModal.test.tsx > NewHeaderModal > validates header name length
+ ✓ resources/js/tests/components/Admin/NavigationMaker/NewHeaderModal.test.tsx > NewHeaderModal > adds new header successfully
+ ✓ resources/js/tests/components/Admin/NavigationMaker/NewHeaderModal.test.tsx > NewHeaderModal > closes modal when cancel is clicked
+ ✓ resources/js/tests/components/Admin/NavigationMaker/NewHeaderModal.test.tsx > NewHeaderModal > assigns correct order number to new header
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > renders correct number of stars
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > fills correct number of stars based on rating
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > handles click events
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > disables interaction in readonly mode
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > applies different sizes correctly
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > defaults to medium size
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > applies hover effects only in interactive mode
+ ✓ resources/js/tests/components/Store/Review/StarRating.test.tsx > StarRating > maintains consistent star order
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > renders about us section 395ms
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > renders quick links section with correct links
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > renders newsletter section with email input
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > handles newsletter subscription
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > applies hover styles to quick links
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > renders copyright notice
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > has accessible form controls
+ ✓ resources/js/tests/components/Footer.test.tsx > Footer > maintains responsive layout classes
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > displays product name and price 318ms
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > shows in stock badge when product is available
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > hides in stock badge when product is unavailable
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > shows product image
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > shows lowest price from subproducts
+ ✓ resources/js/tests/components/Store/ProductCard/ProductCard.test.tsx > ProductCard > shows placeholder image when no images available
+ ✓ resources/js/tests/components/Admin/DeleteSubproductModal.test.tsx > DeleteSubproductModal > renders delete subproduct modal correctly 822ms
+ ✓ resources/js/tests/components/Admin/DeleteSubproductModal.test.tsx > DeleteSubproductModal > handles subproduct deletion successfully 494ms
+ ✓ resources/js/tests/components/Admin/DeleteSubproductModal.test.tsx > DeleteSubproductModal > handles deletion error gracefully
+ ✓ resources/js/tests/components/Admin/DeleteSubproductModal.test.tsx > DeleteSubproductModal > closes modal when cancel is clicked
+ ✓ resources/js/tests/components/Admin/DeleteSubproductModal.test.tsx > DeleteSubproductModal > shows loading state during deletion
+ ✓ resources/js/tests/components/Admin/ProductForm/BrandSelect.test.tsx > BrandSelect > displays brand selection trigger with placeholder
+ ✓ resources/js/tests/components/Admin/ProductForm/BrandSelect.test.tsx > BrandSelect > displays selected brand name when brand is selected
+ ✓ resources/js/tests/components/Admin/ProductForm/BrandSelect.test.tsx > BrandSelect > loads and displays brands from API
+ ✓ resources/js/tests/components/Admin/ProductForm/BrandSelect.test.tsx > BrandSelect > allows selecting a brand 365ms
+ ✓ resources/js/tests/components/Admin/DeleteProductModal.test.tsx > DeleteProductModal > renders delete product modal correctly 762ms
+ ✓ resources/js/tests/components/Admin/DeleteProductModal.test.tsx > DeleteProductModal > handles product deletion successfully
+ ✓ resources/js/tests/components/Admin/DeleteProductModal.test.tsx > DeleteProductModal > handles deletion error gracefully
+ ✓ resources/js/tests/components/Admin/DeleteProductModal.test.tsx > DeleteProductModal > closes modal when cancel is clicked
+ ✓ resources/js/tests/components/Admin/DeleteProductModal.test.tsx > DeleteProductModal > shows loading state during deletion
+ ✓ resources/js/tests/components/Admin/AdminSidebar.test.tsx > AdminSidebar > renders desktop sidebar when not mobile 635ms
+ ✓ resources/js/tests/components/Admin/AdminSidebar.test.tsx > AdminSidebar > renders mobile sidebar with sheet when on mobile
+ ✓ resources/js/tests/components/Admin/AdminSidebar.test.tsx > AdminSidebar > applies correct classes to navigation buttons
+ ✓ resources/js/tests/components/Admin/AdminSidebar.test.tsx > AdminSidebar > renders icons for each navigation item
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > renders navigation links correctly
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > displays store name in the navbar
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > handles cart button click
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > shows cart item count when items are present
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > does not show cart count when no items
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > applies hover styles to navigation links
+ ✓ resources/js/tests/components/Navbar.test.tsx > Navbar > shows cart icon
+ ✓ resources/js/tests/components/ui/Button.test.tsx > Button > renders button with text 310ms
+ ✓ resources/js/tests/components/ui/Button.test.tsx > Button > handles click events
+ ✓ resources/js/tests/components/ui/Button.test.tsx > Button > can be disabled
+ ✓ resources/js/tests/components/ui/Button.test.tsx > Button > applies size classes correctly

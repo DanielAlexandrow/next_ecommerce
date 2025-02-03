@@ -78,7 +78,8 @@ class CategoryServiceTest extends TestCase
         // Arrange
         $data = [
             'name' => 'Test Category',
-            'description' => 'Test Description'
+            'description' => 'Test Description',
+            'slug' => 'test-category' 
         ];
 
         // Act
@@ -193,10 +194,13 @@ class CategoryServiceTest extends TestCase
         $category = Category::factory()->create();
         $product = Product::factory()->create();
         $product->categories()->attach($category->id);
+
+        $user = \App\Models\User::factory()->create();
         
         // Create reviews with ratings
         Review::factory()->count(2)->create([
             'product_id' => $product->id,
+            'user_id' => $user->id, // Assign user_id to review
             'rating' => 4
         ]);
 

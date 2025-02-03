@@ -17,22 +17,26 @@ class ChatController extends Controller {
         ]);
 
         $message = ChatMessage::create([
-            'content' => $request->content,
+            'chat_id' => $request->chat_id, // Assuming chat_id is passed in request
             'sender_id' => Auth::id(),
-            'sender_type' => 'user',
-            'user_id' => $request->user_id
+            'receiver_id' => $request->user_id, // Assuming receiver_id is user_id from request
+            'message_content' => $request->content,
+            'timestamp' => now() // Use now() for timestamp
         ]);
 
-        broadcast(new MessageSent($message))->toOthers();
+        broadcast(new MessageSent($message)); // Removed ->toOthers() for now, might need to adjust based on requirements
 
         return response()->json($message);
     }
 
     public function getMessages(Request $request) {
-        $messages = ChatMessage::where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->take(50)
-            ->get();
+        $request->validate([
+            'chat_id' => 'required|exists:chat_messages,chat_id' // Validate chat_id is provided
+        ]);
+
+        $messages = ChatMessage::where('chat_id', $request->chat_id)
+            ->orderBy('timestamp', 'asc') // Chronological order
+            ->get(); // Removed take(50) for now to get full history
 
         return response()->json($messages);
     }
@@ -49,5 +53,11 @@ class ChatController extends Controller {
 
         broadcast(new AgentStatusChanged($request->user_id, $request->status))->toOthers();
         return response()->json(['status' => 'ok']);
+    }
+
+    public function initiateChat(Request $request) {
+        $chatId = uniqid('chat_'); // Generate unique chat_id, you might want to use a more robust method
+
+        return response()->json(['chat_id' => $chatId]);
     }
 }

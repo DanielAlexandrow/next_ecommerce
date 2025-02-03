@@ -22,6 +22,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 <div className="relative">
                     <input
                         ref={ref}
+                        data-testid={`${props.id}-input`}
                         className={cn(
                             'block w-full rounded-lg border-gray-300 shadow-sm',
                             'focus:border-primary-500 focus:ring-primary-500',
@@ -62,4 +63,4 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }
 );
 
-Input.displayName = 'Input'; 
+Input.displayName = 'Input';

@@ -29,12 +29,6 @@ export interface Brand {
     name: string;
 }
 
-export interface Subproduct {
-    id: number;
-    name: string;
-    price: number;
-    product_id: number;
-}
 
 // Store Types
 export interface ProductSearchStore {
@@ -99,4 +93,4 @@ export interface ImageStore {
     images: Image[];
     uploadImage: (file: File) => Promise<Image>;
     deleteImage: (id: number) => Promise<void>;
-} 
+}

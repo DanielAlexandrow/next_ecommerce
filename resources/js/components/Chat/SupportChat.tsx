@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import Echo from 'laravel-echo';
+import Echo from 'laravel-echo'; // Try importing without type declarations
 
 interface Message {
     id: string;
@@ -16,37 +16,96 @@ export function SupportChat() {
     const [newMessage, setNewMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [agentStatus, setAgentStatus] = useState<'online' | 'offline'>('offline');
+    const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+    const [chatIdLoading, setChatIdLoading] = useState(false); // Loading state for chat_id fetch
+    const [chatIdError, setChatIdError] = useState<string | null>(null); // Error state for chat_id fetch
+    const [historyLoading, setHistoryLoading] = useState(false); // Loading state for history fetch
+    const [historyError, setHistoryError] = useState<string | null>(null); // Error state for history fetch
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { user, loading } = useAuth();
-    const echo = useRef<Echo>();
+    const echo = useRef<any>(initializeEcho()); // Initialize Echo outside useEffect
 
-    useEffect(() => {
-        // Initialize Laravel Echo
-        echo.current = new Echo({
+    function initializeEcho() {
+        return new Echo({
             broadcaster: 'pusher',
             key: process.env.MIX_PUSHER_APP_KEY,
             cluster: process.env.MIX_PUSHER_APP_CLUSTER,
             forceTLS: true
         });
+    }
+
+    useEffect(() => {
+        // Fetch chat_id on component mount
+        const fetchChatId = async () => {
+            setChatIdLoading(true);
+            setChatIdError(null);
+            try {
+                const response = await fetch('/api/chat/initiate', { method: 'POST' });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentChatId(data.chat_id);
+                } else {
+                    setChatIdError('Failed to initiate chat session.');
+                    console.error('Failed to initiate chat session');
+                }
+            } catch (error) {
+                setChatIdError('Error initiating chat session.');
+                console.error('Error initiating chat session:', error);
+            } finally {
+                setChatIdLoading(false);
+            }
+        };
+        fetchChatId();
+
+        const fetchChatHistory = async () => {
+            if (currentChatId) {
+                setHistoryLoading(true);
+                setHistoryError(null);
+                try {
+                    const response = await fetch(`/api/chat/messages?chat_id=${currentChatId}`);
+                    if (response.ok) {
+                        const history = await response.json();
+                        setMessages(history); // Replace existing messages with history
+                    } else {
+                        setHistoryError('Failed to fetch chat history.');
+                        console.error('Failed to fetch chat history');
+                    }
+                } catch (error) {
+                    setHistoryError('Error fetching chat history.');
+                    console.error('Error fetching chat history:', error);
+                } finally {
+                    setHistoryLoading(false);
+                }
+            }
+        };
+
+        useEffect(() => {
+            fetchChatHistory();
+        }, [isOpen, currentChatId]); // Fetch history when chat window opens and chat_id is available
+
 
         // Subscribe to the chat channel
-        if (user) {
-            echo.current.private(`chat.${user.id}`)
-                .listen('MessageSent', (e: { message: Message }) => {
-                    setMessages(prev => [...prev, e.message]);
-                })
-                .listen('AgentTyping', () => {
-                    setIsTyping(true);
-                    setTimeout(() => setIsTyping(false), 3000);
-                })
-                .listen('AgentStatusChanged', (e: { status: 'online' | 'offline' }) => {
-                    setAgentStatus(e.status);
-                });
+        if (user && echo.current) {
+            const privateChannel = echo.current.private(`chat.${user.id}`);
+
+            privateChannel.listen('MessageSent', (e: { message: Message }) => {
+                setMessages(prev => [...prev, e.message]);
+            });
+            privateChannel.listen('AgentTyping', () => {
+                setIsTyping(true);
+                setTimeout(() => setIsTyping(false), 3000);
+            });
+            privateChannel.listen('AgentStatusChanged', (e: { status: 'online' | 'offline' }) => {
+                setAgentStatus(e.status);
+            });
+
+            // Return a cleanup function to unsubscribe when the component unmounts or user changes
+            return () => {
+                privateChannel.unsubscribe();
+            };
         }
 
-        return () => {
-            echo.current?.disconnect();
-        };
+        return () => { }; // Return empty function if no user or echo is not initialized
     }, [user]);
 
     useEffect(() => {
@@ -65,7 +124,8 @@ export function SupportChat() {
                 },
                 body: JSON.stringify({
                     content: newMessage,
-                    user_id: user.id
+                    user_id: user.id,
+                    chat_id: currentChatId, // Use currentChatId from state
                 }),
             });
 
@@ -108,10 +168,25 @@ export function SupportChat() {
                                 </svg>
                             </button>
                         </div>
-                    </div>
+                        </div>
 
                     <div className="flex-1 overflow-y-auto p-4">
-                        {messages.map((message) => (
+                        {chatIdError && (
+                            <div className="text-red-500 mb-2">
+                                {chatIdError} Please refresh the page to try again.
+                            </div>
+                        )}
+                        {historyError && (
+                            <div className="text-red-500 mb-2">
+                                {historyError} Please refresh the page to try again.
+                            </div>
+                        )}
+                        {historyLoading && !historyError && (
+                            <div className="text-gray-500 mb-2">
+                                Loading chat history...
+                            </div>
+                        )}
+                        {!historyLoading && !historyError && messages.map((message) => (
                             <div
                                 key={message.id}
                                 className={`mb-4 ${message.sender_type === 'user' ? 'text-right' : 'text-left'}`}
@@ -157,4 +232,4 @@ export function SupportChat() {
             )}
         </div>
     );
-} 
+}
