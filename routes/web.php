@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/getImagesPaginated', [ImageController::class, 'getImagesPaginated']);
 
 	// Products routes
-	Route::resource('/products', ProductController::class)->only(['index', 'create', 'store', 'destroy', 'update', 'show']);
+	Route::resource('/products', ProductController::class)->only(['index', 'store', 'destroy', 'update', 'show']);
 	Route::get('/product/{product_id}', [StoreProductController::class, 'index']);
 
 	Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
@@ -106,6 +106,8 @@ Route::middleware(['auth'])->group(function () {
 		Route::post('/driver/coordinates', [CoordinateController::class, 'store']);
 		Route::get('/driver/coordinates/current', [CoordinateController::class, 'show']);
 		Route::put('/driver/coordinates', [CoordinateController::class, 'update']);
+
+		Route::get('/products/create', [ProductController::class, 'create']);
 	});
 });
 
