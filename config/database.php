@@ -49,6 +49,14 @@ return [
             'search_path' => 'public',
             'sslmode' => 'prefer',
         ],
+
+        'sqlite' => [
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => env('DB_DATABASE', ':memory:'),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
     ],
 
     /*
@@ -63,6 +71,16 @@ return [
     */
 
     'migrations' => 'migrations',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Testing
+    |--------------------------------------------------------------------------
+    |
+    */
+    'testing' => [
+        'default' => 'sqlite',
+    ],
 
     /*
     |--------------------------------------------------------------------------
