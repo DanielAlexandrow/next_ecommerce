@@ -1,11 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 
-export interface AuthData {
-    csrfToken: string;
-    authCookie: string;
-}
-
-export async function getAuthData(request: APIRequestContext, email: string, password: string): Promise<AuthData> {
+export async function getAuthData(request, email, password) {
     const baseUrl = 'http://localhost:8000';
 
     // Get CSRF token
@@ -29,7 +24,7 @@ export async function getAuthData(request: APIRequestContext, email: string, pas
     return { csrfToken, authCookie };
 }
 
-export function getAuthHeaders(authData: AuthData, includeCsrf = true): Record<string, string> {
+export function getAuthHeaders(authData, includeCsrf = true) {
     const headers: Record<string, string> = {
         'Cookie': authData.authCookie
     };
