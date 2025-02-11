@@ -51,7 +51,7 @@
 ## Test Implementation Patterns
 
 ### 1. Component Test Structure
-```typescript
+```javascript
 // Standard test structure
 describe('ComponentName', () => {
   beforeEach(() => {
@@ -98,7 +98,7 @@ describe('ComponentName', () => {
 ```
 
 ### 3. Mock Patterns
-```typescript
+```javascript
 // API Mock Template
 vi.mock('axios', () => ({
   default: {

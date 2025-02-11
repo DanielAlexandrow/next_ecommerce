@@ -42,7 +42,7 @@
 ## Action Plan
 
 ### 1. Create Test Data Factories
-```typescript
+```javascript
 // Example product factory
 const createTestProduct = (overrides = {}) => ({
     id: 1,

@@ -10,7 +10,7 @@
    - This approach catches real issues with store implementation
 
 2. **Store Reset Pattern**
-   ```typescript
+   ```javascript
    beforeEach(() => {
        const store = useProductSearchStore.getState();
        store.resetFilters();
@@ -23,7 +23,7 @@
    - Mock external dependencies (API calls, router, notifications)
    - Keep the store implementation real
    - Example:
-   ```typescript
+   ```javascript
    vi.mock('@/api/productApi', () => ({
        productApi: {
            searchProducts: vi.fn()
@@ -36,7 +36,7 @@
 1. **Proper State Updates**
    - Use `act` for state updates
    - Use `waitFor` for async operations
-   ```typescript
+   ```javascript
    await act(async () => {
        store.setFilters({ name: 'test' });
    });
@@ -58,7 +58,7 @@
 ### Component Testing
 
 1. **Test Loading States**
-   ```typescript
+   ```javascript
    it('shows loading state', async () => {
        productApi.searchProducts.mockImplementation(() => 
            new Promise(resolve => setTimeout(resolve, 100))
@@ -69,7 +69,7 @@
    ```
 
 2. **Test Empty States**
-   ```typescript
+   ```javascript
    it('shows empty state', async () => {
        productApi.searchProducts.mockResolvedValue({ products: [] });
        render(<ProductSearch />);
@@ -80,7 +80,7 @@
    ```
 
 3. **Test Error States**
-   ```typescript
+   ```javascript
    it('handles errors', async () => {
        const error = new Error('Failed to load');
        productApi.searchProducts.mockRejectedValue(error);
@@ -155,7 +155,7 @@ Testing React components with Zustand stores is most effective when:
 ## Form Testing Best Practices
 
 ### Mock Structure
-```typescript
+```javascript
 vi.mock('react-hook-form', () => {
     const mockUseForm = vi.fn(() => ({
         trigger: vi.fn(),

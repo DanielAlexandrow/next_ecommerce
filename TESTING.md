@@ -51,7 +51,7 @@
    - Frontend tests require a mock for `ResizeObserver`
    - Mock should be added to `vitest.setup.ts`
    - Mock implementation:
-     ```typescript
+     ```javascript
      const mockResizeObserver = vi.fn(() => ({
          observe: vi.fn(),
          unobserve: vi.fn(),
