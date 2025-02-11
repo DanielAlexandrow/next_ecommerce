@@ -11,6 +11,20 @@ use Tests\Browser\Assertions\AssertNoConsoleErrors;
 abstract class DuskTestCase extends BaseTestCase {
     use CreatesApplication;
 
+    protected $defaultDatabase = 'sqlite';
+
+    /**
+     * Register the base URL with Dusk.
+     *
+     * Setup the test environment.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        config(['database.default' => $this->defaultDatabase]);
+    }
+
     /**
      * Register the base URL with Dusk.
      *
