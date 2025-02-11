@@ -27,7 +27,7 @@ A modern e-commerce admin panel built with Laravel, React, TypeScript, and Tailw
 ## Tech Stack
 
 - **Backend**: Laravel 10
-- **Frontend**: React + TypeScript
+- **Frontend**: React + JavaScript
 - **Styling**: Tailwind CSS + shadcn/ui
 - **State Management**: Zustand
 - **API Communication**: Axios + React Query
