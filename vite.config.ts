@@ -19,15 +19,6 @@ export default defineConfig({
 			'@/types': path.resolve(__dirname, './resources/js/types'),
 		},
 	},
-	server: {
-		host: '0.0.0.0',
-		hmr: {
-			host: 'localhost',
-		},
-		watch: {
-			usePolling: true,
-		},
-	},
 	test: {
 		globals: true,
 		environment: 'jsdom',

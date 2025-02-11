@@ -1,4 +1,4 @@
-// api/imageApi.ts
+// api/imageApi.js
 
 import { CustomImage } from '@/types';
 import axios from 'axios';

@@ -1,9 +1,44 @@
-export const createSubproduct = async (subproductData) => {
-    const response = await axios.post('/api/subproducts', subproductData);
-    return response.data;
-};
+import axios from 'axios';
+import { Subproduct, SubproductImage } from '@/types';
 
-export const getSubproducts = async (productId) => {
-    const response = await axios.get(`/api/products/${productId}/subproducts`);
-    return response.data;
+interface SubproductPayload {
+	name: string;
+	price: number;
+	product_id?: number;
+	id?: number;
+	images: SubproductImage[];
+	available: boolean;
+}
+
+export const subproductApi = {
+	createSubproduct: async (payload: SubproductPayload) => {
+		const response = await axios.post('/subproducts', payload);
+		if (response.status !== 200) {
+			throw new Error('Failed to create subproduct');
+		}
+		return response;
+	},
+
+	updateSubproduct: async (id: number, payload: SubproductPayload) => {
+		const response = await axios.put(`/subproducts/${id}`, payload);
+		if (response.status !== 200) {
+			throw new Error('Failed to update subproduct');
+		}
+		return response;
+	},
+
+	deleteSubproduct: async (id: number) => {
+		const response = await axios.delete(`/subproducts/${id}`);
+		if (response.status !== 200) {
+			throw new Error('Failed to delete subproduct');
+		}
+		return response;
+	},
+	getSubproductsByProductId: async (productId: number): Promise<Subproduct[]> => {
+		const response = await axios.get(`/subproducts/byproduct/${productId}`);
+		if (response.status !== 200) {
+			throw new Error('Failed to fetch subproducts');
+		}
+		return response.data;
+	}
 };

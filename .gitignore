@@ -28,3 +28,6 @@ frankenphp-worker.php
 .pnpm-workspace.yaml-
 /pnpm
 /v3
+
+
+.aider*

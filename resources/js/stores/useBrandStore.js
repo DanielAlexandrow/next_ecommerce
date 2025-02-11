@@ -1,4 +1,4 @@
-// src/store/useBrandStore.ts
+// src/store/useBrandStore.js
 import create from 'zustand';
 import { Brand } from "@/types";
 
