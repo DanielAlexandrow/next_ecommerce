@@ -123,11 +123,15 @@ A modern e-commerce admin panel built with Laravel, React, TypeScript, and Tailw
    cp .env.example .env
    php artisan key:generate
    ```
-4. Run migrations and seeders:
+4. Reinstall dependencies:
+   ```bash
+   pnpm install
+   ```
+5. Run migrations and seeders:
    ```bash
    php artisan migrate:fresh --seed
    ```
-5. Start development servers:
+6. Start development servers:
    ```bash
    php artisan serve
    npm run dev
