@@ -285,6 +285,10 @@
 # Run single test
 php artisan test --filter=TestName
 
+# Frontend tests
+pnpm test
+````
+
 # Run test in isolation
 php artisan test --filter=TestName --stop-on-failure
 

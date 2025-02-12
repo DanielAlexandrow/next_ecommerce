@@ -113,7 +113,8 @@ vi.mock('axios', () => ({
 ## Quick Commands
 ```bash
 # Run single test
-npm test -- -t "test name"
+pnpm test -- -t "test name"
+````
 
 # Run tests in watch mode
 npm test -- --watch
