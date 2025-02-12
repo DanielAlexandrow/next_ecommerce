@@ -13,7 +13,7 @@
 
 2. **Vitest Frontend Tests (Second Priority)**
    ```bash
-   pnpm run test
+   pnpm test
    ```
    - Run after all PHP tests pass
    - Fix any failing tests before proceeding

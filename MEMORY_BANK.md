@@ -2,7 +2,7 @@
 
 ## Package Manager
 - Using pnpm for dependency management and script execution
-- Command pattern: `pnpm test` for running vitest
+- Command pattern: `pnpm test` for running vitest.
 
 ## Active Test Iterations
 

@@ -123,5 +123,5 @@ npm test -- --watch
 npm test -- -u
 
 # Run with coverage
-npm test -- --coverage
-``` 
+pnpm test -- --coverage
+```
