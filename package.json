@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "pnpm jest"
+    "test": "pnpm exec jest"
   },
   "dependencies": {
     "next": "13.4.19",
