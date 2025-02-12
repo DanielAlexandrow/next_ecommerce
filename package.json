@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "pnpm run frontend & pnpm run backend",
-    "frontend": "next dev",
-    "backend": "php artisan serve",
+    "frontend": "next dev && echo 'Frontend server started successfully' || echo 'Frontend server failed to start'",
+    "backend": "php artisan serve && echo 'Backend server started successfully' || echo 'Backend server failed to start'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
