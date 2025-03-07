@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { CiFileOn } from 'react-icons/ci';
 import { FaProductHunt } from 'react-icons/fa';
 import { GrNotes } from 'react-icons/gr';
@@ -12,155 +11,156 @@ import { ShoppingCartIcon } from 'lucide-react';
 import { FaTrademark } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoLocationOutline } from "react-icons/io5";
-
-
+import { styles } from './Sidebar.styles';
 
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-	DropdownMenuItem,
-} from '../../ui/dropdown-menu';
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 import axios from 'axios';
 
 const sidebarItems = [
-	{
-		icon: <FaProductHunt />,
-		text: 'New Product',
-		href: '/products/create',
-	},
-	{
-		icon: <GrNotes />,
-		text: 'Product List',
-		href: '/products',
-	},
-	{
-		icon: <CiFileOn />,
-		text: 'Images',
-		href: '/images',
-	},
-	{
-		icon: <FiAlignJustify />,
-		text: 'Navigation Maker',
-		href: '/navigation',
-	},
-	{
-		icon: <ShoppingCartIcon />,
-		text: 'Orders',
-		href: '/orders',
-	},
-	,
-	{
-		icon: <FaTrademark />,
-		text: 'Brands',
-		href: '/brands',
-	},
-	{
-		icon: <FaStore />,
-		text: 'Store',
-		href: '/productsearch',
-	},
-	{
-		icon: <IoLocationOutline />,
-		text: 'Driver Location',
-		href: '/driver/coordinates',
-	},
-	{
-		icon: <IoSettingsOutline />,
-		text: 'Settings',
-		href: '/shop-settings',
-	},
-	{
-		icon: <FiAlignJustify />,
-		text: 'Categories',
-		href: '/admin/categories',
-	},
+    {
+        icon: <FaProductHunt />,
+        text: 'New Product',
+        href: '/products/create',
+    },
+    {
+        icon: <GrNotes />,
+        text: 'Product List',
+        href: '/products',
+    },
+    {
+        icon: <CiFileOn />,
+        text: 'Images',
+        href: '/images',
+    },
+    {
+        icon: <FiAlignJustify />,
+        text: 'Navigation Maker',
+        href: '/navigation',
+    },
+    {
+        icon: <ShoppingCartIcon />,
+        text: 'Orders',
+        href: '/orders',
+    },
+    {
+        icon: <FaTrademark />,
+        text: 'Brands',
+        href: '/brands',
+    },
+    {
+        icon: <FaStore />,
+        text: 'Store',
+        href: '/productsearch',
+    },
+    {
+        icon: <IoLocationOutline />,
+        text: 'Driver Location',
+        href: '/driver/coordinates',
+    },
+    {
+        icon: <IoSettingsOutline />,
+        text: 'Settings',
+        href: '/shop-settings',
+    },
+    {
+        icon: <FiAlignJustify />,
+        text: 'Categories',
+        href: '/admin/categories',
+    },
 ];
 
 export default function Sidebar({
-	sidebarMinimized,
-	setSidebarMinimized,
+    sidebarMinimized,
+    setSidebarMinimized,
 }: {
-	sidebarMinimized: boolean;
-	setSidebarMinimized: React.Dispatch<React.SetStateAction<boolean>>;
+    sidebarMinimized: boolean;
+    setSidebarMinimized: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-	const props: any = usePage().props;
-	const username = props.auth.user.data.name;
+    const pageProps: any = usePage().props;
+    const username = pageProps?.auth?.user?.data?.name || '';
 
-	function logout() {
-		axios.post('/logout').then((response) => {
-			window.location.href = '/login';
-		});
-	}
+    const logout = async () => {
+        try {
+            await axios.post('/logout');
+            window.location.href = '/';
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
 
-	return (
-		<div className='flex h-screen fixed border-b border-white mx-auto' style={{ borderRight: '1px solid white' }}>
-			<div
-				className={`w-${sidebarMinimized ? '16' : '50'} md:w-${sidebarMinimized ? '16' : '50'
-					} bg-background text-white flex flex-col mx-auto`}>
-				<div className='flex-1 overflow-auto'>
-					<nav className='px-4 py-2 space-y-2'>
-						<div style={{ borderBottom: '1px solid white' }} title='Profile'>
-							<DropdownMenu>
-								<DropdownMenuTrigger asChild>
-									<div>
-										{sidebarMinimized ? (
-											<CgProfile
-												className='m-auto hover:bg-gray-90'
-												style={{ fontSize: '20px' }}
-											/>
-										) : (
-											<div className='hover:bg-gray-90'>{'Welcome, ' + username}</div>
-										)}
-									</div>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent className='w-56'>
-									<DropdownMenuItem onClick={logout} className='text-center'>
-										Logout
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</div>
-						{sidebarItems.map((item, index) => (
-							<Link
-								key={index}
-								href={item!.href}
-								className='flex items-center m-auto space-x-2 text-white hover:bg-gray-900 hover:text-white px-2 py-1 rounded-md'
-								style={{ fontSize: '20px' }}
-								title={item!.text}>
-								<span className='w-5 h-5'>{item!.icon}</span>
-								{!sidebarMinimized && <span className='md:inline text-sm'>{item!.text}</span>}
-							</Link>
-						))}
-					</nav>
-				</div>
+    return (
+        <div className={`${styles.sidebar.container} ${sidebarMinimized ? styles.sidebar.minimized : ''}`}>
+            <div className={styles.header.container}>
+                <div className={`${styles.header.title} ${sidebarMinimized ? styles.header.minimized : ''}`}>
+                    Admin Panel
+                </div>
+                <MinimizeButton isMinimized={sidebarMinimized} setIsMinimized={setSidebarMinimized} />
+            </div>
 
-				<div className={`p-4 ${!sidebarMinimized ? 'flex justify-center items-center' : ''}`}>
-					<MinimizeButton isMinimized={sidebarMinimized} setIsMinimized={setSidebarMinimized} />
-				</div>
-			</div>
-		</div>
-	);
+            <div className={styles.nav.container}>
+                {sidebarItems.map((item, index) => (
+                    <Link
+                        key={index}
+                        href={item.href}
+                        className={styles.nav.item.base}
+                    >
+                        {item.icon}
+                        <div className={`${styles.nav.item.text} ${sidebarMinimized ? styles.nav.item.minimized : ''}`}>
+                            {item.text}
+                        </div>
+                    </Link>
+                ))}
+            </div>
+
+            <div className={styles.profile.container}>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <div className={styles.profile.button}>
+                            {sidebarMinimized ? (
+                                <CgProfile
+                                    className={styles.profile.icon}
+                                    style={{ fontSize: '20px' }}
+                                />
+                            ) : (
+                                <div className={styles.profile.username(sidebarMinimized)}>
+                                    {'Welcome, ' + username}
+                                </div>
+                            )}
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className='w-56'>
+                        <DropdownMenuItem onClick={logout} className='text-center'>
+                            Logout
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </div>
+    );
 }
 
 function MinimizeButton({
-	isMinimized,
-	setIsMinimized,
+    isMinimized,
+    setIsMinimized,
 }: {
-	isMinimized: boolean;
-	setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>;
+    isMinimized: boolean;
+    setIsMinimized: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-	return (
-		<Button className='text-white' size='icon' variant='ghost' onClick={() => setIsMinimized(!isMinimized)}>
-			{isMinimized ? (
-				<FaChevronRight className='w-4 h-4 md:w-6 md:h-6' onClick={() => setIsMinimized(false)} />
-			) : (
-				<FaChevronLeft className='w-4 h-4 md:w-6 md:h-6' onClick={() => setIsMinimized(true)} />
-			)}
-			<span className='sr-only'>Toggle Sidebar</span>
-		</Button>
-	);
+    return (
+        <div
+            className={styles.minimizeButton.container}
+            onClick={() => setIsMinimized(!isMinimized)}
+        >
+            {isMinimized ? (
+                <FaChevronRight className={styles.minimizeButton.icon} />
+            ) : (
+                <FaChevronLeft className={styles.minimizeButton.icon} />
+            )}
+        </div>
+    );
 }
-
-// Add the minimized class to hide text
-const minimizedStyles = 'text-opacity-0 pointer-events-none';

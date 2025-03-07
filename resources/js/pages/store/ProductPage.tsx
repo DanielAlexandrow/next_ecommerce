@@ -8,63 +8,50 @@ import { Product, StoreProduct } from "@/types";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { cartApi } from "@/api/cartApi";
+import { styles } from './ProductPage.styles';
 
 export default function ProductPage() {
 	const pageProps: any = usePage().props;
-	const [product, setProduct] = useState<StoreProduct | null>(pageProps.product || null);
-	const [selectedOption, setSelectedOption] = useState(pageProps.product?.subproducts?.[0] || null);
+	const product = pageProps.product as StoreProduct;
+	const [selectedOption, setSelectedOption] = useState(product.subproducts[0]);
 
 	const handleAddToCart = async () => {
 		try {
-			const response = await cartApi.addItem(selectedOption.id);
-			toast.success(response.result.headers['x-message']);
+			await cartApi.addItem(selectedOption.id);
+			toast.success('Item added to cart!');
 		} catch (error) {
 			toast.error('Failed to add item to cart');
-			console.error('Add to cart error:', error);
 		}
-	}
-
-	if (!product) {
-		return (
-			<div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
-				<div className="max-w-md mx-auto text-center space-y-6">
-					<h2 className="text-3xl font-bold tracking-tighter">Product not found</h2>
-					<p className="text-gray-500 dark:text-gray-400">The product you're looking for doesn't exist or has been removed.</p>
-					<Button
-						onClick={() => window.location.href = '/productsearch'}
-						className="bg-primary hover:bg-primary/90 text-white"
-					>
-						Back to Products
-					</Button>
-				</div>
-			</div>
-		);
-	}
+	};
 
 	return (
-		<div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
-			<div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start max-w-6xl mx-auto">
-				<div className="space-y-4">
-					<div className="aspect-square relative rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-800">
-						<img
-							alt="Product Image"
-							className="object-cover w-full h-full transition-all hover:scale-105"
-							src={'/storage/' + product.images[0]?.path}
-						/>
-					</div>
+		<div className={styles.container}>
+			<div className={styles.grid}>
+				<div className="aspect-square relative h-full w-full">
+					<img
+						alt={product.name}
+						className="object-cover"
+						src={`/storage/${product.images[0]?.path}`}
+						style={{
+							position: 'absolute',
+							height: '100%',
+							width: '100%',
+							inset: '0px',
+						}}
+					/>
 				</div>
-				<div className="space-y-8">
-					<div className="space-y-2">
-						<h1 className="text-4xl font-bold tracking-tighter">{product.name}</h1>
-						<p className="text-gray-500 dark:text-gray-400">{product.description}</p>
+				<div className={styles.content.wrapper}>
+					<div className={styles.content.header.container}>
+						<h1 className={styles.content.header.title}>{product.name}</h1>
+						<p className={styles.content.header.description}>{product.description}</p>
 					</div>
-					<div className="space-y-6">
-						<div className="space-y-2">
-							<Label className="text-lg font-semibold">Price</Label>
-							<p className="text-3xl font-bold">$ {selectedOption.price}</p>
+					<div className={styles.content.details.container}>
+						<div className={styles.content.details.section}>
+							<Label className={styles.content.details.label}>Price</Label>
+							<p className={styles.content.price.amount}>$ {selectedOption.price}</p>
 						</div>
-						<div className="space-y-2">
-							<Label className="text-lg font-semibold">Size</Label>
+						<div className={styles.content.details.section}>
+							<Label className={styles.content.details.label}>Size</Label>
 							<Select
 								defaultValue={selectedOption.id.toString()}
 								onValueChange={(value) => setSelectedOption(product.subproducts.find(sp => sp.id.toString() === value))}
@@ -83,7 +70,7 @@ export default function ProductPage() {
 						</div>
 						<Button
 							size="lg"
-							className="w-full bg-primary hover:bg-primary/90 text-white"
+							className={styles.content.addToCart.button}
 							onClick={handleAddToCart}
 						>
 							Add to cart

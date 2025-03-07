@@ -77,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
 	// Orders routes
 	Route::resource('/orders', AdminOrders::class)->only(['index']);
 	Route::get('/orders/getitems/{order_id}', [AdminOrders::class, 'getOrderDetails']);
-	Route::post('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
+	Route::get('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
 	Route::put('/orders/{order}/status', [AdminOrders::class, 'updateStatus']);
 
 	Route::resource('/brands', BrandController::class)->only(['index', 'store', 'update', 'destroy']);
@@ -107,6 +107,33 @@ Route::middleware(['auth'])->group(function () {
 		Route::get('/driver/coordinates/current', [CoordinateController::class, 'show']);
 		Route::put('/driver/coordinates', [CoordinateController::class, 'update']);
 	});
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Admin routes
+    Route::get('/admin/dashboard', function () {
+        return inertia('admin/Dashboard');
+    })->name('admin.dashboard');
+
+    Route::resource('/products', ProductController::class);
+    Route::resource('/brands', BrandController::class);
+    Route::get('/admin/categories', function () {
+        return inertia('admin/CategoryManagement');
+    })->name('admin.categories');
+
+    // User management routes
+    Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users');
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+
+    Route::resource('/navigation', NavigationController::class)->only(['index', 'store', 'update']);
+    Route::resource('/orders', AdminOrders::class)->only(['index']);
+    Route::get('/orders/getitems/{order_id}', [AdminOrders::class, 'getOrderDetails']);
+    Route::get('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
+    Route::put('/orders/{order}/status', [AdminOrders::class, 'updateStatus']);
+    Route::get('/brands/getallbrands', [BrandController::class, 'getAllBrands']);
+    Route::get('/shop-settings', [ShopSettingsController::class, 'index']);
+    Route::post('/api/shop-settings', [ShopSettingsController::class, 'update']);
 });
 
 Route::fallback(function () {

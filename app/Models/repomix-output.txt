@@ -1,0 +1,590 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+The content has been processed where empty lines have been removed.
+
+================================================================
+Directory Structure
+================================================================
+AddressInfo.php
+Brand.php
+Cart.php
+CartItem.php
+Category.php
+CategoryNavigationItem.php
+Coordinate.php
+Guest.php
+Header.php
+Image.php
+NavigationItem.php
+Order.php
+OrderItem.php
+Product.php
+ProductCategory.php
+ProductImage.php
+Review.php
+ShopSettings.php
+Subproduct.php
+User.php
+
+================================================================
+Files
+================================================================
+
+================
+File: AddressInfo.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class AddressInfo extends Model
+{
+	use HasFactory;
+	protected $fillable = [
+		'name',
+		'email',
+		'postcode',
+		'city',
+		'country',
+		'street',
+	];
+	public function user(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+		return $this->hasOne(User::class, 'id_address_info');
+	}
+}
+
+================
+File: Brand.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Product;
+class Brand extends Model
+{
+	use HasFactory;
+	public $timestamps = false;
+	protected $fillable = ['name'];
+	public function products()
+	{
+		return $this->hasMany(Product::class);
+	}
+}
+
+================
+File: Cart.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+class Cart extends Model
+{
+	protected $table = 'cart';
+	protected $fillable = [
+		'user_id',
+	];
+	public function user()
+	{
+		return $this->hasOne(User::class);
+	}
+	public function cartitems()
+	{
+		return $this->hasMany(CartItem::class);
+	}
+}
+
+================
+File: CartItem.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Subproduct;
+use App\Models\User;
+class CartItem extends Model
+{
+	protected $table = 'cart_item';
+	protected $fillable = [
+		'cart_id',
+		'subproduct_id',
+		'quantity'
+	];
+	public function subproduct()
+	{
+		return $this->belongsTo(Subproduct::class);
+	}
+}
+
+================
+File: Category.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Category extends Model {
+	use HasFactory;
+	protected $table = 'categories';
+	public $timestamps = false;
+	protected $fillable = [
+		'name',
+	];
+	public function navigationItems() {
+		return $this->belongsToMany(NavigationItem::class);
+	}
+	public function products() {
+		return $this->belongsToMany(Product::class, 'product_categories');
+	}
+}
+
+================
+File: CategoryNavigationItem.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class CategoryNavigationItem extends Model {
+    use HasFactory;
+    protected $table = 'category_navigation_item';
+    protected $fillable = [
+        'category_id',
+        'navigation_item_id',
+        'description'
+    ];
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
+    public function navigationItem() {
+        return $this->belongsTo(NavigationItem::class);
+    }
+}
+
+================
+File: Coordinate.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Coordinate extends Model {
+    use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'latitude',
+        'longitude'
+    ];
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+}
+
+================
+File: Guest.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\AddressInfo;
+class Guest extends Model
+{
+	use HasFactory;
+	protected $fillable = [
+		'id_address_info',
+	];
+	public function addressInfo()
+	{
+		return $this->belongsTo(AddressInfo::class, 'id_address_info');
+	}
+	public function orders()
+	{
+		return $this->hasMany(Order::class, 'guest_id');
+	}
+}
+
+================
+File: Header.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Header extends Model
+{
+	use HasFactory;
+	protected $table = 'headers';
+	public $timestamps = false;
+	protected $fillable = [
+		'name',
+		'description',
+		'order_num'
+	];
+	public function navigationItems()
+	{
+		return $this->hasMany(NavigationItem::class);
+	}
+}
+
+================
+File: Image.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
+class Image extends Model {
+	protected $table = 'images';
+	protected $fillable = [
+		'name',
+		'path',
+	];
+	protected $appends = ['full_path'];
+	public function products() {
+		return $this->belongsToMany(Product::class, 'product_images')
+			->withPivot('order_num');
+	}
+	public function getFullPathAttribute() {
+		return "storage/" . $this->path;
+	}
+}
+
+================
+File: NavigationItem.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class NavigationItem extends Model
+{
+	use HasFactory;
+	protected $table = 'navigation_item';
+	public $timestamps = false;
+	protected $fillable = [
+		'name',
+		'order_num',
+		'description'
+	];
+	public function header()
+	{
+		return $this->belongsTo(Header::class);
+	}
+	public function categories()
+	{
+		return $this->belongsToMany(Category::class);
+	}
+}
+
+================
+File: Order.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Order extends Model
+{
+	use HasFactory;
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'orders';
+	protected $fillable = [
+		'user_id',
+		'guest_id',
+	];
+	public function user()
+	{
+		return $this->belongsTo(User::class);
+	}
+	public function orderItems()
+	{
+		return $this->hasMany(OrderItem::class);
+	}
+	public function guest()
+	{
+		return $this->belongsTo(Guest::class);
+	}
+}
+
+================
+File: OrderItem.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class OrderItem extends Model
+{
+	use HasFactory;
+	protected $fillable = [
+		'order_id',
+		'subproduct_id',
+		'quantity',
+	];
+	public function order()
+	{
+		return $this->belongsTo(Order::class);
+	}
+	public function subproduct()
+	{
+		return $this->belongsTo(Subproduct::class);
+	}
+}
+
+================
+File: Product.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+/**
+ * Product
+ *
+ * @mixin Eloquent
+ */
+class Product extends Model {
+    use HasFactory;
+    /**
+     * @var string
+     */
+    protected $table = 'products';
+    /**
+     * @var string[]
+     */
+    protected $fillable = [
+        'name',
+        'description',
+        'discount',
+        'original_price',
+        'available',
+        'brand_id',
+    ];
+    protected $casts = [
+        'available' => 'boolean',
+        'discount' => 'float',
+        'original_price' => 'float',
+    ];
+    protected $with = ['images', 'categories', 'brand', 'subproducts', 'reviews'];
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function subproducts() {
+        return $this->hasMany(Subproduct::class, 'product_id');
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function images() {
+        return $this->belongsToMany(Image::class, 'product_images')->withPivot('order_num');
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function categories() {
+        return $this->belongsToMany(Category::class, 'product_categories');
+    }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function brand() {
+        return $this->belongsTo(Brand::class);
+    }
+    public function reviews() {
+        return $this->hasMany(Review::class);
+    }
+    protected $appends = ['average_rating'];
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+    public function averageRating() {
+        return $this->reviews()->avg('rating');
+    }
+}
+
+================
+File: ProductCategory.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class ProductCategory extends Model
+{
+	use HasFactory;
+	public $timestamps = false;
+	protected $table = 'product_categories';
+	protected $fillable = [
+		'product_id',
+		'category_id',
+	];
+	public function product()
+	{
+		return $this->belongsTo(Product::class);
+	}
+	public function category()
+	{
+		return $this->belongsTo(Category::class);
+	}
+}
+
+================
+File: ProductImage.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class ProductImage extends Model
+{
+	use HasFactory;
+	protected $table = 'product_images';
+	public $timestamps = false;
+	protected $fillable = [
+		'product_id',
+		'image_id',
+		'order_num',
+	];
+	public function product()
+	{
+		return $this->belongsTo(Product::class, 'product_id');
+	}
+	public function image()
+	{
+		return $this->belongsTo(Image::class, 'image_id');
+	}
+}
+
+================
+File: Review.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Review extends Model {
+    use HasFactory;
+    protected $fillable = ['user_id', 'product_id', 'title', 'content', 'rating'];
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+    public function product() {
+        return $this->belongsTo(Product::class);
+    }
+}
+
+================
+File: ShopSettings.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class ShopSettings extends Model {
+    use HasFactory;
+    protected $fillable = [
+        'currency',
+        'mapbox_api_key',
+        'sendgrid_api_key',
+        'shop_name',
+        'shop_logo',
+    ];
+}
+
+================
+File: Subproduct.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+class Subproduct extends Model
+{
+	use HasFactory;
+	protected $table = 'subproducts';
+	public $timestamps = false;
+	protected $fillable = [
+		'name',
+		'price',
+		'product_id',
+		'available',
+	];
+	public function product()
+	{
+		return $this->belongsTo(Product::class, 'product_id');
+	}
+	public function images()
+	{
+		return $this->hasMany(SubproductImage::class, 'subproduct_id');
+	}
+}
+
+================
+File: User.php
+================
+<?php
+namespace App\Models;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use App\Models\Coordinate;
+class User extends Authenticatable implements MustVerifyEmail {
+    use HasApiTokens, HasFactory, Notifiable;
+    protected $fillable = [
+        'username',
+        'name',
+        'email',
+        'password',
+        'id_address_info',
+        'role',
+    ];
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+    public function avatar(): string {
+        return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?s=200&d=mp';
+    }
+    public function addressInfo() {
+        return $this->hasOne(AddressInfo::class, 'id', 'id_address_info');
+    }
+    public function orders() {
+        return $this->hasMany(Order::class, 'user_id');
+    }
+    /**
+     * Get the coordinate associated with the driver.
+     */
+    public function coordinate() {
+        return $this->hasOne(Coordinate::class);
+    }
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool {
+        return $this->role === 'admin';
+    }
+    /**
+     * Check if the user is a driver.
+     */
+    public function isDriver(): bool {
+        return $this->role === 'driver';
+    }
+}
+
+
+
+================================================================
+End of Codebase
+================================================================

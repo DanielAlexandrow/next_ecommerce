@@ -76,6 +76,7 @@ export interface ImageUploadProps {
 	multiple?: boolean;
 }
 
+
 // Re-export store types for compatibility
 export type {
 	CartItem,
@@ -87,3 +88,146 @@ export type {
 	ProductStore,
 	ProductSearchStore
 } from './stores';
+
+
+export interface Category {
+    id: number;
+    name: string;
+}
+
+export interface NavigationIt {
+    id: number;
+    name: string;
+    order_num: number;
+    header_id: number;
+    description?: string;
+    categories: Category[];
+    isTemporary?: boolean;
+}
+
+export interface NavigationHeader {
+    id: number;
+    name: string;
+    order_num: number;
+    navigation_items: NavigationIt[];
+}
+
+export interface StoreProduct {
+    id: number;
+    name: string;
+    description: string;
+    available: boolean;
+    images: ProductImage[];
+    subproducts: Subproduct[];
+    categories: ProductCategory[];
+    brand: Brand;
+    reviews: Review[];
+    average_rating: number;
+    discount: number;
+    original_price?: number;
+}
+
+export interface ProductImage {
+    id: number;
+    name: string;
+    path: string;
+    pivot?: {
+        image_id: number;
+        order_num?: number;
+    };
+}
+
+export interface ProductCategory {
+    id: number;
+    name: string;
+    pivot: {
+        category_id: number;
+    };
+}
+
+export interface Brand {
+    id: number;
+    name: string;
+    description?: string;
+}
+
+export interface Subproduct {
+    id: number;
+    name: string;
+    price: number;
+    available: boolean;
+    product_id: number;
+    stock?: number;
+}
+
+export interface Review {
+    id: number;
+    rating: number;
+    content?: string;
+    title?: string;
+    user_id: number;
+    created_at: string;
+    user: {
+        name: string;
+        avatar: string;
+        id: number;
+    };
+}
+
+export interface OrderItem {
+    product_id: number;
+    subproduct_id: number;
+    quantity: number;
+    price: number;
+    name: string;
+    variant: string;
+}
+
+export interface Order {
+    id: number;
+    user_id: number | null;
+    guest_id: number | null;
+    total: number;
+    status: string;
+    payment_status: string;
+    shipping_status: string;
+    items: OrderItem[];
+    created_at: string;
+    updated_at: string;
+}
+
+// Alias to ensure backward compatibility
+export type StoreOrder = Order;
+
+export interface CustomImage {
+    id: number;
+    name?: string;
+    path: string;
+    full_path?: string;
+    pivot?: {
+        id?: number;
+        image_id: number;
+        order_num: number;
+    };
+}
+
+export interface Product {
+    id: number;
+    name: string;
+    description: string;
+    available: boolean;
+    brand_id: number;
+    price?: number; // Adding price property
+    brand?: Brand | null; // Adding brand relation
+    categories?: Category[]; // Adding categories relation
+    images?: CustomImage[]; // Adding images relation
+    subproducts?: Subproduct[];
+    reviews?: Array<{
+        id: number;
+        rating: number;
+        comment: string;
+    }>;
+    created_at?: string;
+    updated_at?: string;
+    average_rating?: number;
+}

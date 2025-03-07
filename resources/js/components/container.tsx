@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import clsx from 'clsx';
+import { styles } from './container.styles';
 
 export default function Container({
     withNoHorizontalPadding = false,
@@ -9,11 +9,7 @@ export default function Container({
     children: ReactNode;
 }) {
     return (
-        <div
-            className={clsx(
-                'mx-auto max-w-7xl py-4 sm:px-6 sm:py-10 lg:px-8',
-                withNoHorizontalPadding ? null : 'px-4 sm:px-0'
-            )}>
+        <div className={styles.container(withNoHorizontalPadding)}>
             {children}
         </div>
     );

@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { styles } from './section-title.styles';
 
 interface Props {
     className?: string;

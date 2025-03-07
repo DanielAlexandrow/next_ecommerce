@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import Echo from 'laravel-echo';
+import { styles } from './SupportChat.styles';
 
 interface Message {
     id: string;
@@ -82,22 +83,22 @@ export function SupportChat() {
     if (loading) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 z-50">
+        <div className={styles.container}>
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-4 shadow-lg"
+                    className={styles.chatButton}
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                     </svg>
                 </button>
             ) : (
-                <div className="bg-white rounded-lg shadow-xl w-96 h-[32rem] flex flex-col">
-                    <div className="p-4 border-b flex justify-between items-center">
-                        <h3 className="font-semibold">Support Chat</h3>
+                <div className={styles.chatWindow}>
+                    <div className={styles.header.container}>
+                        <h3 className={styles.header.title}>Support Chat</h3>
                         <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${agentStatus === 'online' ? 'bg-green-500' : 'bg-gray-400'}`} />
+                            <span className={styles.header.status(agentStatus === 'online')} />
                             <span className="text-sm text-gray-600">{agentStatus === 'online' ? 'Agent Online' : 'Agent Offline'}</span>
                             <button
                                 onClick={() => setIsOpen(false)}
@@ -110,17 +111,14 @@ export function SupportChat() {
                         </div>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4">
+                    <div className={styles.messageContainer}>
                         {messages.map((message) => (
                             <div
                                 key={message.id}
-                                className={`mb-4 ${message.sender_type === 'user' ? 'text-right' : 'text-left'}`}
+                                className={styles.message.container(message.sender_type === 'agent')}
                             >
                                 <div
-                                    className={`inline-block p-3 rounded-lg ${message.sender_type === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-100 text-gray-800'
-                                        }`}
+                                    className={styles.message.bubble(message.sender_type === 'agent')}
                                 >
                                     {message.content}
                                 </div>
@@ -135,26 +133,24 @@ export function SupportChat() {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <div className="p-4 border-t">
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={newMessage}
-                                onChange={(e) => setNewMessage(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                placeholder="Type your message..."
-                                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                            <button
-                                onClick={handleSendMessage}
-                                className="bg-blue-500 hover:bg-blue-600 text-white rounded-lg px-4 py-2"
-                            >
-                                Send
-                            </button>
-                        </div>
+                    <div className={styles.inputContainer}>
+                        <input
+                            type="text"
+                            value={newMessage}
+                            onChange={(e) => setNewMessage(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            placeholder="Type your message..."
+                            className={styles.input}
+                        />
+                        <button
+                            onClick={handleSendMessage}
+                            className={styles.sendButton}
+                        >
+                            Send
+                        </button>
                     </div>
                 </div>
             )}
         </div>
     );
-} 
+}

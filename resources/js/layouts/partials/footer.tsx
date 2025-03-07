@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import { SVGProps } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { styles } from './footer.styles';
 
 const navigation = {
     solutions: [
@@ -98,32 +99,34 @@ export default function Footer() {
             <h2 id='footer-heading' className='sr-only'>
                 Footer
             </h2>
-            <div className='mx-auto max-w-7xl px-6 pb-8 pt-20 sm:pt-24 lg:px-8 lg:pt-32'>
-                <div className='xl:grid xl:grid-cols-3 xl:gap-8'>
-                    <div className='grid grid-cols-2 gap-8 xl:col-span-2'>
-                        <div className='md:grid md:grid-cols-2 md:gap-8'>
+            <div className={styles.container}>
+                <div className={styles.grid}>
+                    <div className={styles.navigation.container}>
+                        <div className={styles.navigation.grid}>
                             <div>
-                                <h3 className='text-sm font-semibold leading-6 text-primary'>Solutions</h3>
-                                <ul role='list' className='mt-6 space-y-4'>
+                                <h3 className={styles.navigation.section.title}>Solutions</h3>
+                                <ul role='list' className={styles.navigation.section.list}>
                                     {navigation.solutions.map((item) => (
                                         <li key={item.name}>
                                             <Link
                                                 href={item.href}
-                                                className='text-sm leading-6 text-muted-foreground hover:text-foreground'>
+                                                className={styles.navigation.section.link}
+                                            >
                                                 {item.name}
                                             </Link>
                                         </li>
                                     ))}
                                 </ul>
                             </div>
-                            <div className='mt-10 md:mt-0'>
-                                <h3 className='text-sm font-semibold leading-6 text-primary'>Support</h3>
-                                <ul role='list' className='mt-6 space-y-4'>
+                            <div>
+                                <h3 className={styles.navigation.section.title}>Support</h3>
+                                <ul role='list' className={styles.navigation.section.list}>
                                     {navigation.support.map((item) => (
                                         <li key={item.name}>
                                             <a
                                                 href={item.href}
-                                                className='text-sm leading-6 text-muted-foreground hover:text-foreground'>
+                                                className={styles.navigation.section.link}
+                                            >
                                                 {item.name}
                                             </a>
                                         </li>
@@ -131,15 +134,16 @@ export default function Footer() {
                                 </ul>
                             </div>
                         </div>
-                        <div className='md:grid md:grid-cols-2 md:gap-8'>
+                        <div className={styles.navigation.grid}>
                             <div>
-                                <h3 className='text-sm font-semibold leading-6 text-primary'>Company</h3>
-                                <ul role='list' className='mt-6 space-y-4'>
+                                <h3 className={styles.navigation.section.title}>Company</h3>
+                                <ul role='list' className={styles.navigation.section.list}>
                                     {navigation.company.map((item) => (
                                         <li key={item.name}>
                                             <a
                                                 href={item.href}
-                                                className='text-sm leading-6 text-muted-foreground hover:text-foreground'>
+                                                className={styles.navigation.section.link}
+                                            >
                                                 {item.name}
                                             </a>
                                         </li>
@@ -147,13 +151,14 @@ export default function Footer() {
                                 </ul>
                             </div>
                             <div className='mt-10 md:mt-0'>
-                                <h3 className='text-sm font-semibold leading-6 text-primary'>Legal</h3>
-                                <ul role='list' className='mt-6 space-y-4'>
+                                <h3 className={styles.navigation.section.title}>Legal</h3>
+                                <ul role='list' className={styles.navigation.section.list}>
                                     {navigation.legal.map((item) => (
                                         <li key={item.name}>
                                             <a
                                                 href={item.href}
-                                                className='text-sm leading-6 text-muted-foreground hover:text-foreground'>
+                                                className={styles.navigation.section.link}
+                                            >
                                                 {item.name}
                                             </a>
                                         </li>
@@ -162,13 +167,15 @@ export default function Footer() {
                             </div>
                         </div>
                     </div>
-                    <div className='mt-10 xl:mt-0'>
-                        <h3 className='text-sm font-semibold leading-6 text-primary'>Subscribe to our newsletter</h3>
-                        <p className='mt-2 text-sm leading-6 text-muted-foreground'>
+                    <div className={styles.newsletter.container}>
+                        <h3 className={styles.newsletter.title}>
+                            Subscribe to our newsletter
+                        </h3>
+                        <p className={styles.newsletter.description}>
                             The latest news, articles, and resources, sent to your inbox weekly.
                         </p>
-                        <form className='mt-6 sm:flex sm:max-w-md'>
-                            <label htmlFor='email-address' className='sr-only'>
+                        <form className={styles.newsletter.form}>
+                            <label htmlFor='email-address' className={styles.newsletter.input.label}>
                                 Email address
                             </label>
                             <Input
@@ -179,27 +186,28 @@ export default function Footer() {
                                 required
                                 placeholder='Enter your email'
                             />
-                            <div className='mt-4 sm:ml-4 sm:mt-0 sm:flex-shrink-0'>
+                            <div className={styles.newsletter.input.wrapper}>
                                 <Button type='submit'>Subscribe</Button>
                             </div>
                         </form>
                     </div>
                 </div>
-                <div className='mt-16 border-t border-slate-900/10 pt-8 sm:mt-20 md:flex md:items-center md:justify-between lg:mt-24'>
-                    <div className='flex space-x-6 md:order-2'>
+                <div className={styles.footer.container}>
+                    <div className={styles.footer.social.container}>
                         {navigation.social.map((item) => (
                             <a
                                 key={item.name}
                                 href={item.href}
-                                className='text-muted-foreground hover:text-foreground [&>svg]:h-5 [&>svg]:w-5 [&>svg]:stroke-[1.5]'>
-                                <span className='sr-only'>{item.name}</span>
+                                className={styles.footer.social.link}
+                            >
+                                <span className={styles.footer.social.label}>{item.name}</span>
                                 <item.icon aria-hidden='true' />
                             </a>
                         ))}
                     </div>
-                    <p className='mt-8 text-xs leading-5 text-muted-foreground md:order-1 md:mt-0'>
+                    <p className={styles.footer.copyright.text}>
                         &copy; 2020 Inertia.ts by{' '}
-                        <a href='https://twitter.com/irsyadadl' className='font-semibold text-foreground'>
+                        <a href='https://twitter.com/irsyadadl' className={styles.footer.copyright.link}>
                             irsyadadl
                         </a>
                         , Inc. All rights reserved.

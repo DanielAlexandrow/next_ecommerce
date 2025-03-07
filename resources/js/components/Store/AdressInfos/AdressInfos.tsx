@@ -2,12 +2,12 @@ import React from 'react';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage, Form } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { styles } from './AdressInfos.styles';
 
 const AddressInfo = ({ form, onSubmit, checkOut }) => {
-
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+			<form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
 				<FormField
 					control={form.control}
 					name="name"
@@ -60,7 +60,6 @@ const AddressInfo = ({ form, onSubmit, checkOut }) => {
 						</FormItem>
 					)}
 				/>
-
 				<FormField
 					control={form.control}
 					name="country"
@@ -88,7 +87,7 @@ const AddressInfo = ({ form, onSubmit, checkOut }) => {
 					)}
 				/>
 				{!checkOut && (
-					<Button type="submit" className="bg-white text-black">
+					<Button type="submit" className={styles.submitButton}>
 						Submit
 					</Button>
 				)}

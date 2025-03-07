@@ -4,29 +4,23 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-switch"
+import { styles } from './app-layout.styles';
 
 export function AdminLayout({ children }: PropsWithChildren) {
     const [sidebarMinimized, setSidebarMinimized] = useState(false);
 
     return (
         <ThemeProvider defaultTheme="system" storageKey="my-app-theme">
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div className="min-h-screen flex">
                 <Sidebar sidebarMinimized={sidebarMinimized} setSidebarMinimized={setSidebarMinimized} />
                 <ToastContainer />
 
-                <div style={{ flexGrow: 1, paddingLeft: sidebarMinimized ? '80px' : '200px' }}>
-                    <div
-                        style={{
-                            margin: '10px auto',
-                            maxWidth: '1200px',
-                        }}>
-                        {children}
-                    </div>
+                <div className={`flex-1 ${sidebarMinimized ? 'pl-20' : 'pl-64'}`}>
+                    {children}
                 </div>
             </div>
-            <header className="border-b">
-                <div className="container flex items-center justify-between">
-                    {/* Your other header content */}
+            <header className={styles.header}>
+                <div className={styles.headerContainer}>
                     <ThemeToggle />
                 </div>
             </header>

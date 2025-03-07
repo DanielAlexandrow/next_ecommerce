@@ -1,52 +1,32 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+import { styles } from './Footer.styles';
 
 const Footer: React.FC = () => {
     return (
-        <footer className="bg-gray-800 text-white py-12">
-            <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <footer className={styles.footer}>
+            <div className={styles.container}>
+                <div className={styles.grid}>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <h3 className="text-lg font-semibold mb-4">About Us</h3>
-                        <p className="text-gray-400">
-                            Your one-stop shop for all your needs. We provide quality products
-                            with excellent customer service.
-                        </p>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                    >
-                        <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-                        <ul className="space-y-2">
+                        <h3 className={styles.quickLinks.title}>Quick Links</h3>
+                        <ul className={styles.quickLinks.list}>
                             <li>
-                                <Link
-                                    href="/products"
-                                    className="text-gray-400 hover:text-white transition-colors"
-                                >
+                                <Link href="/products" className={styles.quickLinks.link}>
                                     Products
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/categories"
-                                    className="text-gray-400 hover:text-white transition-colors"
-                                >
+                                <Link href="/categories" className={styles.quickLinks.link}>
                                     Categories
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    href="/contact"
-                                    className="text-gray-400 hover:text-white transition-colors"
-                                >
+                                <Link href="/contact" className={styles.quickLinks.link}>
                                     Contact Us
                                 </Link>
                             </li>
@@ -56,22 +36,47 @@ const Footer: React.FC = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.4 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-                        <p className="text-gray-400 mb-4">
+                        <h3 className={styles.quickLinks.title}>Company</h3>
+                        <ul className={styles.quickLinks.list}>
+                            <li>
+                                <Link href="/about" className={styles.quickLinks.link}>
+                                    About Us
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/privacy" className={styles.quickLinks.link}>
+                                    Privacy Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/terms" className={styles.quickLinks.link}>
+                                    Terms & Conditions
+                                </Link>
+                            </li>
+                        </ul>
+                    </motion.div>
+
+                    <motion.div
+                        initial={styles.newsletter.container.initial}
+                        whileInView={styles.newsletter.container.whileInView}
+                        transition={styles.newsletter.container.transition}
+                    >
+                        <h3 className={styles.newsletter.title}>Newsletter</h3>
+                        <p className={styles.newsletter.description}>
                             Subscribe to our newsletter for updates and exclusive offers.
                         </p>
-                        <div className="flex">
+                        <div className={styles.newsletter.form}>
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="flex-1 px-4 py-2 rounded-l-md text-gray-900 focus:outline-none"
+                                className={styles.newsletter.input}
                             />
                             <motion.button
-                                className="bg-primary-500 px-4 py-2 rounded-r-md"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                className={styles.newsletter.button.base}
+                                whileHover={styles.newsletter.button.hover}
+                                whileTap={styles.newsletter.button.tap}
                             >
                                 Subscribe
                             </motion.button>
@@ -80,10 +85,10 @@ const Footer: React.FC = () => {
                 </div>
 
                 <motion.div
-                    className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
+                    className={styles.copyright.container.base}
+                    initial={styles.copyright.container.animation.initial}
+                    whileInView={styles.copyright.container.animation.whileInView}
+                    transition={styles.copyright.container.animation.transition}
                 >
                     <p>&copy; 2024 Your Store. All rights reserved.</p>
                 </motion.div>
@@ -92,4 +97,4 @@ const Footer: React.FC = () => {
     );
 };
 
-export default Footer; 
+export default Footer;

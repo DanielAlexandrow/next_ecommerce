@@ -14,5 +14,12 @@ export const navigationApi = {
 		if (response.status !== 200) {
 			throw new Error('Failed to update navigation');
 		}
+	},
+
+	logout: async (): Promise<void> => {
+		const response = await axios.post('/logout');
+		if (response.status !== 200 && response.status !== 204) {
+			throw new Error('Failed to logout');
+		}
 	}
 };

@@ -158,12 +158,17 @@ class ProductSeeder extends Seeder {
                     $product->categories()->attach($category->id);
                 }
 
-                foreach ($productData['subproducts'] as $subproductData) {
+                foreach ($productData['subproducts'] as $index => $subproductData) {
                     Subproduct::create([
                         'name' => $subproductData['name'],
                         'price' => $subproductData['price'],
                         'product_id' => $product->id,
                         'available' => true,
+                        'sku' => strtoupper(
+                            preg_replace('/[^A-Za-z0-9]/', '', $product->name) . 
+                            '-' . 
+                            preg_replace('/[^A-Za-z0-9]/', '', $subproductData['name'])
+                        ),
                     ]);
                 }
             }

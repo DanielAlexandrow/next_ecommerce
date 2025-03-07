@@ -23,13 +23,6 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user() ? UserResource::make($request->user()) : null,
             ],
-            // 'ziggy' => fn () => [
-            //     ...(new Ziggy)->toArray(), ...[
-            //         'location' => $request->url(),
-            //     ],
-            // ],
-
-            // 'hasTermsAndPrivacyPolicyFeature' => Clara::hasTermsAndPrivacyPolicyFeature(),
         ]);
     }
 }

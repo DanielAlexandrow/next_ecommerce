@@ -1,218 +1,170 @@
-import type { NavigationHeader, NavigationIt, TemporaryNavigationIt } from '@/types';
-import { AdminLayout } from '@/layouts/app-layout';
 import React, { useEffect } from 'react';
-import { IoArrowUp } from 'react-icons/io5';
-import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import { usePage } from '@inertiajs/react';
-import { navigationStore } from '@/stores/productlist/navigation/navigationstore';
-import { FaPlusCircle, FaRegTrashAlt } from 'react-icons/fa';
-import NavigationItem from '../../components/Admin/NavigationMaker/NavigationItem';
-import DeleteNavigationItemModal from '../../components/Admin/NavigationMaker/DeleteNavItemModal';
-import { toast } from 'react-toastify';
+import { NavigationHeader, NavigationItem as NavigationItemType } from '@/types';
+import AdminLayout from '@/layouts/admin-layout';
+import NavigationItem from '@/components/Admin/NavigationMaker/NavigationItem';
+import { motion, AnimatePresence } from 'framer-motion';
 import NewHeaderModal from '@/components/Admin/NavigationMaker/NewHeaderModal';
+import DeleteHeaderNavigationModal from '@/components/Admin/NavigationMaker/DeleteHeaderNavigationModal';
 import EditNavigationItemModal from '@/components/Admin/NavigationMaker/EditNavigationItemModal';
-import DeleteHeaderNavigationModal from '@/components/Admin/NavigationMaker/DeleteNavigationHeaderModal';
+import { HeaderState, navigationMakerStore } from '@/stores/navigationmaker/navigationmakerstore';
+import DeleteNavigationItemModal from '@/components/Admin/NavigationMaker/DeleteNavigationItemModal';
+import { IoArrowUp } from 'react-icons/io5';
+import { FaPlusCircle } from 'react-icons/fa';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { useQuery } from '@tanstack/react-query';
 import { navigationApi } from '@/api/navigationApi';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
+import { styles } from './NavigationMaker.styles';
 
-// Add a module-level counter for unique negative IDs
-let tempIdCounter = -1;
-
-const generateUniqueId = () => {
-	return {
-		id: tempIdCounter--, // Returns a number
-		isTemporary: true as const
-	};
+const fetchHeaders = async () => {
+	return await navigationApi.getNavData();
 };
 
 const NavigationMaker = () => {
-	const [
-		headers,
-		setHeaders,
-		selectedNavigationItem,
-		setOpenNewHeaderModal,
-		setSelectedHeader,
-		openEditNavigationItemModal,
-		setOpenDeleteHeaderModal,
-	] = navigationStore((state) => [
-		state.headers,
-		state.setHeaders,
-		state.selectedNavigationItem,
+	const [headers, setHeaders, selectedHeader, setSelectedHeader, selectedNavigationItem, setSelectedNavigationItem] =
+		navigationMakerStore((state) => [
+			state.headers,
+			state.setHeaders,
+			state.selectedHeader,
+			state.setSelectedHeader,
+			state.selectedNavigationItem,
+			state.setSelectedNavigationItem,
+		]);
+
+	const [openNewHeaderModal, setOpenNewHeaderModal] = navigationMakerStore((state) => [
+		state.openNewHeaderModal,
 		state.setOpenNewHeaderModal,
-		state.setSelectedHeader,
-		state.openEditNavigationItemModal,
+	]);
+
+	const [openDeleteHeaderModal, setOpenDeleteHeaderModal] = navigationMakerStore((state) => [
+		state.openDeleteHeaderModal,
 		state.setOpenDeleteHeaderModal,
 	]);
 
-	const pageProps: any = usePage().props;
+	const [openEditNavigationItemModal, setOpenEditNavigationItemModal] = navigationMakerStore((state) => [
+		state.openEditNavigationItemModal,
+		state.setOpenEditNavigationItemModal,
+	]);
 
-	useEffect(() => {
-		console.log('pageProps.headers', pageProps);
-		setHeaders(pageProps.headers);
-	}, []);
-
-	const handleHeaderOrderLeft = (index: number) => {
-		const items = Array.from(headers);
-		if (index > 0) {
-			const temp = items[index - 1];
-			items[index - 1] = items[index];
-			items[index] = temp;
-			items.forEach((item, index) => {
-				item.order_num = index + 1;
-			});
-			setHeaders(items);
-		}
-	};
-
-	const handleHeaderOrderRight = (index: number) => {
-		const items = Array.from(headers);
-		if (index < items.length - 1) {
-			const temp = items[index + 1];
-			items[index + 1] = items[index];
-			items[index] = temp;
-			items.forEach((item, index) => {
-				item.order_num = index + 1;
-			});
-			setHeaders(items);
-		}
-	};
-
-	const handleSaveNavigation = async () => {
-		try {
-			const processedHeaders = headers.map(header => ({
-				id: typeof header.id === 'string' || header.id < 0 ? 0 : Number(header.id),
-				name: header.name,
-				order_num: header.order_num,
-				navigation_items: header.navigation_items.map(item => ({
-					id: typeof item.id === 'string' || item.id < 0 ? 0 : Number(item.id),
-					name: item.name,
-					order_num: item.order_num,
-					header_id: typeof header.id === 'string' || header.id < 0 ? 0 : Number(header.id),
-					categories: item.categories,
-				}))
-			}));
-
-			await navigationApi.saveNavigation(processedHeaders);
-			toast.success('Navigation updated successfully');
-		} catch (error) {
-			toast.error('Error updating navigation: ' + (error instanceof Error ? error.message : String(error)));
-		}
-	};
+	const { data: fetchedHeaders } = useQuery({
+		queryKey: ['headers'],
+		queryFn: fetchHeaders,
+		onSuccess: (data) => {
+			setHeaders(data);
+		},
+	});
 
 	const handleAddNavigationItem = (header: NavigationHeader) => {
-		const { id: tempId, isTemporary } = generateUniqueId();
-
-		const newItem: TemporaryNavigationIt = {
-			id: tempId,
-			name: 'Menu Option',
+		const newNavigationItem: NavigationItemType = {
+			id: Math.floor(Math.random() * 1000000),
+			name: 'New Navigation Item',
 			order_num: header.navigation_items.length + 1,
 			header_id: header.id,
-			categories: [],
-			isTemporary
+			isTemporary: true,
 		};
 
-		const updatedHeaders: NavigationHeader[] = headers.map(item => {
-			if (item.id === header.id) {
-				return {
-					...item,
-					navigation_items: [...item.navigation_items, newItem]
-				};
-			}
-			return item;
-		});
-
-		setHeaders(updatedHeaders);
-	};
-
-	const handleMoveUp = (item: NavigationIt) => {
-		const updatedHeaders = headers.map(header => {
-			if (header.id !== item.header_id) return header;
-
-			const navigationItems = [...header.navigation_items];
-			const currentIndex = navigationItems.findIndex(navItem => navItem.id === item.id);
-
-			if (currentIndex > 0) {
-				[navigationItems[currentIndex - 1], navigationItems[currentIndex]] =
-					[navigationItems[currentIndex], navigationItems[currentIndex - 1]];
-
-				return {
-					...header,
-					navigation_items: navigationItems.map((navItem, idx) => ({
-						...navItem,
-						order_num: idx + 1
-					}))
-				};
-			}
-			return header;
-		});
-
-		setHeaders(updatedHeaders);
-	};
-
-	const handleMoveDown = (item: NavigationIt) => {
-		const updatedHeaders = headers.map(header => {
-			if (header.id !== item.header_id) return header;
-
-			const navigationItems = [...header.navigation_items];
-			const currentIndex = navigationItems.findIndex(navItem => navItem.id === item.id);
-
-			if (currentIndex < navigationItems.length - 1) {
-				[navigationItems[currentIndex], navigationItems[currentIndex + 1]] =
-					[navigationItems[currentIndex + 1], navigationItems[currentIndex]];
-
-				return {
-					...header,
-					navigation_items: navigationItems.map((navItem, idx) => ({
-						...navItem,
-						order_num: idx + 1
-					}))
-				};
-			}
-			return header;
-		});
-
-		setHeaders(updatedHeaders);
-	};
-
-	const handleChangeHeaderName = (header: NavigationHeader, name: string) => {
-		const updatedHeaders = headers.map(item => {
-			if (item.id !== header.id) return item;
-			return { ...item, name };
-		});
-		setHeaders(updatedHeaders);
-	};
-
-	const handleAddHeader = () => {
-		const { id: tempId } = generateUniqueId();
-
-		const newHeader: NavigationHeader = {
-			id: tempId, // Unique negative integer ID
-			name: 'New Header',
-			order_num: headers.length + 1,
-			navigation_items: []
+		const updatedHeader = {
+			...header,
+			navigation_items: [...header.navigation_items, newNavigationItem],
 		};
 
-		setHeaders([...headers, newHeader]);
+		setHeaders(
+			headers.map((h) => {
+				if (h.id === header.id) {
+					return updatedHeader;
+				}
+				return h;
+			})
+		);
+	};
+
+	const handleChangeHeaderName = (header: NavigationHeader, newName: string) => {
+		const updatedHeader = { ...header, name: newName };
+		updateHeader(updatedHeader);
+	};
+
+	const handleHeaderOrderRight = async (index: number) => {
+		if (index >= headers.length - 1) return;
+
+		const newHeaders = [...headers];
+		[newHeaders[index], newHeaders[index + 1]] = [newHeaders[index + 1], newHeaders[index]];
+
+		newHeaders[index].order_num = index + 1;
+		newHeaders[index + 1].order_num = index + 2;
+
+		setHeaders(newHeaders);
+
+		try {
+			await navigationApi.updateHeaderOrder({
+				header_id: newHeaders[index + 1].id,
+				new_order: newHeaders[index + 1].order_num,
+			});
+			await navigationApi.updateHeaderOrder({
+				header_id: newHeaders[index].id,
+				new_order: newHeaders[index].order_num,
+			});
+		} catch (error) {
+			console.error('Error updating header order:', error);
+		}
+	};
+
+	const handleHeaderOrderLeft = async (index: number) => {
+		if (index <= 0) return;
+
+		const newHeaders = [...headers];
+		[newHeaders[index], newHeaders[index - 1]] = [newHeaders[index - 1], newHeaders[index]];
+
+		newHeaders[index].order_num = index + 1;
+		newHeaders[index - 1].order_num = index;
+
+		setHeaders(newHeaders);
+
+		try {
+			await navigationApi.updateHeaderOrder({
+				header_id: newHeaders[index - 1].id,
+				new_order: newHeaders[index - 1].order_num,
+			});
+			await navigationApi.updateHeaderOrder({
+				header_id: newHeaders[index].id,
+				new_order: newHeaders[index].order_num,
+			});
+		} catch (error) {
+			console.error('Error updating header order:', error);
+		}
+	};
+
+	const updateHeader = async (updatedHeader: HeaderState) => {
+		setHeaders(
+			headers.map((h) => {
+				if (h.id === updatedHeader.id) {
+					return updatedHeader;
+				}
+				return h;
+			})
+		);
+
+		try {
+			await navigationApi.updateHeader(updatedHeader);
+		} catch (error) {
+			console.error('Error updating header:', error);
+		}
 	};
 
 	return (
 		<>
-			<h1 className='text-center'>Navigation Maker</h1>
-			<div className='flex space-x-4 mb-4'>
-				<Button onClick={handleSaveNavigation}>Sync Headers</Button>
-				<Button onClick={handleAddHeader}>Add New Header</Button>
-			</div>
+			<motion.div layout>
+				<button
+					onClick={() => setOpenNewHeaderModal(true)}
+					className='bg-white text-black p-2 rounded-md hover:bg-gray-200 transition duration-200 mb-4'
+				>
+					Add New Header
+				</button>
 
-			<motion.div className='flex flex-wrap' layout>
 				<AnimatePresence>
 					{headers
 						.sort((a, b) => a.order_num - b.order_num)
 						.map((header, index) => (
 							<motion.div
-								key={header.id} // Unique key using unique negative IDs
-								className='border rounded-lg p-2 m-1 max-w-[250px]'
+								key={header.id}
 								layout
 								initial={{ opacity: 0, scale: 0.9 }}
 								animate={{ opacity: 1, scale: 1 }}
@@ -220,27 +172,25 @@ const NavigationMaker = () => {
 								transition={{ duration: 0.3 }}
 							>
 								<div>
-									<div className='flex items-center mb-2'>
+									<div className={styles.container.header}>
 										<motion.div
-											style={{ padding: '3px' }}
+											className={styles.button.arrow}
 											onClick={() => handleHeaderOrderLeft(index)}
-											className='text-lg hover:border hover:border-white rounded-sm cursor-pointer'
 											whileTap={{ scale: 0.8 }}
 										>
 											<IoArrowUp style={{ transform: 'rotate(-90deg)' }} title='Move Left' />
 										</motion.div>
 										<motion.input
 											type='text'
-											className='text-white bg-black text-center hover:border hover:border-white rounded-sm flex-1 mx-2 p-1'
+											className={styles.input}
 											value={header.name}
 											onChange={(e) => handleChangeHeaderName(header, e.target.value)}
 											whileFocus={{ scale: 1.05 }}
 											transition={{ duration: 0.2 }}
 										/>
 										<motion.div
-											style={{ padding: '3px' }}
+											className={styles.button.arrow}
 											onClick={() => handleHeaderOrderRight(index)}
-											className='text-lg hover:border hover:border-white rounded-sm cursor-pointer'
 											whileTap={{ scale: 0.8 }}
 										>
 											<IoArrowUp style={{ transform: 'rotate(+90deg)' }} title='Move Right' />
@@ -248,7 +198,7 @@ const NavigationMaker = () => {
 									</div>
 									<div className='inline-flex justify-center w-full mb-2'>
 										<motion.div
-											className='place-content-center hover:border hover:border-white rounded-sm p-1 cursor-pointer'
+											className={styles.button.action}
 											onClick={() => handleAddNavigationItem(header)}
 											whileTap={{ scale: 0.8 }}
 										>
@@ -258,7 +208,7 @@ const NavigationMaker = () => {
 											/>
 										</motion.div>
 										<motion.div
-											className='place-content-center hover:border hover:border-white rounded-sm p-1 cursor-pointer'
+											className={styles.button.action}
 											onClick={() => {
 												setSelectedHeader(header);
 												setOpenDeleteHeaderModal(true);
@@ -278,7 +228,7 @@ const NavigationMaker = () => {
 											.sort((a, b) => a.order_num - b.order_num)
 											.map((item) => (
 												<NavigationItem
-													key={`${header.id}-${item.id}-${item.isTemporary ? 'temp' : 'perm'}`} // Unique key
+													key={`${header.id}-${item.id}-${item.isTemporary ? 'temp' : 'perm'}`}
 													item={item}
 												/>
 											))}

@@ -22,9 +22,12 @@ interface NavigationStore {
 
 	openDeleteHeaderModal: boolean;
 	setOpenDeleteHeaderModal: (open: boolean) => void;
+
+	deleteItem: (itemId: number) => void;
+	setEditItem: (item: NavigationIt) => void;
 }
 
-export const navigationStore = create<NavigationStore>((set) => ({
+export const navigationStore = create<NavigationStore>((set, get) => ({
 	headers: [],
 	setHeaders: (headers) => set({ headers }),
 
@@ -45,4 +48,22 @@ export const navigationStore = create<NavigationStore>((set) => ({
 
 	openDeleteHeaderModal: false,
 	setOpenDeleteHeaderModal: (open) => set({ openDeleteHeaderModal: open }),
+
+	deleteItem: (itemId) => {
+		set((state) => {
+			const updatedHeaders = state.headers.map(header => ({
+				...header,
+				navigation_items: header.navigation_items.filter(item => item.id !== itemId)
+			}));
+			return { headers: updatedHeaders };
+		});
+		set({ openDeleteNavigationItemModal: true });
+	},
+
+	setEditItem: (item) => {
+		set({ 
+			selectedNavigationItem: item,
+			openEditNavigationItemModal: true 
+		});
+	}
 }));

@@ -1,122 +1,64 @@
-import { Category } from '@/types';
-import { Badge } from '../../ui/badge';
-import { useState, useEffect } from 'react';
-import { Input } from '../../ui/input';
+import React, { useEffect, useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { styles } from './CategorySelect.styles';
+import { ProductCategory } from '@/types';
 import { categoryApi } from '@/api/categoryApi';
 import { toast } from 'react-toastify';
 
 interface CategorySelectProps {
-	selectedCategories: any[];
-	setSelectedCategories: React.Dispatch<React.SetStateAction<any[]>>;
+    selectedCategories: ProductCategory[];
+    setSelectedCategories: React.Dispatch<React.SetStateAction<ProductCategory[]>>;
 }
 
-const CategorySelect = ({ selectedCategories, setSelectedCategories }: CategorySelectProps) => {
-	const [allCategories, setAllCategories] = useState<Category[]>([]);
-	const [filterText, setFilterText] = useState('');
+const CategorySelect: React.FC<CategorySelectProps> = ({
+    selectedCategories,
+    setSelectedCategories,
+}) => {
+    const [categories, setCategories] = useState<ProductCategory[]>([]);
 
-	useEffect(() => {
-		const loadCategories = async () => {
-			const categories = await categoryApi.fetchCategories();
-			setAllCategories(categories);
-		};
-		loadCategories();
-	}, []);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoriesData = await categoryApi.fetchCategories();
+                setCategories(categoriesData.map((cat: any) => ({
+                    ...cat,
+                    pivot: { category_id: cat.id }
+                })));
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+                toast.error('Failed to load categories');
+            }
+        };
+        fetchCategories();
+    }, []);
 
-	const handleSelectCategory = (category: Category) => {
-		if (!selectedCategories.find((selectedCat) => selectedCat.id === category.id)) {
-			setSelectedCategories([
-				...selectedCategories,
-				{ id: category.id, name: category.name, pivot: { category_id: category.id } },
-			]);
-		}
-	};
+    const handleCategoryChange = (category: ProductCategory) => {
+        const isSelected = selectedCategories.some((c) => c.id === category.id);
+        if (isSelected) {
+            setSelectedCategories(selectedCategories.filter((c) => c.id !== category.id));
+        } else {
+            setSelectedCategories([...selectedCategories, category]);
+        }
+    };
 
-	const handleCreateCategory = async (categoryName: string) => {
-		try {
-			const newCategory = await categoryApi.createCategory(categoryName);
-			setAllCategories([...allCategories, newCategory]);
-			setSelectedCategories([
-				...selectedCategories,
-				{
-					id: newCategory.id,
-					name: newCategory.name,
-					pivot: { category_id: newCategory.id },
-				},
-			]);
-			setFilterText('');
-		} catch (error) {
-			console.error('Failed to create category:', error);
-			toast.error('Failed to create category');
-		}
-	};
-
-	const filteredCategories = filterText
-		? allCategories.filter((category) => category.name.toLowerCase().includes(filterText.toLowerCase()))
-		: [];
-
-	return (
-		<>
-			<div className='text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5 '>
-				Selected Categories
-			</div>
-			<div>
-				<ul>
-					{selectedCategories?.map((category) => (
-						<li className='mt-2' key={category.id}>
-							<Badge>
-								<div
-									data-testid={`selected-category-${category.id}`}
-									onClick={() =>
-										setSelectedCategories(
-											selectedCategories.filter((cat) => cat.id !== category.id)
-										)
-									}>
-									{category.name}
-								</div>
-							</Badge>
-						</li>
-					))}
-				</ul>
-			</div>
-
-			<div className='text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5'>
-				All Categories
-			</div>
-			<Input
-				data-testid="category-select-trigger"
-				placeholder='Type in a category'
-				type='text'
-				onChange={(e) => setFilterText(e.target.value)}
-				title='If category not already available, press ENTER to create it and add to the list'
-				maxLength={30}
-			/>
-			<div className='mt-5'>
-				<ul>
-					{filterText.length > 2 && allCategories.every((category) => category.name !== filterText) ? (
-						<li className='mt-2'>
-							<Badge>
-								<div data-testid="create-category-button" onClick={() => handleCreateCategory(filterText)}>
-									"{filterText}" not available. Press to create and add to list
-								</div>
-							</Badge>
-						</li>
-					) : null}
-					{filteredCategories.map((category) => (
-						<li className='mt-2' key={category.id}>
-							<Badge>
-								<div
-									data-testid={`category-option-${category.id}`}
-									onClick={() => handleSelectCategory(category)}
-								>
-									{category.name}
-								</div>
-							</Badge>
-						</li>
-					))}
-				</ul>
-			</div>
-		</>
-	);
+    return (
+        <div className={styles.container}>
+            <Label className={styles.label}>Categories</Label>
+            <div className={styles.categories.list}>
+                {categories.map((category) => (
+                    <div key={category.id} className={styles.categories.item}>
+                        <Checkbox
+                            id={`category-${category.id}`}
+                            checked={selectedCategories.some((c) => c.id === category.id)}
+                            onCheckedChange={() => handleCategoryChange(category)}
+                        />
+                        <Label htmlFor={`category-${category.id}`}>{category.name}</Label>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 };
 
 export default CategorySelect;

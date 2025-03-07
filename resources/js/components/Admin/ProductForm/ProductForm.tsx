@@ -1,81 +1,100 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { ProductFormProps } from '@/types/components';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import ImageSelect from './ImageSelect';
+import { Checkbox } from '../../ui/checkbox';
+import CategorySelect from './CategorySelect';
+import BrandSelect from './BrandSelect';
 import { Product } from '@/types';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
+import { styles } from './ProductForm.styles';
+import { useProductForm } from './ProductForm.hooks';
 
-export default function ProductForm({ mode, product, onSubmit, onCancel }: ProductFormProps) {
-	const { register, handleSubmit, formState: { errors } } = useForm<Partial<Product>>({
-		defaultValues: mode === 'edit' ? product : undefined
-	});
-
-	const onFormSubmit = (data: Partial<Product>) => {
-		onSubmit?.(data);
-	};
-
-	return (
-		<form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
-			<div>
-				<Label htmlFor="name">Name</Label>
-				<Input
-					id="name"
-					aria-label="name"
-					{...register('name', { required: 'Name is required' })}
-				/>
-				{errors.name && (
-					<p className="text-red-500 text-sm">{errors.name.message}</p>
-				)}
-			</div>
-
-			<div>
-				<Label htmlFor="description">Description</Label>
-				<Textarea
-					id="description"
-					aria-label="description"
-					{...register('description')}
-				/>
-			</div>
-
-			<div>
-				<Label htmlFor="price">Price</Label>
-				<Input
-					id="price"
-					type="number"
-					aria-label="price"
-					{...register('price', {
-						required: 'Price is required',
-						min: { value: 0, message: 'Price must be positive' }
-					})}
-				/>
-				{errors.price && (
-					<p className="text-red-500 text-sm">{errors.price.message}</p>
-				)}
-			</div>
-
-			<div>
-				<Label htmlFor="category">Category</Label>
-				<Input
-					id="category"
-					type="number"
-					aria-label="category"
-					{...register('category_id', { required: 'Category is required' })}
-				/>
-				{errors.category_id && (
-					<p className="text-red-500 text-sm">{errors.category_id.message}</p>
-				)}
-			</div>
-
-			<div className="flex justify-end gap-2">
-				{onCancel && (
-					<Button type="button" variant="outline" onClick={onCancel}>
-						Cancel
-					</Button>
-				)}
-				<Button type="submit">Save</Button>
-			</div>
-		</form>
-	);
+interface ProductFormProps {
+    mode: 'edit' | 'new';
+    product: Product | null;
 }
+
+const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
+    const {
+        form,
+        onSubmit,
+        productImages,
+        setProductImages,
+        productCategories,
+        setProductCategories,
+        productBrand,
+        setProductBrand
+    } = useProductForm(mode, product);
+
+    return (
+        <>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className={styles.container.flex}>
+                    <div className={styles.column.left}>
+                        <FormField
+                            control={form.control}
+                            name='name'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder='' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name='description'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder='' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name='available'
+                            render={({ field }) => (
+                                <FormItem className={styles.checkbox.container}>
+                                    <FormLabel>Available</FormLabel>
+                                    <FormControl>
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <CategorySelect
+                            selectedCategories={productCategories}
+                            setSelectedCategories={setProductCategories}
+                        />
+                        <Button type='submit' className={styles.submit}>
+                            Submit
+                        </Button>
+                    </div>
+                    <div className={styles.column.right}>
+                        <ImageSelect productImages={productImages} setProductImages={setProductImages} />
+                        <div className={styles.brand.container}>
+                            <div className={styles.brand.label}>
+                                Brand
+                            </div>
+                            <BrandSelect
+                                productBrand={productBrand}
+                                setProductBrand={setProductBrand}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </Form>
+        </>
+    );
+};
+
+export default ProductForm;

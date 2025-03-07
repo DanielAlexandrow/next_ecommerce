@@ -6,7 +6,7 @@ async function globalSetup() {
     const page = await context.newPage();
 
     // Navigate to login page
-    await page.goto('http://localhost:8000/login');
+    await page.goto('http://localhost:8000/adminlogin');
 
     // Fill in login form
     await page.fill('input[type="email"]', 'admin@example.com');

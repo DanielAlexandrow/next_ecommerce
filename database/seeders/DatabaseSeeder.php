@@ -138,11 +138,13 @@ class DatabaseSeeder extends Seeder {
 
             $newProduct->categories()->attach($category->id);
 
-            // Create subproduct for each product
+            // Create subproduct for each product with SKU
+            $sku = strtoupper(substr($product['brand'], 0, 3) . '-' . substr(preg_replace('/[^A-Za-z0-9]/', '', $product['name']), 0, 3) . '-STD');
             $newProduct->subproducts()->create([
                 'name' => 'Standard',
                 'price' => $product['price'],
                 'available' => true,
+                'sku' => $sku
             ]);
         }
 

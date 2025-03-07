@@ -11,6 +11,8 @@ import { StoreProduct } from '@/types';
 import { productApi } from '@/api/productApi';
 import { toast } from 'react-toastify';
 import { router } from '@inertiajs/react';
+import { cartApi } from '@/api/cartApi';
+import { styles } from './ProductSearch.styles';
 
 const ProductSearch = () => {
 	const {
@@ -53,6 +55,16 @@ const ProductSearch = () => {
 		router.visit(`/product/${productId}`);
 	};
 
+	const handleAddToCart = async (productId) => {
+		try {
+			const response = await cartApi.addItem(productId);
+			toast.success(response.result.headers['x-message']);
+		} catch (error) {
+			toast.error('Failed to add item to cart');
+			console.error('Add to cart error:', error);
+		}
+	}
+
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="flex flex-col md:flex-row gap-6">
@@ -78,29 +90,28 @@ const ProductSearch = () => {
 								<Card
 									key={product.id}
 									data-testid="product-card"
-									className="group hover:shadow-lg transition-shadow cursor-pointer"
+									className={styles.card}
 									onClick={() => handleProductClick(product.id)}
 								>
-									<CardContent className="p-0">
-										<div className="relative aspect-square">
+									<CardContent className={styles.content.container}>
+										<div className={styles.content.imageContainer}>
 											<img
 												src={getProductImage(product)}
 												alt={product.name}
-												className="object-cover w-full h-full rounded-t-lg"
+												className={styles.content.image}
 											/>
 											{product.subproducts.some(sp => sp.available) && (
-												<Badge className="absolute top-2 right-2 bg-green-500">
+												<Badge className={styles.content.badge}>
 													In Stock
 												</Badge>
 											)}
 										</div>
-										<div className="p-4">
-											<h3 className="font-semibold text-lg truncate">
+										<div className={styles.content.details.container}>
+											<h3 className={styles.content.details.title}>
 												{product.name}
 											</h3>
-
-											<div className="flex items-center gap-2 mt-2">
-												<span className="text-lg font-bold">
+											<div className={styles.content.details.priceContainer}>
+												<span className={styles.content.details.price}>
 													${getLowestPrice(product)}
 												</span>
 											</div>
@@ -108,11 +119,11 @@ const ProductSearch = () => {
 									</CardContent>
 									<CardFooter className="p-4 pt-0">
 										<Button
-											className="w-full group-hover:bg-primary/90"
+											className="w-full group-hover:bg-primary/90 text-black"
 											disabled={!product.subproducts.some(sp => sp.available)}
 											onClick={(e) => {
 												e.stopPropagation(); // Prevent card click when clicking button
-												// Add to cart logic here
+												handleAddToCart(product.id);
 											}}
 										>
 											<ShoppingCart className="w-4 h-4 mr-2" />

@@ -1,3 +1,4 @@
+<?php
 namespace Tests\Unit\Controllers;
 
 use Tests\TestCase;

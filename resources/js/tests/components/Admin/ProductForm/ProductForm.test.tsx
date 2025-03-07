@@ -403,7 +403,10 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const nameInput = screen.getByTestId('product-name-input');
+            const nameField = screen.getByTestId('product-name-input');
+            const input = nameField.querySelector('input');
+            expect(input).not.toBeNull();
+
             const testCases = [
                 '   Leading spaces',
                 'Trailing spaces   ',
@@ -415,7 +418,7 @@ describe('ProductForm Edge Cases', () => {
 
             for (const testCase of testCases) {
                 await act(async () => {
-                    fireEvent.change(nameInput, { target: { value: testCase } });
+                    fireEvent.change(input!, { target: { value: testCase } });
                 });
 
                 await waitFor(() => {
@@ -439,7 +442,10 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const descriptionInput = screen.getByTestId('product-description-input');
+            const descriptionField = screen.getByTestId('product-description-input');
+            const textarea = descriptionField.querySelector('textarea');
+            expect(textarea).not.toBeNull();
+
             const htmlTestCases = [
                 '<script>alert("xss")</script>',
                 '<img src="x" onerror="alert(1)">',
@@ -452,7 +458,7 @@ describe('ProductForm Edge Cases', () => {
 
             for (const testCase of htmlTestCases) {
                 await act(async () => {
-                    fireEvent.change(descriptionInput, { target: { value: testCase } });
+                    fireEvent.change(textarea!, { target: { value: testCase } });
                 });
 
                 await waitFor(() => {
@@ -478,7 +484,10 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const nameInput = screen.getByTestId('product-name-input');
+            const nameField = screen.getByTestId('product-name-input');
+            const input = nameField.querySelector('input');
+            expect(input).not.toBeNull();
+
             const sqlTestCases = [
                 "'; DROP TABLE products; --",
                 "' OR '1'='1",
@@ -492,7 +501,7 @@ describe('ProductForm Edge Cases', () => {
 
             for (const testCase of sqlTestCases) {
                 await act(async () => {
-                    fireEvent.change(nameInput, { target: { value: testCase } });
+                    fireEvent.change(input!, { target: { value: testCase } });
                 });
 
                 await waitFor(() => {
@@ -514,7 +523,10 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const nameInput = screen.getByTestId('product-name-input');
+            const nameField = screen.getByTestId('product-name-input');
+            const input = nameField.querySelector('input');
+            expect(input).not.toBeNull();
+
             const unicodeTestCases = [
                 '🌟 Star Product',
                 '产品名称',
@@ -529,7 +541,7 @@ describe('ProductForm Edge Cases', () => {
 
             for (const testCase of unicodeTestCases) {
                 await act(async () => {
-                    fireEvent.change(nameInput, { target: { value: testCase } });
+                    fireEvent.change(input!, { target: { value: testCase } });
                 });
 
                 await waitFor(() => {
@@ -549,12 +561,15 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const nameInput = screen.getByTestId('product-name-input');
+            const nameField = screen.getByTestId('product-name-input');
+            const input = nameField.querySelector('input');
+            expect(input).not.toBeNull();
+
             const rapidChanges = ['a', 'ab', 'abc', 'abcd', 'abcde'];
 
             for (const value of rapidChanges) {
                 await act(async () => {
-                    fireEvent.change(nameInput, { target: { value } });
+                    fireEvent.change(input!, { target: { value } });
                 });
             }
 
@@ -575,7 +590,10 @@ describe('ProductForm Edge Cases', () => {
 
             render(<ProductForm mode="new" product={mockProduct} />);
 
-            const descriptionInput = screen.getByTestId('product-description-input');
+            const descriptionField = screen.getByTestId('product-description-input');
+            const textarea = descriptionField.querySelector('textarea');
+            expect(textarea).not.toBeNull();
+
             const mixedContent = `
                 <h1>Product Title</h1>
                 🌟 Special Features:
@@ -594,9 +612,9 @@ describe('ProductForm Edge Cases', () => {
                         getData: () => mixedContent
                     }
                 });
-                fireEvent.paste(descriptionInput, pasteEvent);
+                fireEvent.paste(textarea!, pasteEvent);
                 // Also trigger change event as it would happen in real browser
-                fireEvent.change(descriptionInput, { target: { value: mixedContent } });
+                fireEvent.change(textarea!, { target: { value: mixedContent } });
             });
 
             await waitFor(() => {
@@ -608,4 +626,4 @@ describe('ProductForm Edge Cases', () => {
             });
         });
     });
-}); 
+});

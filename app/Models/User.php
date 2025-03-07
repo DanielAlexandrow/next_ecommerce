@@ -54,4 +54,13 @@ class User extends Authenticatable {
     public function getAvatarAttribute(): string {
         return $this->avatar();
     }
+
+    /**
+     * Check if the user is an admin.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool {
+        return $this->role === 'admin';
+    }
 }

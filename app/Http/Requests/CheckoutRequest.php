@@ -11,7 +11,7 @@ class CheckoutRequest extends FormRequest {
 
 	public function rules() {
 		$rules = [
-			'cart_id' => 'required|exists:cart,id',
+			'cart_id' => 'required|exists:carts,id',
 		];
 
 		if ($this->user() === null) {

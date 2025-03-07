@@ -95,7 +95,7 @@ const CoordinateForm: React.FC = () => {
                     {errors.address && <p className="text-red-500">{errors.address.message}</p>}
                 </div>
                 <div className="mb-4">
-                    <div id="map" style={{ width: '100%', height: '400px' }}></div>
+                    <div id="map" className="map-container"></div>
                 </div>
                 <div className="mb-4">
                     <Input
@@ -123,4 +123,4 @@ const CoordinateForm: React.FC = () => {
     );
 };
 
-export default CoordinateForm; 
+export default CoordinateForm;

@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { styles } from './AdminSidebar.styles';
 
 import {
     LayoutDashboard,
@@ -67,18 +68,18 @@ export function AdminSidebar({ className }: SidebarProps) {
     ];
 
     const SidebarContent = () => (
-        <Sidebar className="pb-12">
-            <div className="space-y-4 py-4">
-                <div className="px-3 py-2">
-                    <h2 className="mb-2 px-4 text-lg font-semibold">Admin Panel</h2>
-                    <div className="space-y-1">
+        <Sidebar className={styles.sidebar}>
+            <div className={styles.container}>
+                <div className={styles.nav}>
+                    <h2 className={styles.title}>Admin Panel</h2>
+                    <div className={styles.navItems}>
                         {nav.map((item) => (
                             <Link key={item.href} href={item.href}>
                                 <Button
                                     variant="ghost"
-                                    className="w-full justify-start gap-2"
+                                    className={styles.button}
                                 >
-                                    <item.icon className="h-4 w-4" />
+                                    <item.icon className={styles.icon} />
                                     {item.title}
                                 </Button>
                             </Link>
@@ -93,11 +94,11 @@ export function AdminSidebar({ className }: SidebarProps) {
         return (
             <Sheet>
                 <SheetTrigger asChild>
-                    <Button variant="ghost" size="icon" className="lg:hidden">
-                        <Menu className="h-6 w-6" />
+                    <Button variant="ghost" size="icon" className={styles.mobileButton}>
+                        <Menu className={styles.mobileIcon} />
                     </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="w-[240px] p-0">
+                <SheetContent side="left" className={styles.mobileSheet}>
                     <SidebarContent />
                 </SheetContent>
             </Sheet>
@@ -105,8 +106,8 @@ export function AdminSidebar({ className }: SidebarProps) {
     }
 
     return (
-        <ScrollArea className={cn("hidden lg:block", className)}>
+        <ScrollArea className={cn(styles.scrollArea, className)}>
             <SidebarContent />
         </ScrollArea>
     );
-} 
+}

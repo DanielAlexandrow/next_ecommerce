@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { StoreLayout } from '@/layouts/store-layout';
 import { useQuery } from '@tanstack/react-query';
 import { orderApi } from '@/api/orderApi';
@@ -109,7 +109,7 @@ const OrdersPage = () => {
                                 <Button
                                     variant="outline"
                                     className="w-full"
-                                    onClick={() => window.open(`/orders/generatepdf/${order.id}`, '_blank')}
+                                    onClick={() => window.open(window.location.origin + `/orders/generatepdf/${order.id}`, '_blank')}
                                 >
                                     Download Invoice
                                 </Button>
@@ -124,4 +124,4 @@ const OrdersPage = () => {
 
 OrdersPage.layout = (page: React.ReactNode) => <StoreLayout>{page}</StoreLayout>;
 
-export default OrdersPage; 
+export default OrdersPage;

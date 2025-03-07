@@ -2,18 +2,19 @@ import React from 'react';
 import { navigationStore } from '@/stores/productlist/navigation/navigationstore';
 import NavigationItem from './NavigationItem';
 import { AnimatePresence, motion } from 'framer-motion';
+import { styles } from './NavigationList.styles';
 
 const NavigationList: React.FC = () => {
     const headers = navigationStore((state) => state.headers);
 
     return (
-        <motion.table className='w-full' layout>
+        <motion.table className={styles.table} layout>
             <thead>
-                <tr className='bg-gray-800 text-white'>
-                    <th className='p-2'>Delete</th>
-                    <th className='p-2'>Edit</th>
-                    <th className='p-2'>Name</th>
-                    <th className='p-2'>Actions</th>
+                <tr className={styles.header.row}>
+                    <th className={styles.header.cell}>Delete</th>
+                    <th className={styles.header.cell}>Edit</th>
+                    <th className={styles.header.cell}>Name</th>
+                    <th className={styles.header.cell}>Actions</th>
                 </tr>
             </thead>
             <motion.tbody>
@@ -32,4 +33,4 @@ const NavigationList: React.FC = () => {
     );
 };
 
-export default NavigationList; 
+export default NavigationList;

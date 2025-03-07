@@ -15,14 +15,18 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'avatar' => $this->avatar(),
-            'acronym' => $this->createAcronym($request->user()->name),
-            'id' => $this->id,
-            'username' => $this->username,
-            'name' => $this->name,
-            'email' => $this->email,
-            'status' => $this->hasVerifiedEmail() ? 'Verified' : 'Unverified',
-            'joined' => $this->created_at->format('j M Y, g:i a'),
+            'data' => [
+                'id' => $this->id,
+                'username' => $this->username,
+                'name' => $this->name,
+                'email' => $this->email,
+                'role' => $this->role,
+                'isAdmin' => $this->isAdmin(),
+                'avatar' => $this->avatar(),
+                'acronym' => $this->createAcronym($this->name),
+                'status' => $this->hasVerifiedEmail() ? 'Verified' : 'Unverified',
+                'joined' => $this->created_at->format('j M Y, g:i a'),
+            ]
         ];
     }
 

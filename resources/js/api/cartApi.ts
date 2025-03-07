@@ -18,6 +18,11 @@ export const cartApi = {
 			cart_id: cartId
 		});
 		return response.data;
+	},
+
+	getItems: async () => {
+		const result = await axios.get("/getcartitems");
+		return result.data;
 	}
 };
 

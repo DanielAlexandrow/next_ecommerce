@@ -13,6 +13,16 @@ export function getFirstWord(value: string) {
 	return value.split(' ')[0];
 }
 
+export function formatDate(dateString: string): string {
+	if (!dateString) return '';
+	const date = new Date(dateString);
+	return new Intl.DateTimeFormat('en-US', { 
+		year: 'numeric', 
+		month: 'long', 
+		day: 'numeric' 
+	}).format(date);
+}
+
 export function updateLinks(links, sortKey, sortDirection) {
 	if (!links) return [];
 	return links.map((link) => {

@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import AnimatedLayout from '@/components/Layout/AnimatedLayout';
 import AnimatedCart from '@/components/Cart/AnimatedCart';
 import useCart from '@/hooks/useCart';
+import { styles } from './main-layout.styles';
 
 interface MainLayoutProps {
     children: React.ReactNode;
@@ -23,13 +24,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, title = 'Welcome' }) 
     } = useCart();
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className={styles.container}>
             <Head title={title} />
-
             <Navbar onCartClick={openCart} cartItemCount={totalItems} />
 
             <AnimatedLayout>
-                <main className="container mx-auto px-4 py-8">
+                <main className={styles.main}>
                     {children}
                 </main>
             </AnimatedLayout>
@@ -47,4 +47,4 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, title = 'Welcome' }) 
     );
 };
 
-export default MainLayout; 
+export default MainLayout;

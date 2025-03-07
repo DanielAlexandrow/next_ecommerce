@@ -19,11 +19,17 @@ export const brandApi = {
 		const response = await axios.put(`${API_URL}/${id}`, data);
 		return response.data;
 	},
+
 	deleteBrand: async (id: number) => {
 		const response = await axios.delete(`/brands/${id}`);
 		if (response.status !== 204) {
 			throw new Error('Failed to delete brand');
 		}
 		return response;
+	},
+
+	getAllBrands: async () => {
+		const response = await axios.get(`${API_URL}/getallbrands`);
+		return response.data;
 	},
 };

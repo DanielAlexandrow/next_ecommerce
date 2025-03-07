@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { TableRow, TableCell, TableBody, Table } from '../../ui/table';
-import { IoArrowUp, IoArrowDown } from 'react-icons/io5';
-import { Button } from '../../ui/button';
-import { ProductImage, CustomImage } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHeader, TableRow } from '@/components/ui/table';
+import React, { useEffect, useState } from 'react';
+import { CustomImage } from '@/types';
+import { styles } from './ImageSelect.styles';
 import { imageApi } from '@/api/imageApi';
-import { Input } from '../../ui/input';
 import Paginate from '@/components/pagination';
 import { updateLinks } from '@/lib/utils';
 
@@ -115,60 +115,66 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 	};
 
 	const pages = (
-		<div className='mt-4'>
+		<div className={styles.paginationContainer}>
 			{links.length > 0 && <Paginate links={links} onPageChange={handlePageChange} />}
 		</div>
 	);
 
 	return (
 		<>
-			<div className='text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5'>
+			<div className={styles.titleText}>
 				Selected Images {maxSelected ? `(${productImages.length}/${maxSelected})` : ''}
 			</div>
 			{pages}
 			{productImages.length > 0 ? (
 				<Table>
+						<TableHeader>
+						<TableRow>
+							<TableCell>Preview</TableCell>
+							<TableCell>Name</TableCell>
+							<TableCell>Actions</TableCell>
+						</TableRow>
+					</TableHeader>
 					<TableBody>
 						{productImages.map((image, index) => (
 							<TableRow key={image.id}>
 								<TableCell>
-									<div
-										data-testid={`move-up-${image.id}`}
-										className='text-lg hover:border hover:border-white rounded-sm'
-										onClick={() => handleOrderUp(index)}>
-										<IoArrowUp className='m-auto' />
-									</div>
-									<div
-										data-testid={`move-down-${image.id}`}
-										className='text-lg hover:border hover:border-white rounded-sm'
-										onClick={() => handleOrderDown(index)}>
-										<IoArrowDown className='m-auto' />
+									<img
+										src={image.full_path}
+										alt={image.name}
+										style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+									/>
+								</TableCell>
+								<TableCell>
+									<div data-testid={`selected-image-name-${image.id}`} className={styles.imageName}>
+										{image.name}
 									</div>
 								</TableCell>
 								<TableCell>
-									<Button
-										data-testid={`remove-image-${image.id}`}
-										className='text-m hover:border hover:border-white rounded-sm'
-										onClick={() => handleRemoveImage(image)}
-										variant='outline'>
-										Remove
-									</Button>
-								</TableCell>
-								<TableCell style={{ userSelect: 'none', pointerEvents: 'none' }}>
-									<img
-										data-testid={`selected-image-${image.id}`}
-										className='mx-auto'
-										style={{
-											width: '50px',
-											height: '50px',
-											userSelect: 'none',
-											pointerEvents: 'none',
-										}}
-										src={image.full_path}
-										alt={image.name}
-									/>
-									<div data-testid={`selected-image-name-${image.id}`} className='text-center' style={{ userSelect: 'none' }}>
-										{image.name}
+									<div className="flex gap-2">
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleOrderUp(index)}
+											disabled={index === 0}
+										>
+											↑
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleOrderDown(index)}
+											disabled={index === productImages.length - 1}
+										>
+											↓
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={() => handleRemoveImage(image.id)}
+										>
+											X
+										</Button>
 									</div>
 								</TableCell>
 							</TableRow>
@@ -176,12 +182,12 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 					</TableBody>
 				</Table>
 			) : (
-				<div data-testid="no-images-message" className='italic text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5'>
+				<div data-testid="no-images-message" className={styles.noImagesMessage}>
 					No images selected
 				</div>
 			)}
 
-			<div className='text-center text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 mb-5 mt-5'>
+			<div className={styles.titleText}>
 				All Images
 			</div>
 
@@ -191,37 +197,25 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 				placeholder='Search images...'
 				value={searchTerm}
 				onChange={handleSearch}
-				className='mb-4'
+				className={styles.searchInput}
 			/>
 
-			<div className='grid grid-cols-4 gap-4' style={{ overflow: 'auto' }}>
+			<div className={styles.imageGrid}>
 				{availableImages.map((image) => (
 					<div
 						data-testid={`image-option-${image.id}`}
 						key={image.id}
 						onClick={() => handleImageClick(image, productImages.length + 1)}
 						title={image.name}
-						style={{
-							border: productImages.some((selectedImg) => selectedImg.id === image.id)
-								? '3px solid #1c2738'
-								: 'none',
-							borderRadius: productImages.some((selectedImg) => selectedImg.id === image.id)
-								? '8px'
-								: '0',
-						}}
-						className='p-2'>
+						className={styles.imageOption(productImages.some((selectedImg) => selectedImg.id === image.id))}
+					>
 						<img
 							data-testid={`image-preview-${image.id}`}
-							style={{
-								width: '75px',
-								height: '75px',
-								margin: 'auto',
-							}}
-							className='object-cover'
+							className={styles.imagePreview}
 							src={'/storage/' + image.path}
 							alt={image?.name}
 						/>
-						<div data-testid={`image-name-${image.id}`} className='text-center overflow-hidden text-overflow ellipsis whitespace-nowrap'>
+						<div data-testid={`image-name-${image.id}`} className={styles.imageName}>
 							{image.name}
 						</div>
 					</div>
