@@ -10,7 +10,9 @@ use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminOrders;
 use App\Http\Controllers\BrandController;
-
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ShopSettingsController;
 
 use App\Http\Controllers\Store\ProductSearchController;
 use App\Http\Controllers\Store\StoreProductController;
@@ -19,6 +21,9 @@ use App\Http\Controllers\Store\CheckoutController;
 use App\Http\Controllers\Store\UserAdressInfoController;
 use App\Http\Controllers\Store\UserOrdersController;
 use App\Http\Controllers\Store\UserPasswordController;
+use App\Http\Controllers\DriverController;
+use App\Http\Controllers\DriverOrderController;
+use App\Http\Controllers\CoordinateController;
 
 // Public routes
 Route::get('/', function () {
@@ -46,7 +51,6 @@ Route::middleware(['auth'])->group(function () {
 	Route::get('/getImagesPaginated', [ImageController::class, 'getImagesPaginated']);
 
 	// Products routes
-	Route::resource('/products', ProductController::class)->only(['index', 'create', 'store', 'destroy', 'update', 'show']);
 	Route::get('/product/{product_id}', [StoreProductController::class, 'index']);
 
 	Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);

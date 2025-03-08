@@ -143,4 +143,37 @@ describe('BrandPage', () => {
         expect(screen.getByTestId('delete-brand-modal')).toBeInTheDocument();
         expect(screen.getByTestId('add-brand-modal')).toBeInTheDocument();
     });
-}); 
+
+    it('fails to open add brand modal when clicking add button', async () => {
+        const setOpenAddBrandModal = vi.fn();
+        const setModalMode = vi.fn();
+        const setModalBrand = vi.fn();
+
+        mockUseBrandStore.mockReturnValue({
+            brands: [
+                { id: 1, name: 'Brand 1', products_count: 5 },
+                { id: 2, name: 'Brand 2', products_count: 3 }
+            ],
+            openDeleteModal: false,
+            openAddBrandModal: false,
+            modalBrand: null,
+            modalMode: 'add',
+            setBrands: vi.fn(),
+            setOpenDeleteModal: vi.fn(),
+            setOpenAddBrandModal,
+            setModalBrand,
+            setModalMode
+        });
+
+        render(<BrandPage />);
+
+        const addButton = screen.getByText('Add new brand');
+        await act(async () => {
+            fireEvent.click(addButton);
+        });
+
+        expect(setModalMode).not.toHaveBeenCalled();
+        expect(setModalBrand).not.toHaveBeenCalled();
+        expect(setOpenAddBrandModal).not.toHaveBeenCalled();
+    });
+});

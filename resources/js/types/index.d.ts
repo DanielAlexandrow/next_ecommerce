@@ -5,6 +5,9 @@ export interface BaseModel {
 	updated_at?: string;
 }
 
+// Re-export Header type
+export { Header } from './types';
+
 // Product Types
 export interface ProductImage extends BaseModel {
 	name: string;
@@ -230,4 +233,30 @@ export interface Product {
     created_at?: string;
     updated_at?: string;
     average_rating?: number;
+}
+
+// Add the Image type if it's missing
+export interface Image {
+  id: number;
+  name: string;
+  path: string;
+  full_path: string; // Based on the models, this is an appended attribute
+  created_at?: string;
+  updated_at?: string;
+  pivot?: {
+    product_id: number;
+    image_id: number;
+    order_num: number;
+  };
+}
+
+// Add NavigationItem if it doesn't exist
+export interface NavigationItem {
+  id: number;
+  name: string;
+  order_num: number;
+  description?: string;
+  header_id: number;
+  header?: Header;
+  categories?: Category[];
 }

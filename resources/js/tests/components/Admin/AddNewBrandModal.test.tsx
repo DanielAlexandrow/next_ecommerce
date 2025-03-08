@@ -153,4 +153,4 @@ describe('AddNewBrandDialog', () => {
         expect(brandApi.updateBrand).toHaveBeenCalledWith(1, { name: 'Updated Brand' });
         expect(toast.success).toHaveBeenCalledWith('Brand updated successfully');
     });
-}); 
+});

@@ -14,14 +14,18 @@ class Product extends Model {
     protected $fillable = [
         'name',
         'description',
-        'brand_id',
-        'metadata',
-        'available'
+        'discount',
+        'original_price',
+        'available',
+        'brand_id'  // Now nullable
     ];
 
     protected $casts = [
         'metadata' => 'array',
-        'available' => 'boolean'
+        'available' => 'boolean',
+        'discount' => 'float',
+        'original_price' => 'float',
+        'brand_id' => 'integer'
     ];
 
     protected static function boot() {

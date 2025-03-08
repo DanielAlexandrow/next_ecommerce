@@ -8,17 +8,27 @@ use App\Models\Subproduct;
 use App\Models\User;
 
 class CartItem extends Model {
-	use HasFactory;
+    use HasFactory;
 
-	protected $table = 'cart_items';
+    protected $table = 'cart_items';
 
-	protected $fillable = [
-		'cart_id',
-		'subproduct_id',
-		'quantity'
-	];
+    protected $fillable = [
+        'cart_id',
+        'subproduct_id',
+        'quantity'
+    ];
 
-	public function subproduct() {
-		return $this->belongsTo(Subproduct::class);
-	}
+    protected $casts = [
+        'quantity' => 'integer',
+        'cart_id' => 'integer',
+        'subproduct_id' => 'integer'
+    ];
+
+    public function subproduct() {
+        return $this->belongsTo(Subproduct::class);
+    }
+
+    public function cart() {
+        return $this->belongsTo(Cart::class);
+    }
 }

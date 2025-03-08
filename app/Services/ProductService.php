@@ -23,15 +23,15 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ProductService implements ProductServiceInterface {
 
 	public function create(array $data): Product {
-		\DB::beginTransaction();
+		DB::beginTransaction();
 		try {
-			// Create the product
+			// Create the product with nullable brand_id
 			$product = Product::create([
 				'name' => $data['name'],
-				'description' => $data['description'],
-				'brand_id' => $data['brand_id'],
-				'metadata' => $data['metadata'] ?? null,
-				'available' => true
+				'description' => $data['description'] ?? null,
+				'brand_id' => $data['brand_id'] ?? null, // Make brand_id nullable
+				'available' => $data['available'] ?? true,
+				'metadata' => isset($data['metadata']) ? json_encode($data['metadata']) : null,
 			]);
 
 			// Attach categories if provided
@@ -39,35 +39,74 @@ class ProductService implements ProductServiceInterface {
 				$product->categories()->attach($data['categories']);
 			}
 
-			// Create subproducts
-			foreach ($data['subproducts'] as $subproductData) {
-				$product->subproducts()->create([
-					'name' => $subproductData['name'],
-					'sku' => $subproductData['sku'],
-					'price' => $subproductData['price'],
-					'stock' => $subproductData['stock'],
-					'weight' => $subproductData['weight'] ?? null,
-					'dimensions' => $subproductData['dimensions'] ?? null,
-					'metadata' => $subproductData['metadata'] ?? null,
-					'available' => true
-				]);
+			// Attach images if provided
+			if (!empty($data['images'])) {
+				$imageData = [];
+				foreach ($data['images'] as $index => $imageId) {
+					$imageData[$imageId] = ['order_num' => $index + 1];
+				}
+				$product->images()->attach($imageData);
 			}
 
-			\DB::commit();
-			return $product->load(['categories', 'subproducts', 'brand']);
+			// Create subproducts
+			if (!empty($data['subproducts'])) {
+				foreach ($data['subproducts'] as $subproductData) {
+					$product->subproducts()->create([
+						'name' => $subproductData['name'],
+						'sku' => $subproductData['sku'] ?? null,
+						'price' => $subproductData['price'],
+						'stock' => $subproductData['stock'] ?? 0,
+						'weight' => $subproductData['weight'] ?? null,
+						'dimensions' => $subproductData['dimensions'] ?? null,
+						'metadata' => $subproductData['metadata'] ?? null,
+						'available' => true
+					]);
+				}
+			}
+
+			DB::commit();
+			return $product->load(['categories', 'subproducts', 'brand', 'images']);
 		} catch (\Exception $e) {
-			\DB::rollBack();
+			DB::rollBack();
+		
 			throw $e;
 		}
 	}
 
 	public function update($data, $id) {
-		$product = Product::findOrFail($id);
-		$product->update($data);
-		$product->images()->sync($data['images'] ?? []);
-		$product->categories()->sync($data['categories'] ?? []);
+		DB::beginTransaction();
+		try {
+			$product = Product::findOrFail($id);
+			
+			$product->update([
+				'name' => $data['name'],
+				'description' => $data['description'] ?? $product->description,
+				'brand_id' => $data['brand_id'] ?? null, // Make brand_id nullable
+				'available' => $data['available'] ?? $product->available,
+			]);
 
-		return $product->load('images', 'categories', 'brand');
+			// Sync categories if provided
+			if (isset($data['categories'])) {
+				$product->categories()->sync($data['categories']);
+			}
+
+			// Sync images if provided
+			if (isset($data['images'])) {
+				$imageData = [];
+				foreach ($data['images'] as $index => $imageId) {
+					$imageData[$imageId] = ['order_num' => $index + 1];
+				}
+				$product->images()->sync($imageData);
+			}
+			
+			DB::commit();
+			return $product->load(['images', 'categories', 'brand', 'subproducts']);
+			
+		} catch (\Exception $e) {
+			DB::rollBack();
+	
+			throw $e;
+		}
 	}
 
 	public function delete(int $id): bool {
@@ -76,7 +115,6 @@ class ProductService implements ProductServiceInterface {
 		try {
 			return $product->delete();
 		} catch (\Exception $e) {
-			\Log::error('Failed to delete product: ' . $e->getMessage());
 			throw $e;
 		}
 	}
@@ -92,7 +130,7 @@ class ProductService implements ProductServiceInterface {
 	/**
 	 * Track search history for a user
 	 */
-	private function trackSearchHistory(string $searchTerm, ?int $userId): void {
+	public function trackSearchHistory(string $searchTerm, ?int $userId): void {
 		if ($userId) {
 			SearchHistory::create([
 				'user_id' => $userId,
@@ -132,7 +170,7 @@ class ProductService implements ProductServiceInterface {
 					$query->whereIn('categories.id', $product->categories->pluck('id'));
 				})
 				->where('id', '!=', $product->id)
-				->orderBy(DB::raw('RAND()'))
+				->orderByRaw(config('database.default') === 'sqlite' ? 'RANDOM()' : 'RAND()')
 				->limit($limit)
 				->get()
 				->toArray();
@@ -250,10 +288,7 @@ class ProductService implements ProductServiceInterface {
 
 			return $results;
 		} catch (\Exception $e) {
-			\Log::error('Error in getPaginatedStoreProducts: ' . $e->getMessage(), [
-				'filters' => $filters,
-				'trace' => $e->getTraceAsString()
-			]);
+		
 			throw $e;
 		}
 	}

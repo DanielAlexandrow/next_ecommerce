@@ -44,7 +44,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       // Implement update quantity API call if needed
       const { items } = get();
       const updatedItems = items.map(item => 
-        item.subproduct_id === subproductId ? { ...item, quantity } : item
+        item.id === subproductId ? { ...item, quantity } : item
       );
       set({ items: updatedItems, loading: false });
     } catch (error) {

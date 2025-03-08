@@ -1,25 +1,31 @@
 import axios from 'axios';
+import { Header } from '@/types';
 
-export const navigationApi = {
-	fetchNavData: async (): Promise<any> => {
-		const response = await axios.get("/navigation/getnavdata");
-		if (response.status !== 200) {
-			throw new Error('Failed to fetch navigation data');
-		}
-		return response.data;
-	},
+const navigationApi = {
+    fetchNavData: async () => {
+        const response = await axios.get('/navigation/getnavdata');
+        return response.data;
+    },
 
-	saveNavigation: async (headers: any): Promise<void> => {
-		const response = await axios.put(`/navigation/0`, headers);
-		if (response.status !== 200) {
-			throw new Error('Failed to update navigation');
-		}
-	},
+    saveNavigation: async (headers: Header[]) => {
+        const response = await axios.post('/navigation', { headers });
+        return response.data;
+    },
 
-	logout: async (): Promise<void> => {
-		const response = await axios.post('/logout');
-		if (response.status !== 200 && response.status !== 204) {
-			throw new Error('Failed to logout');
-		}
-	}
+    updateHeader: async (header: Header) => {
+        const response = await axios.put(`/navigation/${header.id}`, header);
+        return response.data;
+    },
+
+    updateHeaderOrder: async (headers: Header[]) => {
+        const response = await axios.put('/navigation', { headers });
+        return response.data;
+    },
+
+    logout: async () => {
+        const response = await axios.post('/logout');
+        return response.data;
+    }
 };
+
+export default navigationApi;

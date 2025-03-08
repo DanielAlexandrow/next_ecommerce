@@ -8,170 +8,181 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Requests\CategoryRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Mockery;
 
 class CategoryControllerTest extends TestCase {
-use RefreshDatabase;
+    use RefreshDatabase;
 
-private CategoryController $controller;
-private $categoryService;
+    private CategoryController $controller;
+    private $categoryService;
 
-protected function setUp(): void {
-parent::setUp();
-$this->categoryService = Mockery::mock(CategoryService::class);
-$this->controller = new CategoryController($this->categoryService);
-}
+    protected function setUp(): void {
+        parent::setUp();
+        $this->categoryService = Mockery::mock(CategoryService::class);
+        $this->controller = new CategoryController($this->categoryService);
+    }
 
-protected function tearDown(): void {
-Mockery::close();
-parent::tearDown();
-}
+    protected function tearDown(): void {
+        Mockery::close();
+        parent::tearDown();
+    }
 
-public function test_index_returns_categories() {
-// Arrange
-$categories = [
-['id' => 1, 'name' => 'Category 1'],
-['id' => 2, 'name' => 'Category 2']
-];
-$this->categoryService->shouldReceive('getAllWithProductCount')
-->once()
-->andReturn($categories);
+    public function test_index_returns_categories() {
+        // Arrange
+        $categories = [
+            ['id' => 1, 'name' => 'Category 1'],
+            ['id' => 2, 'name' => 'Category 2']
+        ];
 
-// Act
-$response = $this->controller->index();
+        $this->categoryService->shouldReceive('getAllWithProductCount')
+            ->once()
+            ->andReturn($categories);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertEquals($categories, $response->getData()->categories);
-}
+        // Act
+        $response = $this->controller->index();
 
-public function test_store_creates_new_category() {
-// Arrange
-$categoryData = [
-'name' => 'New Category',
-'description' => 'Description'
-];
-$category = new Category($categoryData);
-$category->id = 1;
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $this->assertEquals($categories, json_decode(json_encode($response->getData()->categories), true));
+    }
 
-$request = new CategoryRequest($categoryData);
+    public function test_store_creates_new_category() {
+        // Arrange
+        $categoryData = [
+            'name' => 'New Category',
+            'description' => 'Description'
+        ];
+        $category = new Category([
+            'name' => 'New Category',
+            'description' => 'Description'
+        ]);
+        $category->id = 1;
 
-$this->categoryService->shouldReceive('store')
-->once()
-->with($categoryData)
-->andReturn($category);
+        $request = new CategoryRequest($categoryData);
 
-// Act
-$response = $this->controller->store($request);
+        $this->categoryService->shouldReceive('store')
+            ->once()
+            ->with($categoryData)
+            ->andReturn($category);
 
-// Assert
-$this->assertEquals(201, $response->status());
-$this->assertEquals($category, $response->getData()->category);
-}
+        // Act
+        $response = $this->controller->store($request);
 
-public function test_update_modifies_category() {
-// Arrange
-$categoryId = 1;
-$updateData = [
-'name' => 'Updated Category',
-'description' => 'Updated Description'
-];
-$category = new Category($updateData);
-$category->id = $categoryId;
+        // Assert
+        $this->assertEquals(201, $response->status());
+        $this->assertEquals($category->toArray(), json_decode(json_encode($response->getData()->category), true));
+    }
 
-$request = new CategoryRequest($updateData);
+    public function test_update_modifies_category() {
+        // Arrange
+        $categoryId = 1;
+        $updateData = [
+            'name' => 'Updated Category',
+            'description' => 'Updated Description'
+        ];
+        $category = new Category([
+            'name' => 'Updated Category',
+            'description' => 'Updated Description'
+        ]);
+        $category->id = $categoryId;
 
-$this->categoryService->shouldReceive('update')
-->once()
-->with($categoryId, $updateData)
-->andReturn($category);
+        $request = new CategoryRequest($updateData);
 
-// Act
-$response = $this->controller->update($request, $categoryId);
+        $this->categoryService->shouldReceive('update')
+            ->once()
+            ->with($categoryId, $updateData)
+            ->andReturn($category);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertEquals($category, $response->getData()->category);
-}
+        // Act
+        $response = $this->controller->update($request, $categoryId);
 
-public function test_destroy_deletes_category() {
-// Arrange
-$categoryId = 1;
-$this->categoryService->shouldReceive('delete')
-->once()
-->with($categoryId)
-->andReturn(true);
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $this->assertEquals($category->toArray(), json_decode(json_encode($response->getData()->category), true));
+    }
 
-// Act
-$response = $this->controller->destroy($categoryId);
+    public function test_destroy_deletes_category() {
+        // Arrange
+        $categoryId = 1;
+        $this->categoryService->shouldReceive('delete')
+            ->once()
+            ->with($categoryId)
+            ->andReturn(true);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertTrue($response->getData()->success);
-}
+        // Act
+        $response = $this->controller->destroy($categoryId);
 
-public function test_search_finds_categories() {
-// Arrange
-$query = 'test';
-$categories = collect([
-new Category(['name' => 'Test Category']),
-new Category(['name' => 'Another Test'])
-]);
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $this->assertTrue($response->getData()->success);
+    }
 
-$request = new Request(['query' => $query]);
+    public function test_search_finds_categories() {
+        // Arrange
+        $query = 'test';
+        $categories = collect([
+            ['name' => 'Test Category'],
+            ['name' => 'Another Test']
+        ]);
 
-$this->categoryService->shouldReceive('search')
-->once()
-->with($query)
-->andReturn($categories);
+        $request = new Request(['query' => $query]);
 
-// Act
-$response = $this->controller->search($request);
+        $this->categoryService->shouldReceive('search')
+            ->once()
+            ->with($query)
+            ->andReturn($categories);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertEquals($categories->toArray(), $response->getData()->categories);
-}
+        // Act
+        $response = $this->controller->search($request);
 
-public function test_bulk_delete_removes_multiple_categories() {
-// Arrange
-$ids = [1, 2, 3];
-$request = new Request(['ids' => $ids]);
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $this->assertEquals($categories->toArray(), json_decode(json_encode($response->getData()->categories), true));
+    }
 
-$this->categoryService->shouldReceive('bulkDelete')
-->once()
-->with($ids)
-->andReturn(true);
+    public function test_bulk_delete_removes_multiple_categories() {
+        // Arrange
+        $ids = [1, 2, 3];
+        $request = new Request(['ids' => $ids]);
 
-// Act
-$response = $this->controller->bulkDelete($request);
+        $this->categoryService->shouldReceive('bulkDelete')
+            ->once()
+            ->with($ids)
+            ->andReturn(true);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertTrue($response->getData()->success);
-}
+        // Act
+        $response = $this->controller->bulkDelete($request);
 
-public function test_get_hierarchy_returns_hierarchical_categories() {
-// Arrange
-$categories = collect([
-new Category([
-'id' => 1,
-'name' => 'Parent',
-'children' => collect([
-new Category(['id' => 2, 'name' => 'Child'])
-])
-])
-]);
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $this->assertTrue($response->getData()->success);
+    }
 
-$this->categoryService->shouldReceive('getHierarchicalCategories')
-->once()
-->andReturn($categories);
+    public function test_get_hierarchy_returns_hierarchical_categories() {
+        // Arrange
+        $childCategory = new Category(['name' => 'Child']);
+        $childCategory->id = 2;
 
-// Act
-$response = $this->controller->getHierarchy();
+        $children = collect([$childCategory]);
 
-// Assert
-$this->assertEquals(200, $response->status());
-$this->assertEquals($categories->toArray(), $response->getData()->categories);
-}
+        $parentCategory = new Category(['name' => 'Parent']);
+        $parentCategory->id = 1;
+        $parentCategory->children = $children;
+
+        $categories = collect([$parentCategory]);
+
+        $this->categoryService->shouldReceive('getHierarchicalCategories')
+            ->once()
+            ->andReturn($categories);
+
+        // Act
+        $response = $this->controller->getHierarchy();
+
+        // Assert
+        $this->assertEquals(200, $response->status());
+        $responseData = json_decode(json_encode($response->getData()->categories), true);
+        $expectedData = json_decode(json_encode($categories), true);
+        $this->assertEquals($expectedData, $responseData);
+    }
 }

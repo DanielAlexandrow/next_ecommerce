@@ -40,7 +40,7 @@ describe('DeleteProductModal', () => {
     });
 
     it('handles product deletion successfully', async () => {
-        (productApi.deleteProduct as any).mockResolvedValueOnce({});
+        vi.mocked(productApi.deleteProduct).mockResolvedValueOnce({});
 
         render(<DeleteProductModal {...mockProps} />);
 
@@ -56,7 +56,7 @@ describe('DeleteProductModal', () => {
     });
 
     it('handles deletion error gracefully', async () => {
-        (productApi.deleteProduct as any).mockRejectedValueOnce(new Error('API Error'));
+        vi.mocked(productApi.deleteProduct).mockRejectedValueOnce(new Error('API Error'));
 
         render(<DeleteProductModal {...mockProps} />);
 
@@ -79,7 +79,7 @@ describe('DeleteProductModal', () => {
     });
 
     it('shows loading state during deletion', async () => {
-        (productApi.deleteProduct as any).mockImplementation(() => new Promise(() => { })); // Never resolves
+        vi.mocked(productApi.deleteProduct).mockImplementation(() => new Promise(() => {})); // Never resolves
 
         render(<DeleteProductModal {...mockProps} />);
 
@@ -89,4 +89,4 @@ describe('DeleteProductModal', () => {
         expect(screen.getByText('Deleting...')).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /Cancel/i })).toBeDisabled();
     });
-}); 
+});

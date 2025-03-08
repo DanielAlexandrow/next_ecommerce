@@ -8,8 +8,16 @@ export const cartApi = {
 	},
 
 	addItem: async (subproductId: number) => {
-		const result = await axios.post("/cart/add", { subproduct_id: subproductId });
-		return { data: result.data, result };
+		try {
+			const result = await axios.post("/cart/add", {
+				subproduct_id: subproductId,
+				quantity: 1
+			});
+			return { data: result.data, result };
+		} catch (error) {
+			console.error('Error adding item to cart:', error);
+			throw error;
+		}
 	},
 
 	checkout: async (cartId, addressData) => {

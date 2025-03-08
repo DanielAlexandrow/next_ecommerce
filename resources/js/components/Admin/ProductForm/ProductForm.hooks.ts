@@ -1,115 +1,131 @@
-import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import { useState, useEffect } from 'react';
-import { productsStore } from '@/stores/productlist/productstore';
-import { handleFormError } from '@/lib/utils';
+import { Product, Category, CustomImage, Brand, ProductImage } from '@/types';
 import { toast } from 'react-toastify';
+import { router } from '@inertiajs/react';
 import { productApi } from '@/api/productApi';
-import { Product, Brand, CustomImage, Category } from '@/types';
 
-interface ProductCategory extends Category {
-    pivot: {
-        category_id: number;
-    };
-}
-
-export const formSchema = z.object({
-    name: z.string().min(4).max(60),
-    description: z.string().max(500),
-    available: z.boolean(),
+// Helper function to convert ProductImage to CustomImage
+const convertToCustomImage = (image: ProductImage): CustomImage => ({
+  id: image.id,
+  name: image.name,
+  path: image.path,
+  full_path: 'storage/' + image.path,
+  pivot: {
+    image_id: image.id,
+    order_num: image.pivot?.order || 0
+  }
 });
 
-export type FormSchema = z.infer<typeof formSchema>;
+// Update schema to make brand_id optional
+const formSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().optional(),
+  available: z.boolean().default(true),
+  brand_id: z.number().nullable().optional(), // Make brand_id optional
+});
 
 export const useProductForm = (mode: 'edit' | 'new', product: Product | null) => {
-    const [productImages, setProductImages] = useState<CustomImage[]>([]);
-    const [productCategories, setProductCategories] = useState<ProductCategory[]>([]);
-    const [productBrand, setProductBrand] = useState<Brand | null>(null);
-    const [products, setProducts] = productsStore((state) => [state.products, state.setProducts]);
+  const [productImages, setProductImages] = useState<CustomImage[]>([]);
+  const [productCategories, setProductCategories] = useState<Category[]>([]);
+  const [productBrand, setProductBrand] = useState<Brand | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => {
-        if (product) {
-            const mappedImages: CustomImage[] = (product.images || []).map((img, index) => ({
-                id: img.id || 0,
-                name: img.name || '',
-                path: img.path,
-                full_path: '/storage/' + img.path,
-                pivot: {
-                    image_id: img.id,
-                    order_num: img.pivot?.order || index + 1
-                }
-            }));
-            setProductImages(mappedImages);
-            
-            const mappedCategories: ProductCategory[] = (product.categories || []).map(cat => ({
-                ...cat,
-                pivot: {
-                    category_id: cat.id
-                }
-            }));
-            setProductCategories(mappedCategories);
-            setProductBrand(product.brand || null);
-        }
-    }, [product]);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: product?.name || '',
+      description: product?.description || '',
+      available: product?.available ?? true,
+      brand_id: product?.brand_id || undefined, // Initialize properly
+    },
+  });
 
-    const defaultValues = {
-        name: product?.name || '',
-        description: product?.description || '',
-        available: product?.available ?? true,
-    };
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        name: product.name,
+        description: product.description || '',
+        available: product.available,
+        brand_id: product.brand_id || undefined,
+      });
+      
+      if (product.images) {
+        setProductImages(product.images.map(convertToCustomImage));
+      }
+      
+      if (product.categories) {
+        setProductCategories(product.categories);
+      }
+      
+      if (product.brand) {
+        setProductBrand(product.brand);
+      }
+    }
+  }, [product]);
 
-    const form = useForm<FormSchema>({
-        resolver: zodResolver(formSchema),
-        defaultValues,
-    });
+  // Update brand_id when productBrand changes
+  useEffect(() => {
+    if (productBrand) {
+      form.setValue('brand_id', productBrand.id);
+    } else {
+      form.setValue('brand_id', undefined);
+    }
+  }, [productBrand]);
 
-    const onSubmit = async (values: FormSchema) => {
-        try {
-            let images = productImages.map((image) => ({
-                ...image.pivot,
-                image_id: image.id
-            }));
-            
-            let categories = productCategories.map((category) => ({
-                category_id: category.id
-            }));
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (isSubmitting) return;
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Prepare data structure
+      const formData = {
+        ...values,
+        brand_id: productBrand?.id || null, // Allow null brand_id
+        categories: productCategories.length > 0 ? productCategories.map(cat => cat.id) : [], // Empty array if no categories
+        images: productImages.map(img => img.id),
+        subproducts: [
+          {
+            name: 'Default variant',
+            price: 0,
+            stock: 10,
+            sku: `${values.name.substring(0, 3)}-${Date.now()}`
+          }
+        ]
+      };
 
-            const payload = {
-                name: values.name,
-                description: values.description,
-                ...(mode === 'edit' && { id: product?.id }),
-                images,
-                categories,
-                available: values.available,
-                brand_id: productBrand?.id,
-            };
+      // API call based on mode
+      let response;
+      if (mode === 'new') {
+        response = await productApi.createProduct(formData);
+        toast.success('Product created successfully!');
+        router.visit('/products');
+      } else if (mode === 'edit' && product) {
+        response = await productApi.updateProduct(product.id, formData);
+        toast.success('Product updated successfully!');
+      }
 
-            let updatedProduct: Product;
-            if (mode === 'edit' && product) {
-                updatedProduct = await productApi.updateProduct(product.id, payload);
-                const newProducts = products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p));
-                setProducts(newProducts);
-            } else {
-                updatedProduct = await productApi.createProduct(payload);
-                setProducts([...products, updatedProduct]);
-            }
+      return response;
+    } catch (error: any) {
+      console.error('Form submission error:', error);
+      toast.error(error.message || 'Failed to save product');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-            toast.success(mode === 'edit' ? 'Product updated!' : 'Product created!');
-            window.location.href = '/products';
-        } catch (error) {
-            handleFormError(error, form);
-        }
-    };
-
-    return {
-        form,
-        onSubmit,
-        productImages,
-        setProductImages,
-        productCategories,
-        setProductCategories,
-        productBrand,
-        setProductBrand
-    };
+  return {
+    form,
+    onSubmit,
+    productImages,
+    setProductImages,
+    productCategories,
+    setProductCategories,
+    productBrand,
+    setProductBrand,
+    isSubmitting
+  };
 };

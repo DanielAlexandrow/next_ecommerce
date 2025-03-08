@@ -1,71 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import React, { useEffect, useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Brand } from '@/types';
-import { brandApi } from '@/api/brandApi';
-import { styles } from './BrandSelect.styles';
+import axios from 'axios';
 
 interface BrandSelectProps {
-    productBrand: Brand | null;
-    setProductBrand: React.Dispatch<React.SetStateAction<Brand | null>>;
+  productBrand: Brand | null;
+  setProductBrand: (brand: Brand | null) => void;
 }
 
 const BrandSelect: React.FC<BrandSelectProps> = ({ productBrand, setProductBrand }) => {
-    const [brands, setBrands] = useState<Brand[]>([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filteredBrands, setFilteredBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchBrands();
-    }, []);
-
-    useEffect(() => {
-        const filtered = brands.filter(brand =>
-            brand.name.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredBrands(filtered);
-    }, [searchTerm, brands]);
-
+  useEffect(() => {
     const fetchBrands = async () => {
-        try {
-            const brandsData = await brandApi.getAllBrands();
-            setBrands(brandsData);
-            setFilteredBrands(brandsData);
-        } catch (error) {
-            console.error('Error fetching brands:', error);
-        }
+      try {
+        setLoading(true);
+        const response = await axios.get('/brands/getallbrands');
+        setBrands(response.data);
+      } catch (err) {
+        console.error('Failed to fetch brands', err);
+        setError('Failed to load brands');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleBrandSelect = (brand: Brand) => {
-        setProductBrand(productBrand?.id === brand.id ? null : brand);
-    };
+    fetchBrands();
+  }, []);
 
-    return (
-        <div>
-            <Input
-                type="text"
-                placeholder="Search brands..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styles.searchInput}
-            />
+  const handleBrandChange = (brandId: string) => {
+    const selectedBrand = brands.find((brand) => brand.id === parseInt(brandId));
+    setProductBrand(selectedBrand || null);
+  };
 
-            <div className={styles.brandList}>
-                {filteredBrands.length > 0 ? (
-                    filteredBrands.map((brand) => (
-                        <div
-                            key={brand.id}
-                            onClick={() => handleBrandSelect(brand)}
-                            className={styles.brandItem(productBrand?.id === brand.id)}
-                        >
-                            <span className={styles.brandName}>{brand.name}</span>
-                        </div>
-                    ))
-                ) : (
-                    <div className={styles.noResults}>No brands found</div>
-                )}
-            </div>
-        </div>
-    );
+  if (loading) {
+    return <div>Loading brands...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  return (
+    <div>
+      <Select 
+        value={productBrand?.id?.toString() || ""} 
+        onValueChange={handleBrandChange}
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select a brand (optional)" />
+        </SelectTrigger>
+        <SelectContent>
+          {brands.map((brand) => (
+            <SelectItem key={brand.id} value={brand.id.toString()}>
+              {brand.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
 };
 
 export default BrandSelect;

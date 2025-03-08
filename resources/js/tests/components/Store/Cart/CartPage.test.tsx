@@ -116,7 +116,7 @@ const mockCartItems = [
             product: {
                 id: 1,
                 name: 'Test Product',
-                images: [{ path: 'test.jpg' }]
+                images: [{ path: 'test.jpg', full_path: 'storage/test.jpg' }]
             }
         }
     }
@@ -155,7 +155,7 @@ describe('CartPage', () => {
                 product: {
                     id: 1,
                     name: 'Test Product',
-                    images: [{ path: 'test.jpg' }]
+                    images: [{ path: 'test.jpg', full_path: 'storage/test.jpg' }]
                 }
             }
         };
@@ -276,4 +276,4 @@ describe('CartPage', () => {
         expect(cartApi.checkout).toHaveBeenCalledWith(1, expect.any(Object));
         expect(toast.success).toHaveBeenCalledWith('Checkout successful!');
     });
-}); 
+});

@@ -165,7 +165,18 @@ export default function ProductsList(): React.ReactNode {
 
 				{openSubproductsModal ? <SubproductsModal /> : null}
 				{openNewSubproductModal ? <NewSubproductModal /> : null}
-				{openDeleteProductModal ? <DeleteProductModal /> : null}
+				{openDeleteProductModal ? (
+					<DeleteProductModal
+						isOpen={openDeleteProductModal}
+						onClose={() => setOpenDeleteProductModal(false)}
+						productId={productsStore.getState().selectedProduct?.id ?? 0}
+						productName={productsStore.getState().selectedProduct?.name ?? ''}
+						onDelete={() => {
+							// TODO: Implement delete logic here
+							console.log('Delete product');
+						}}
+					/>
+				) : null}
 				{openEditProductModal ? <EditProductModal /> : null}
 			</div>
 		</>

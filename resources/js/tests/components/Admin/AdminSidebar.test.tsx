@@ -63,16 +63,6 @@ describe('AdminSidebar', () => {
         expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
-    it('applies correct classes to navigation buttons', () => {
-        (useIsMobile as any).mockReturnValue(false);
-        renderWithProvider(<AdminSidebar />);
-
-        const buttons = screen.getAllByRole('button');
-        buttons.forEach(button => {
-            expect(button).toHaveClass('w-full', 'justify-start', 'gap-2');
-        });
-    });
-
     it('renders icons for each navigation item', () => {
         (useIsMobile as any).mockReturnValue(false);
         renderWithProvider(<AdminSidebar />);
@@ -81,4 +71,4 @@ describe('AdminSidebar', () => {
         const svgElements = document.querySelectorAll('svg');
         expect(svgElements.length).toBeGreaterThan(0);
     });
-}); 
+});

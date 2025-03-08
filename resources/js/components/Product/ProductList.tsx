@@ -33,6 +33,7 @@ export default function ProductsList(): React.ReactNode {
 		setOpenNewSubproductModal,
 		setOpenDeleteProductModal,
 		setOpenEditProductModal,
+		selectedProduct
 	] = productsStore((state) => [
 		state.products,
 		state.openEditProductModal,
@@ -45,6 +46,7 @@ export default function ProductsList(): React.ReactNode {
 		state.setOpenNewSubproductModal,
 		state.setOpenDeleteProductModal,
 		state.setOpenEditProductModal,
+		state.selectedProduct
 	]);
 
 	const pageProps: any = usePage().props;
@@ -165,7 +167,20 @@ export default function ProductsList(): React.ReactNode {
 
 				{openSubproductsModal ? <SubproductsModal /> : null}
 				{openNewSubproductModal ? <NewSubproductModal /> : null}
-				{openDeleteProductModal ? <DeleteProductModal /> : null}
+				{selectedProduct ? (
+					openDeleteProductModal ? (
+						<DeleteProductModal
+							isOpen={openDeleteProductModal}
+							onClose={() => setOpenDeleteProductModal(false)}
+							productId={selectedProduct.id}
+							productName={selectedProduct.name}
+							onDelete={() => {
+								console.log('delete product', selectedProduct.id);
+								setOpenDeleteProductModal(false);
+							}}
+						/>
+					) : null
+				) : null}
 				{openEditProductModal ? <EditProductModal /> : null}
 			</div>
 		</>

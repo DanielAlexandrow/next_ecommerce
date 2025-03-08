@@ -72,9 +72,9 @@ class CheckoutService {
 				'items' => json_encode($items)
 			]);
 
-			// Clear cart
-			$cart->cartItems()->delete();
-			$cart->delete();
+			 // Force delete the cart and its items
+            $cart->cartItems()->forceDelete();
+            $cart->forceDelete();
 
 			DB::commit();
 			return $order;

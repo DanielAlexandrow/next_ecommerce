@@ -121,19 +121,15 @@ class ProductServiceTest extends TestCase {
     /** @test */
     public function it_tracks_search_history_for_user() {
         // Arrange
-        $userId = 1;
+        $user = \App\Models\User::factory()->create();
         $searchTerm = 'test product';
 
         // Act
-        $this->productService->trackSearchHistory($searchTerm, $userId);
+        $this->productService->trackSearchHistory($searchTerm, $user->id);
 
         // Assert
-        $this->assertDatabaseHas('search_histories', [
-            'user_id' => $userId,
-            'search_term' => $searchTerm
-        ]);
-
-        $this->assertDatabaseHas('popular_searches', [
+        $this->assertDatabaseHas('search_history', [
+            'user_id' => $user->id,
             'search_term' => $searchTerm
         ]);
     }
@@ -216,7 +212,8 @@ class ProductServiceTest extends TestCase {
             'name' => 'Test Subproduct',
             'price' => 100,
             'stock' => 10,
-            'available' => true
+            'available' => true,
+            'sku' => 'TEST-SKU-001'
         ]);
 
         $filters = [

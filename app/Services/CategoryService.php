@@ -31,6 +31,7 @@ class CategoryService implements CategoryServiceInterface {
 	}
 
 	public function store(array $data) {
+		$data['slug'] = \Illuminate\Support\Str::slug($data['name']);
 		return Category::create($data);
 	}
 

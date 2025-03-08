@@ -44,8 +44,8 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 		setProductImages(productImages);
 	}, [productImages]);
 
-	const handleRemoveImage = (image: CustomImage) => {
-		const index = productImages.findIndex((pimage) => image.id === pimage.id);
+	const handleRemoveImage = (imageId: number) => {
+		const index = productImages.findIndex((pimage) => imageId === pimage.id);
 		const newSelectedImages = [...productImages];
 		newSelectedImages.splice(index, 1);
 		setProductImages(newSelectedImages);
@@ -59,7 +59,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 
 		const index = productImages.findIndex((pimage) => image.id === pimage.id);
 		if (index !== -1) {
-			handleRemoveImage(productImages[index]);
+			handleRemoveImage(productImages[index].id);
 			return;
 		}
 
@@ -115,7 +115,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 	};
 
 	const pages = (
-		<div className={styles.paginationContainer}>
+		<div>
 			{links.length > 0 && <Paginate links={links} onPageChange={handlePageChange} />}
 		</div>
 	);
@@ -153,6 +153,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 								<TableCell>
 									<div className="flex gap-2">
 										<Button
+											data-testid={`move-up-${image.id}`}
 											variant="outline"
 											size="sm"
 											onClick={() => handleOrderUp(index)}
@@ -161,6 +162,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 											↑
 										</Button>
 										<Button
+											data-testid={`move-down-${image.id}`}
 											variant="outline"
 											size="sm"
 											onClick={() => handleOrderDown(index)}
@@ -169,6 +171,7 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 											↓
 										</Button>
 										<Button
+											data-testid={`remove-image-${image.id}`}
 											variant="outline"
 											size="sm"
 											onClick={() => handleRemoveImage(image.id)}
@@ -211,7 +214,6 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 					>
 						<img
 							data-testid={`image-preview-${image.id}`}
-							className={styles.imagePreview}
 							src={'/storage/' + image.path}
 							alt={image?.name}
 						/>
@@ -227,8 +229,3 @@ const ImageSelect: React.FC<ImageSelectProps> = ({ productImages, setProductImag
 };
 
 export default ImageSelect;
-
-
-
-
-

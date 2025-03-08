@@ -11,3 +11,7 @@ export interface User {
     status: 'Verified' | 'Unverified';
     joined: string;
 }
+
+export interface Product {
+    brand_id: number | null;
+}
