@@ -62,6 +62,16 @@ class User extends Authenticatable {
      * @return bool
      */
     public function isAdmin(): bool {
-        return $this->hasRole('admin');
+        // Check both the role attribute and the hasRole method for compatibility
+        return $this->role === 'admin' || $this->hasRole('admin');
+    }
+    
+    /**
+     * Check if the user is a driver.
+     *
+     * @return bool
+     */
+    public function isDriver(): bool {
+        return $this->role === 'driver' || $this->hasRole('driver');
     }
 }

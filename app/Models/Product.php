@@ -17,7 +17,8 @@ class Product extends Model {
         'discount',
         'original_price',
         'available',
-        'brand_id'  // Now nullable
+        'brand_id',  // Now nullable
+        'metadata'
     ];
 
     protected $casts = [
@@ -27,6 +28,8 @@ class Product extends Model {
         'original_price' => 'float',
         'brand_id' => 'integer'
     ];
+
+    protected $with = ['images', 'categories', 'brand', 'subproducts', 'reviews'];
 
     protected static function boot() {
         parent::boot();

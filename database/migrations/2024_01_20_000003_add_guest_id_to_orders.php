@@ -13,9 +13,16 @@ return new class extends Migration {
     }
 
     public function down() {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign(['guest_id']);
-            $table->dropColumn('guest_id');
-        });
+        if (Schema::getConnection()->getDriverName() !== 'sqlite') {
+            Schema::table('orders', function (Blueprint $table) {
+                $table->dropForeign(['guest_id']);
+                $table->dropColumn('guest_id');
+            });
+        } else {
+            // For SQLite, recreate the table without the guest_id column
+            Schema::table('orders', function (Blueprint $table) {
+                $table->dropColumn('guest_id');
+            });
+        }
     }
 };

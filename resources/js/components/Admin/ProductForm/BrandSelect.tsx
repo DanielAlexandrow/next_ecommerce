@@ -1,65 +1,68 @@
 import React, { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { Brand } from '@/types';
-import axios from 'axios';
+import { brandApi } from '@/api/brandApi';
+import { toast } from 'react-toastify';
 
 interface BrandSelectProps {
-  productBrand: Brand | null;
-  setProductBrand: (brand: Brand | null) => void;
+  selectedBrands: number[];
+  setSelectedBrands: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
-const BrandSelect: React.FC<BrandSelectProps> = ({ productBrand, setProductBrand }) => {
+const BrandSelect: React.FC<BrandSelectProps> = ({ 
+  selectedBrands, 
+  setSelectedBrands 
+}) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
+  
   useEffect(() => {
     const fetchBrands = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/brands/getallbrands');
-        setBrands(response.data);
+        const data = await brandApi.getAllBrands();
+        setBrands(data);
       } catch (err) {
         console.error('Failed to fetch brands', err);
-        setError('Failed to load brands');
+        toast.error('Failed to load brands');
       } finally {
         setLoading(false);
       }
     };
-
     fetchBrands();
   }, []);
 
-  const handleBrandChange = (brandId: string) => {
-    const selectedBrand = brands.find((brand) => brand.id === parseInt(brandId));
-    setProductBrand(selectedBrand || null);
+  const handleBrandChange = (brandId: number) => {
+    // For this implementation, we'll use radio-like behavior (only one brand can be selected)
+    if (selectedBrands.includes(brandId)) {
+      setSelectedBrands([]);
+    } else {
+      setSelectedBrands([brandId]);
+    }
   };
 
   if (loading) {
-    return <div>Loading brands...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="py-2 text-sm">Loading brands...</div>;
   }
 
   return (
-    <div>
-      <Select 
-        value={productBrand?.id?.toString() || ""} 
-        onValueChange={handleBrandChange}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a brand (optional)" />
-        </SelectTrigger>
-        <SelectContent>
-          {brands.map((brand) => (
-            <SelectItem key={brand.id} value={brand.id.toString()}>
+    <div className="space-y-2">
+      <div className="text-sm font-medium mb-2">Select Brand</div>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        {brands.map((brand) => (
+          <div key={brand.id} className="flex items-center space-x-2">
+            <Checkbox
+              id={`brand-${brand.id}`}
+              checked={selectedBrands.includes(brand.id)}
+              onCheckedChange={() => handleBrandChange(brand.id)}
+            />
+            <Label htmlFor={`brand-${brand.id}`} className="text-sm cursor-pointer">
               {brand.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+            </Label>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

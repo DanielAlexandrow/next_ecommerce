@@ -173,13 +173,23 @@ class ProductServiceTest extends TestCase {
         // Arrange
         $brand = Brand::factory()->create();
         $category = Category::factory()->create();
+        $user = \App\Models\User::factory()->create();
         $products = Product::factory()->count(5)->create(['brand_id' => $brand->id]);
 
         foreach ($products as $product) {
             $product->categories()->attach($category->id);
+            $product->subproducts()->create([
+                'name' => 'Test Variant',
+                'price' => 99.99,
+                'stock' => 10,
+                'available' => true,
+                'sku' => 'TEST-SKU-' . $product->id
+            ]);
             Review::factory()->create([
+                'user_id' => $user->id,
                 'product_id' => $product->id,
-                'rating' => 4
+                'rating' => 4,
+                'comment' => 'Test review'
             ]);
         }
 

@@ -35,22 +35,22 @@ class ProductRequest extends FormRequest
             'metadata.seo' => 'nullable|array',
             'metadata.seo.title' => 'nullable|string',
             'metadata.seo.description' => 'nullable|string',
-            'subproducts' => 'array|required',
+            'subproducts' => 'required|array|min:1',
             'subproducts.*.name' => 'required|string|max:255',
-            'subproducts.*.price' => 'required|numeric|gt:0',
             'subproducts.*.sku' => [
                 'required',
                 'string',
-                'distinct',
-                'unique:subproducts,sku'
+                'distinct', // Ensures SKUs are unique within the request array
+                'unique:subproducts,sku' // Ensures SKUs are unique across all existing subproducts
             ],
+            'subproducts.*.price' => 'required|numeric|gt:0',
             'subproducts.*.stock' => 'required|integer|min:0',
             'subproducts.*.weight' => 'nullable|numeric|min:0',
             'subproducts.*.dimensions' => 'nullable|array',
             'subproducts.*.dimensions.length' => 'nullable|numeric|min:0',
             'subproducts.*.dimensions.width' => 'nullable|numeric|min:0',
             'subproducts.*.dimensions.height' => 'nullable|numeric|min:0',
-            'subproducts.*.metadata' => 'nullable|array',
+            'subproducts.*.metadata' => 'nullable|array'
         ];
     }
 
@@ -67,7 +67,7 @@ class ProductRequest extends FormRequest
             'subproducts.*.price.gt' => 'Price must be greater than 0.',
             'subproducts.*.stock.min' => 'Stock cannot be negative.',
             'subproducts.*.dimensions.*.min' => 'Dimensions must be positive numbers.',
-            'metadata.tags.*.string' => 'All tags must be text values.',
+            'metadata.tags.*.string' => 'All tags must be text values.'
         ];
     }
 }

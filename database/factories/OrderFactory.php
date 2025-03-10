@@ -11,20 +11,26 @@ class OrderFactory extends Factory {
     protected $model = Order::class;
 
     public function definition() {
+        $items = [
+            [
+                'id' => $this->faker->numberBetween(1, 100),
+                'quantity' => $this->faker->numberBetween(1, 5),
+                'price' => $this->faker->randomFloat(2, 10, 100),
+                'name' => $this->faker->words(3, true),
+                'variant' => $this->faker->word()
+            ]
+        ];
+
         return [
             'user_id' => User::factory(),
             'guest_id' => null,
-            'items' => [
-                [
-                    'id' => $this->faker->numberBetween(1, 100),
-                    'quantity' => $this->faker->numberBetween(1, 5),
-                    'price' => $this->faker->randomFloat(2, 10, 100)
-                ]
-            ],
+            'items' => $items,
             'total' => function (array $attributes) {
-                return collect($attributes['items'])->sum(function ($item) {
-                    return $item['price'] * $item['quantity'];
-                });
+                $total = 0;
+                foreach ($attributes['items'] as $item) {
+                    $total += $item['price'] * $item['quantity'];
+                }
+                return $total;
             },
             'status' => $this->faker->randomElement(['pending', 'processing', 'completed', 'cancelled']),
             'payment_status' => $this->faker->randomElement(['pending', 'paid', 'refunded']),

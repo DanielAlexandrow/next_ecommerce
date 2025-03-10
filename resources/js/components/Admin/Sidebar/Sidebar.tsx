@@ -68,6 +68,11 @@ const sidebarItems = [
         href: '/shop-settings',
     },
     {
+        icon: <IoSettingsOutline />,
+        text: 'Users',
+        href: '/users',
+    },
+    {
         icon: <FiAlignJustify />,
         text: 'Categories',
         href: '/admin/categories',

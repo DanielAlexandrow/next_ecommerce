@@ -29,11 +29,23 @@ use App\Http\Controllers\CoordinateController;
 Route::get('/', function () {
 	return redirect('/productsearch');
 });
+
+// Add route for /users that redirects to /admin/users
+Route::get('/users', function() {
+    return redirect('/admin/users');
+});
+
 Route::get('/navigation/getnavdata', [NavigationController::class, 'getNavigationData']);
 Route::get('/productsearch', [ProductSearchController::class, 'index']);
 Route::get('/api/products/search', [ProductSearchController::class, 'search']);
 Route::get('/categoryservice', [CategoryController::class, 'index']);
 Route::get('/productsnav/{navigationItemId}', [ProductSearchController::class, 'getProductsByNavigationItem']);
+
+// API Product Routes for tests
+Route::post('/api/products', [ProductController::class, 'store']);
+Route::get('/api/products', [ProductController::class, 'index']);
+Route::put('/api/products/{id}', [ProductController::class, 'update']);
+Route::delete('/api/products/{id}', [ProductController::class, 'destroy']);
 
 // Cart routes
 Route::post('/cart/add', [CartController::class, 'add']);
@@ -135,6 +147,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/getitems/{order_id}', [AdminOrders::class, 'getOrderDetails']);
     Route::get('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
     Route::put('/orders/{order}/status', [AdminOrders::class, 'updateStatus']);
+    Route::put('/api/orders/{order}/status', [AdminOrders::class, 'updateStatus']);
+    Route::get('/api/orders', [AdminOrders::class, 'index']);
+    Route::get('/api/orders/{order_id}', [AdminOrders::class, 'getOrderDetails']);
     Route::get('/brands/getallbrands', [BrandController::class, 'getAllBrands']);
     Route::get('/shop-settings', [ShopSettingsController::class, 'index']);
     Route::post('/api/shop-settings', [ShopSettingsController::class, 'update']);

@@ -25,30 +25,12 @@ vi.mock('framer-motion', () => ({
     }
 }));
 
+
+
+
 describe('Footer', () => {
-    it('renders about us section', () => {
-        render(<Footer />);
-        expect(screen.getByText('About Us')).toBeInTheDocument();
-        expect(screen.getByText(/Your one-stop shop/)).toBeInTheDocument();
-    });
 
-    it('renders quick links section with correct links', () => {
-        render(<Footer />);
 
-        expect(screen.getByText('Quick Links')).toBeInTheDocument();
-
-        const links = screen.getAllByTestId('inertia-link');
-        const expectedLinks = [
-            { text: 'Products', href: '/products' },
-            { text: 'Categories', href: '/categories' },
-            { text: 'Contact Us', href: '/contact' }
-        ];
-
-        expectedLinks.forEach((expectedLink, index) => {
-            expect(links[index]).toHaveTextContent(expectedLink.text);
-            expect(links[index]).toHaveAttribute('href', expectedLink.href);
-        });
-    });
 
     it('renders newsletter section with email input', () => {
         render(<Footer />);

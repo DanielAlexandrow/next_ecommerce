@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Header } from '@/types';
 
-const navigationApi = {
+export const navigationApi = {
     fetchNavData: async () => {
         const response = await axios.get('/navigation/getnavdata');
         return response.data;

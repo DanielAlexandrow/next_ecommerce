@@ -7,14 +7,12 @@ import { Checkbox } from '../../ui/checkbox';
 import CategorySelect from './CategorySelect';
 import BrandSelect from './BrandSelect';
 import { Product, CustomImage } from '@/types';
-import { styles } from './ProductForm.styles';
 import { useProductForm } from './ProductForm.hooks';
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Save, Box, Tag, Bookmark } from "lucide-react"; 
+import { AlertCircle, Save, FileText, Tags, Building2 } from "lucide-react"; 
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useState, useEffect } from 'react';
 import { Category, ProductCategory } from '@/types';
 
 // Add a helper function to convert Category[] to ProductCategory[]
@@ -41,44 +39,44 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
         setProductImages,
         productCategories,
         setProductCategories,
-        productBrand,
-        setProductBrand,
+        selectedBrands,
+        setSelectedBrands,
         isSubmitting
     } = useProductForm(mode, product);
 
     return (
-        <Card className="w-full shadow-md">
-            <CardHeader className="bg-muted/50">
-                <CardTitle className="text-xl font-semibold">
+        <Card className="w-full border border-gray-200 shadow-sm">
+            <CardHeader className="bg-gray-50 border-b border-gray-200">
+                <CardTitle className="text-xl font-semibold text-gray-900">
                     {mode === 'edit' ? 'Edit Product' : 'Create New Product'}
                 </CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 bg-white">
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                             {/* Left Column */}
                             <div className="space-y-6">
                                 <div className="flex items-center gap-2 mb-4">
-                                    <Box className="h-5 w-5 text-primary" />
-                                    <h3 className="text-lg font-medium">Basic Information</h3>
+                                    <FileText className="h-5 w-5 text-gray-700" />
+                                    <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
                                 </div>
-                                <Separator className="my-2" />
+                                <Separator className="my-2 bg-gray-200" />
                                 
                                 <FormField
                                     control={form.control}
                                     name='name'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-sm font-medium">Product Name</FormLabel>
+                                            <FormLabel className="text-sm font-medium text-gray-900">Product Name</FormLabel>
                                             <FormControl>
                                                 <Input 
                                                     placeholder="Enter product name" 
-                                                    className="focus:ring-2 focus:ring-primary/20 transition-all" 
+                                                    className="border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
                                                     {...field} 
                                                 />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="text-red-600" />
                                         </FormItem>
                                     )}
                                 />
@@ -88,15 +86,15 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                     name='description'
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel className="text-sm font-medium">Description</FormLabel>
+                                            <FormLabel className="text-sm font-medium text-gray-900">Description</FormLabel>
                                             <FormControl>
                                                 <Textarea 
                                                     placeholder="Enter product description" 
-                                                    className="min-h-[120px] focus:ring-2 focus:ring-primary/20 transition-all" 
+                                                    className="min-h-[120px] border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
                                                     {...field} 
                                                 />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage className="text-red-600" />
                                         </FormItem>
                                     )}
                                 />
@@ -105,32 +103,32 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                     control={form.control}
                                     name='available'
                                     render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                                        <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border border-gray-200 p-4">
                                             <FormControl>
                                                 <Checkbox 
                                                     checked={field.value} 
                                                     onCheckedChange={field.onChange}
-                                                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
+                                                    className="data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900" 
                                                 />
                                             </FormControl>
                                             <div className="space-y-1 leading-none">
-                                                <FormLabel className="text-sm font-medium">Available for purchase</FormLabel>
-                                                <p className="text-sm text-muted-foreground">
+                                                <FormLabel className="text-sm font-medium text-gray-900">Available for purchase</FormLabel>
+                                                <p className="text-sm text-gray-600">
                                                     Make this product available in your store
                                                 </p>
                                             </div>
-                                            <FormMessage />
+                                            <FormMessage className="text-red-600" />
                                         </FormItem>
                                     )}
                                 />
                                 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2">
-                                        <Tag className="h-5 w-5 text-primary" />
-                                        <h3 className="text-lg font-medium">Categories</h3>
+                                        <Tags className="h-5 w-5 text-gray-700" />
+                                        <h3 className="text-lg font-medium text-gray-900">Categories</h3>
                                     </div>
-                                    <Separator className="my-2" />
-                                    <div className="p-4 border rounded-md bg-muted/30">
+                                    <Separator className="my-2 bg-gray-200" />
+                                    <div className="p-4 border border-gray-200 rounded-md bg-gray-50">
                                         <CategorySelect
                                             selectedCategories={productCategories as unknown as ProductCategory[]}
                                             setSelectedCategories={setProductCategories as unknown as React.Dispatch<React.SetStateAction<ProductCategory[]>>}
@@ -143,11 +141,11 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                             <div className="space-y-6">
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2">
-                                        <Bookmark className="h-5 w-5 text-primary" />
-                                        <h3 className="text-lg font-medium">Brand</h3>
+                                        <Building2 className="h-5 w-5 text-gray-700" />
+                                        <h3 className="text-lg font-medium text-gray-900">Brand</h3>
                                     </div>
-                                    <Separator className="my-2" />
-                                    <Card className="border shadow-sm">
+                                    <Separator className="my-2 bg-gray-200" />
+                                    <Card className="border border-gray-200 shadow-sm">
                                         <CardContent className="pt-6">
                                             <FormField
                                                 control={form.control}
@@ -155,16 +153,16 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                                 render={() => (
                                                     <FormItem>
                                                         <BrandSelect
-                                                            productBrand={productBrand}
-                                                            setProductBrand={setProductBrand}
+                                                            selectedBrands={selectedBrands}
+                                                            setSelectedBrands={setSelectedBrands}
                                                         />
-                                                        <FormMessage />
+                                                        <FormMessage className="text-red-600" />
                                                     </FormItem>
                                                 )}
                                             />
                                             
                                             {form.formState.errors.brand_id && (
-                                                <Alert variant="destructive" className="mt-4">
+                                                <Alert variant="destructive" className="mt-4 bg-red-50 text-red-800 border border-red-200">
                                                     <AlertCircle className="h-4 w-4" />
                                                     <AlertDescription>
                                                         {form.formState.errors.brand_id.message}
@@ -177,10 +175,10 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
 
                                 <div className="mt-6">
                                     <div className="flex items-center gap-2 mb-4">
-                                        <h3 className="text-lg font-medium">Product Images</h3>
+                                        <h3 className="text-lg font-medium text-gray-900">Product Images</h3>
                                     </div>
-                                    <Separator className="my-2" />
-                                    <div className="p-4 border rounded-md bg-muted/30 mt-4">
+                                    <Separator className="my-2 bg-gray-200" />
+                                    <div className="p-4 border border-gray-200 rounded-md bg-gray-50 mt-4">
                                         <ImageSelect 
                                             productImages={productImages as CustomImage[]} 
                                             setProductImages={setProductImages as React.Dispatch<React.SetStateAction<CustomImage[]>>} 
@@ -190,12 +188,12 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                             </div>
                         </div>
 
-                        <Separator className="my-6" />
+                        <Separator className="my-6 bg-gray-200" />
                         
                         <div className="flex justify-end">
                             <Button 
                                 type="submit" 
-                                className="px-8 py-6 text-base font-medium transition-all hover:scale-105"
+                                className="px-8 py-2 bg-gray-900 hover:bg-black text-white transition-all"
                                 disabled={isSubmitting}
                             >
                                 <Save className="mr-2 h-5 w-5" />

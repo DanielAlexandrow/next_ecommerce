@@ -13,6 +13,7 @@ use App\Exceptions\ProductHasOrdersException;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Response;
 use Mockery;
+use Inertia\Testing\AssertableInertia;
 
 class ProductControllerTest extends TestCase {
     private ProductController $controller;
@@ -25,8 +26,8 @@ class ProductControllerTest extends TestCase {
     }
 
     protected function tearDown(): void {
-        Mockery::close();
         parent::tearDown();
+        Mockery::close();
     }
 
     public function test_store_creates_product_successfully() {
@@ -99,10 +100,22 @@ class ProductControllerTest extends TestCase {
 
         // Assert
         $this->assertInstanceOf(\Inertia\Response::class, $response);
-        $props = $response->getProperties();
-        $this->assertEquals($expectedProducts, $props['products']);
-        $this->assertEquals('name', $props['sortkey']);
-        $this->assertEquals('asc', $props['sortdirection']);
+        
+        // Test the component name using reflection
+        $responseReflection = new \ReflectionClass($response);
+        $componentProperty = $responseReflection->getProperty('component');
+        $componentProperty->setAccessible(true);
+        $componentName = $componentProperty->getValue($response);
+        $this->assertEquals('admin/ProductList', $componentName);
+        
+        // Test the props using reflection
+        $propsProperty = $responseReflection->getProperty('props');
+        $propsProperty->setAccessible(true);
+        $actualProps = $propsProperty->getValue($response);
+        
+        $this->assertEquals($expectedProducts, $actualProps['products']);
+        $this->assertEquals('name', $actualProps['sortkey']);
+        $this->assertEquals('asc', $actualProps['sortdirection']);
     }
 
     public function test_update_modifies_product() {
@@ -147,12 +160,10 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $productId = 1;
         
-        $adminUser = Mockery::mock();
-        $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+        // Setup Auth mock with proper expectations
         Auth::shouldReceive('user')
             ->once()
-            ->andReturn($adminUser);
+            ->andReturn(Mockery::mock(['isAdmin' => true]));
         
         $this->productService->shouldReceive('delete')
             ->once()
@@ -171,12 +182,10 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $productId = 1;
         
-        $regularUser = Mockery::mock();
-        $regularUser->shouldReceive('isAdmin')->andReturn(false);
-        
+        // Setup Auth mock with proper expectations
         Auth::shouldReceive('user')
             ->once()
-            ->andReturn($regularUser);
+            ->andReturn(Mockery::mock(['isAdmin' => false]));
             
         // Act
         $response = $this->controller->destroy($productId);
@@ -190,12 +199,10 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $productId = 999;
         
-        $adminUser = Mockery::mock();
-        $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+        // Setup Auth mock with proper expectations
         Auth::shouldReceive('user')
             ->once()
-            ->andReturn($adminUser);
+            ->andReturn(Mockery::mock(['isAdmin' => true]));
         
         $this->productService->shouldReceive('delete')
             ->once()
@@ -214,13 +221,8 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $invalidId = 'not-a-number';
         
-        $adminUser = Mockery::mock();
-        $adminUser->shouldReceive('isAdmin')->andReturn(true);
+        // No need for Auth mock as it won't get that far
         
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn($adminUser);
-            
         // Act
         $response = $this->controller->destroy($invalidId);
         
@@ -233,12 +235,10 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $productId = 1;
         
-        $adminUser = Mockery::mock();
-        $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+        // Setup Auth mock with proper expectations
         Auth::shouldReceive('user')
             ->once()
-            ->andReturn($adminUser);
+            ->andReturn(Mockery::mock(['isAdmin' => true]));
         
         $this->productService->shouldReceive('delete')
             ->once()
@@ -257,12 +257,10 @@ class ProductControllerTest extends TestCase {
         // Arrange
         $productId = 1;
         
-        $adminUser = Mockery::mock(User::class);
-        $adminUser->shouldReceive('isAdmin')->andReturn(true);
-        
+        // Setup Auth mock with proper expectations
         Auth::shouldReceive('user')
             ->once()
-            ->andReturn($adminUser);
+            ->andReturn(Mockery::mock(['isAdmin' => true]));
         
         $this->productService->shouldReceive('delete')
             ->once()

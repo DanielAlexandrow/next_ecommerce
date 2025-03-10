@@ -33,6 +33,11 @@ class ProductController extends Controller
 		]);
 	}
 
+	public function create()
+	{
+		return inertia('admin/NewProduct');
+	}
+
 	public function store(ProductRequest $request)
 	{
 		$product = $this->productService->create($request->validated());
@@ -50,6 +55,11 @@ class ProductController extends Controller
 	{
 		if (!is_numeric($id)) {
 			return response()->json(['message' => 'Invalid product ID format'], 404);
+		}
+
+		// Explicit auth check for admin role
+		if (!Auth::user()->isAdmin()) {
+			return response()->json(['message' => 'Unauthorized action'], 403);
 		}
 
 		try {

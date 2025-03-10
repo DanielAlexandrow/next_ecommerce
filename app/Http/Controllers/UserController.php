@@ -39,7 +39,7 @@ class UserController extends Controller
         $user->update($validated);
 
         return response()->json([
-            'data' => new UserResource($user),
+            'data' => $validated,
             'message' => 'User updated successfully'
         ]);
     }

@@ -10,10 +10,12 @@ class GuestFactory extends Factory {
     protected $model = Guest::class;
 
     public function definition() {
+        $addressInfo = AddressInfo::factory()->create();
+        
         return [
             'email' => $this->faker->unique()->safeEmail,
             'phone' => $this->faker->phoneNumber,
-            'id_address_info' => AddressInfo::factory()
+            'id_address_info' => $addressInfo->id
         ];
     }
 }

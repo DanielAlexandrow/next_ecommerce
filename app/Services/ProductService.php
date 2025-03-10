@@ -23,55 +23,56 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class ProductService implements ProductServiceInterface {
 
 	public function create(array $data): Product {
-		DB::beginTransaction();
-		try {
-			// Create the product with nullable brand_id
-			$product = Product::create([
-				'name' => $data['name'],
-				'description' => $data['description'] ?? null,
-				'brand_id' => $data['brand_id'] ?? null, // Make brand_id nullable
-				'available' => $data['available'] ?? true,
-				'metadata' => isset($data['metadata']) ? json_encode($data['metadata']) : null,
-			]);
+        DB::beginTransaction();
+        try {
+            // Create the product with properly handled metadata
+            $product = Product::create([
+                'name' => $data['name'],
+                'description' => $data['description'] ?? null,
+                'brand_id' => $data['brand_id'] ?? null,
+                'available' => $data['available'] ?? true,
+                'metadata' => $data['metadata'] ?? null
+            ]);
 
-			// Attach categories if provided
-			if (!empty($data['categories'])) {
-				$product->categories()->attach($data['categories']);
-			}
+            // Attach categories if provided
+            if (!empty($data['categories'])) {
+                $product->categories()->attach($data['categories']);
+            }
 
-			// Attach images if provided
-			if (!empty($data['images'])) {
-				$imageData = [];
-				foreach ($data['images'] as $index => $imageId) {
-					$imageData[$imageId] = ['order_num' => $index + 1];
-				}
-				$product->images()->attach($imageData);
-			}
+            // Attach images if provided
+            if (!empty($data['images'])) {
+                $imageData = [];
+                foreach ($data['images'] as $index => $imageId) {
+                    $imageData[$imageId] = ['order_num' => $index + 1];
+                }
+                $product->images()->attach($imageData);
+            }
 
-			// Create subproducts
-			if (!empty($data['subproducts'])) {
-				foreach ($data['subproducts'] as $subproductData) {
-					$product->subproducts()->create([
-						'name' => $subproductData['name'],
-						'sku' => $subproductData['sku'] ?? null,
-						'price' => $subproductData['price'],
-						'stock' => $subproductData['stock'] ?? 0,
-						'weight' => $subproductData['weight'] ?? null,
-						'dimensions' => $subproductData['dimensions'] ?? null,
-						'metadata' => $subproductData['metadata'] ?? null,
-						'available' => true
-					]);
-				}
-			}
+            // Create subproducts
+            if (!empty($data['subproducts'])) {
+                foreach ($data['subproducts'] as $subproductData) {
+                    $product->subproducts()->create([
+                        'name' => $subproductData['name'],
+                        'sku' => $subproductData['sku'],
+                        'price' => $subproductData['price'],
+                        'stock' => $subproductData['stock'],
+                        'weight' => $subproductData['weight'] ?? null,
+                        'dimensions' => $subproductData['dimensions'] ?? null,
+                        'metadata' => $subproductData['metadata'] ?? null,
+                        'available' => $subproductData['available'] ?? true
+                    ]);
+                }
+            }
 
-			DB::commit();
-			return $product->load(['categories', 'subproducts', 'brand', 'images']);
-		} catch (\Exception $e) {
-			DB::rollBack();
-		
-			throw $e;
-		}
-	}
+            DB::commit();
+            
+            // Load relationships and return
+            return $product->load(['categories', 'subproducts', 'brand', 'images']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 
 	public function update($data, $id) {
 		DB::beginTransaction();
@@ -138,11 +139,17 @@ class ProductService implements ProductServiceInterface {
 				'created_at' => now()
 			]);
 
-			// Update popular searches
-			PopularSearch::updateOrCreate(
-				['search_term' => $searchTerm],
-				['count' => DB::raw('count + 1')]
-			);
+			// Update popular searches - SQLite compatible version
+			$popularSearch = PopularSearch::where('search_term', $searchTerm)->first();
+			
+			if ($popularSearch) {
+				$popularSearch->increment('count');
+			} else {
+				PopularSearch::create([
+					'search_term' => $searchTerm,
+					'count' => 1
+				]);
+			}
 		}
 	}
 
