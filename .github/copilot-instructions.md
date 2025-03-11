@@ -94,8 +94,8 @@ subproduct: BelongsTo (Subproduct)
 Product
 Namespace: App\Models
 Table: products
-Fillable: name, description, discount, original_price, available, brand_id
-Casts: available (boolean), discount (float), original_price (float)
+Fillable: name, description, available, brand_id
+Casts: available (boolean), discount (float),  (float)
 With: images, categories, brand, subproducts, reviews
 Appends: average_rating (average of reviews.rating or 0)
 Relationships:

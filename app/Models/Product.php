@@ -15,7 +15,6 @@ class Product extends Model {
         'name',
         'description',
         'discount',
-        'original_price',
         'available',
         'brand_id',  // Now nullable
         'metadata'
@@ -25,7 +24,6 @@ class Product extends Model {
         'metadata' => 'array',
         'available' => 'boolean',
         'discount' => 'float',
-        'original_price' => 'float',
         'brand_id' => 'integer'
     ];
 

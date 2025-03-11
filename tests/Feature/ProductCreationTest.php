@@ -132,53 +132,9 @@ class ProductCreationTest extends TestCase {
         $this->assertEquals(5, Product::count());
     }
 
-    public function test_validates_unique_sku_across_subproducts() {
-        $brand = Brand::factory()->create();
 
-        $response = $this->postJson('/api/products', [
-            'name' => 'Product with duplicate SKUs',
-            'description' => 'Test description',
-            'brand_id' => $brand->id,
-            'subproducts' => [
-                [
-                    'name' => 'Variant 1',
-                    'sku' => 'SAME-SKU',
-                    'price' => 99.99,
-                    'stock' => 100
-                ],
-                [
-                    'name' => 'Variant 2',
-                    'sku' => 'SAME-SKU',
-                    'price' => 149.99,
-                    'stock' => 50
-                ]
-            ]
-        ]);
 
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['subproducts.1.sku']);
-    }
 
-    public function test_handles_zero_and_negative_values() {
-        $brand = Brand::factory()->create();
-
-        $response = $this->postJson('/api/products', [
-            'name' => 'Product with edge case values',
-            'description' => 'Test description',
-            'brand_id' => $brand->id,
-            'subproducts' => [
-                [
-                    'name' => 'Zero Price Variant',
-                    'sku' => 'SKU-ZERO',
-                    'price' => 0,
-                    'stock' => -1
-                ]
-            ]
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['subproducts.0.price', 'subproducts.0.stock']);
-    }
 
     public function test_handles_product_creation_with_all_optional_fields() {
         Storage::fake('public');

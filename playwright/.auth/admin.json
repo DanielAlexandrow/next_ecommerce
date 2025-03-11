@@ -2,24 +2,34 @@
   "cookies": [
     {
       "name": "XSRF-TOKEN",
-      "value": "eyJpdiI6IjZOZXJZZUVtTUNLT1VINmVCQ3N0MHc9PSIsInZhbHVlIjoicU5KOEdKQ0FRVzFBdlhUaktMMGYwbDJWY3pZb1pnRnAxZkhxZnlhMDRab2x2NVNUNnhMY2NyT2Z0WHZPcS8vNFVwTmlLbHJ0dTR1WUxtZ3kzdFFGL0ZOb0x5RjNNU1B3VFI2ejc2WHhvSXdqZTYyYWVYR2lSZk9hT3N6UTFXc2UiLCJtYWMiOiJmZGFhYWFlZWYzNGM1MmQyYTFmZjA0MTA2Zjk4Njg4NTdkNDIyYzI1Mzk2M2QyODM2Y2Y1OTBmMzgxNTUwOGZkIiwidGFnIjoiIn0%3D",
+      "value": "eyJpdiI6Ik5MMEVVS3VJTXFNRFFMQUJrVjZWU1E9PSIsInZhbHVlIjoiaDZhaWZoblFxTUtYald1U05sSjNqcTdZT0k5aWlpbnFxSmF2cENVN0dVVzhNcjlHL2h1V09KR2c5NU5RekhXWHdhNzlSOEx5Z2xKTHV1b2dmTjRpT29qRXBibmE3MUxTSEt5OWlHdmo0UVZITUJtT2haZkp3RzE0MlNSaU9JK0kiLCJtYWMiOiI2ZDNjMTQ3ZDUxM2ZhZGRkMWQ5MjEwMGVlOTFmZmZkNWYyMTUzODA2MTgwYzdhOTJmODkyNmUzOWFjMzBjYjQxIiwidGFnIjoiIn0%3D",
       "domain": "localhost",
       "path": "/",
-      "expires": 1735758899.146345,
+      "expires": 1741717011.29121,
       "httpOnly": false,
       "secure": false,
       "sameSite": "Lax"
     },
     {
       "name": "inertiats_session",
-      "value": "eyJpdiI6InNwUzl2akRQeWpyVGpYdWNTSUMyT0E9PSIsInZhbHVlIjoiaFpBeWl4VnowUkpISlpHanEyK21NWkNVekpXNVQ3K1dYcG01WGphSzMySithTEdZeFQvU2MrUVdkUk42SkxpOHBIcTkranIxMnRGMWFma295d3RoU21FZ3NjeEFnbzVDR1l1NzA1c1NuSGNvTFBHV1RtWHUrUDhFQUxQWVBDUXciLCJtYWMiOiI3ZmE3YTYzOTU2YWE2MzEzNThlZjZmODAwNTA2YzQ5NDRjMjZhZjlhZTQ4YmY5NDcxZTcwNmEzMTlhMjMyNDYxIiwidGFnIjoiIn0%3D",
+      "value": "eyJpdiI6ImpHRWJlT2dsSXpxSndlekFjTzFXVmc9PSIsInZhbHVlIjoiUklxZlZvc3c1YXptb25QS0hwUkJ5eFpuWEF5UVo3MmJmSGVmMnlhaHh0d2h1Vm9Nd2llbEpxT3pUL2d2NjVVQ0dCQ3RzSy9IcUlpVkdXeEFLc20yYjRjYm5GWHZQM1RzaHNhZnRQV0liYnlTR2Q2Ly94R1BzUzdWVVl1R3dhSEwiLCJtYWMiOiIxN2FjODU0YmE1NWQ1ODhkZjczOTU2MWE2ZGQ2MGVkNDkzNjc1NmU3Yjg0YjM4Y2NmNjY1OTQyNzlmZjM2NTBhIiwidGFnIjoiIn0%3D",
       "domain": "localhost",
       "path": "/",
-      "expires": 1735758899.811,
+      "expires": 1741717012.081,
       "httpOnly": true,
       "secure": false,
       "sameSite": "Lax"
     }
   ],
-  "origins": []
+  "origins": [
+    {
+      "origin": "http://localhost:8000",
+      "localStorage": [
+        {
+          "name": "phpdebugbar-height",
+          "value": "300"
+        }
+      ]
+    }
+  ]
 }

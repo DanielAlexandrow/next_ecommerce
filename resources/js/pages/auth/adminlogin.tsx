@@ -5,7 +5,7 @@ import { InputError } from '@/components/input-error';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 
 interface LoginProps {
 	status: string;
@@ -45,46 +45,46 @@ export default function Login(args: LoginProps) {
 			<form onSubmit={submit}>
 				<div>
 					<Label htmlFor='email'>Email</Label>
-
 					<Input
-						type='text'
+						id='email'
+						type='email'
 						name='email'
 						value={data.email}
-						className='mt-1'
+						className='mt-1 block w-full'
 						autoComplete='username'
 						autoFocus
 						onChange={onChange}
 					/>
-
 					<InputError message={errors.email} className='mt-2' />
 				</div>
 
 				<div className='mt-4'>
 					<Label htmlFor='password'>Password</Label>
-
 					<Input
+						id='password'
 						type='password'
 						name='password'
 						value={data.password}
-						className='mt-1'
+						className='mt-1 block w-full'
 						autoComplete='current-password'
 						onChange={onChange}
 					/>
-
 					<InputError message={errors.password} className='mt-2' />
 				</div>
 
 				<div className='mt-4 flex items-center justify-between'>
 					<label className='flex items-center'>
-						<Checkbox name='remember' onCheckedChange={(e) => e} />
-
+						<Checkbox 
+							id='remember'
+							name='remember'
+							checked={data.remember === 'on'}
+							onCheckedChange={(checked) => setData('remember', checked ? 'on' : '')}
+						/>
 						<span className='ml-2 text-sm text-muted-foreground'>Remember me</span>
 					</label>
 				</div>
 
 				<div className='mt-4 flex items-center justify-end'>
-
-
 					<Button className='ml-4' disabled={processing} type='submit'>
 						Log in
 					</Button>
