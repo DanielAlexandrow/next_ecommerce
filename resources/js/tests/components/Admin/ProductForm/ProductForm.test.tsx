@@ -30,7 +30,17 @@ vi.mock('axios', () => {
             get: vi.fn().mockResolvedValue({ data: { categories: [], brands: [] } }),
             post: vi.fn().mockResolvedValue({ data: { id: 1, name: 'Test Product' } }),
             put: vi.fn().mockResolvedValue({ data: { id: 1, name: 'Updated Product' } })
-        })
+        }),
+        interceptors: {
+            request: {
+                use: vi.fn(),
+                eject: vi.fn()
+            },
+            response: {
+                use: vi.fn(),
+                eject: vi.fn()
+            }
+        }
     };
     return {
         __esModule: true,

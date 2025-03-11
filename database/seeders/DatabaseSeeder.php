@@ -16,9 +16,8 @@ use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder {
     public function run(): void {
-        // Create roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $driverRole = Role::create(['name' => 'driver']);
+        // Call RoleSeeder first
+        $this->call(RoleSeeder::class);
 
         // Create admin user
         $admin = User::create([
@@ -27,7 +26,7 @@ class DatabaseSeeder extends Seeder {
             'password' => Hash::make('password123'),
             'email_verified_at' => now(),
         ]);
-        $admin->assignRole($adminRole);
+        $admin->assignRole('admin');
 
         // Create categories
         $categories = [

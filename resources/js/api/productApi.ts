@@ -4,17 +4,25 @@ import { toast } from 'react-hot-toast';
 
 const API_URL = '/products';
 
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 422) {
-      const errorMessages = error.response.data.errors as Record<string, string[]>;
-      // Now messages is properly typed
-      toast.error(Object.values(errorMessages).flat().join('\n'));
+// Set up interceptor in a function that's called immediately
+const setupInterceptors = () => {
+  axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      // First check if there's a response object
+      if (error && error.response) {
+        if (error.response.status === 422) {
+          const errorMessages = error.response.data.errors as Record<string, string[]>;
+          toast.error(Object.values(errorMessages).flat().join('\n'));
+        }
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
+  );
+};
+
+// Initialize interceptors
+setupInterceptors();
 
 export const productApi = {
   createProduct: async (payload: any) => {
