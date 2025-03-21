@@ -70,11 +70,13 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                         <FormItem>
                                             <FormLabel className="text-sm font-medium text-gray-900">Product Name</FormLabel>
                                             <FormControl>
-                                                <Input 
-                                                    placeholder="Enter product name" 
-                                                    className="border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
-                                                    {...field} 
-                                                />
+                                                <div data-testid="product-name-input">
+                                                    <Input 
+                                                        placeholder="Enter product name" 
+                                                        className="border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
+                                                        {...field} 
+                                                    />
+                                                </div>
                                             </FormControl>
                                             <FormMessage className="text-red-600" />
                                         </FormItem>
@@ -88,11 +90,13 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                         <FormItem>
                                             <FormLabel className="text-sm font-medium text-gray-900">Description</FormLabel>
                                             <FormControl>
-                                                <Textarea 
-                                                    placeholder="Enter product description" 
-                                                    className="min-h-[120px] border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
-                                                    {...field} 
-                                                />
+                                                <div data-testid="product-description-input">
+                                                    <Textarea 
+                                                        placeholder="Enter product description" 
+                                                        className="min-h-[120px] border-gray-300 focus:border-black focus:ring-1 focus:ring-black" 
+                                                        {...field} 
+                                                    />
+                                                </div>
                                             </FormControl>
                                             <FormMessage className="text-red-600" />
                                         </FormItem>
@@ -105,11 +109,13 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                     render={({ field }) => (
                                         <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border border-gray-200 p-4">
                                             <FormControl>
-                                                <Checkbox 
-                                                    checked={field.value} 
-                                                    onCheckedChange={field.onChange}
-                                                    className="data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900" 
-                                                />
+                                                <div data-testid="product-available-checkbox">
+                                                    <Checkbox 
+                                                        checked={field.value} 
+                                                        onCheckedChange={field.onChange}
+                                                        className="data-[state=checked]:bg-gray-900 data-[state=checked]:border-gray-900" 
+                                                    />
+                                                </div>
                                             </FormControl>
                                             <div className="space-y-1 leading-none">
                                                 <FormLabel className="text-sm font-medium text-gray-900">Available for purchase</FormLabel>
@@ -192,8 +198,9 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                         
                         <div className="flex justify-end">
                             <Button 
-                                type="submit" 
-                                className="px-8 py-2 bg-gray-900 hover:bg-black text-white transition-all"
+                                type="submit"
+                                data-testid="submit-button" 
+                                className="w-full px-8 py-2 bg-black hover:bg-black/90 text-white transition-all"
                                 disabled={isSubmitting}
                             >
                                 <Save className="mr-2 h-5 w-5" />

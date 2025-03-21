@@ -65,6 +65,15 @@ class Product extends Model {
             ->orderBy('order_num');
     }
 
+    public function orders() {
+        return $this->hasManyThrough(
+            Order::class,
+            Subproduct::class,
+            'product_id',
+            'subproduct_id'
+        );
+    }
+
     public function getAverageRatingAttribute(): ?float {
         if ($this->reviews()->count() === 0) {
             return null;

@@ -18,7 +18,7 @@ test.describe('Admin Authentication', () => {
         await page.getByRole('button', { name: 'Log in' }).click();
         
         // Should redirect to admin dashboard after login
-        await expect(page).toHaveURL('/productsearch');
+        await expect(page).toHaveURL('/shop-settings');
     });
 
     test('should show error with incorrect credentials', async ({ page }) => {

@@ -79,6 +79,7 @@ export const AddReviewDialog: React.FC<AddReviewDialogProps> = ({
               {[1, 2, 3, 4, 5].map((star) => (
                 <StarIcon
                   key={star}
+                  data-testid="star-rating"
                   className={`h-8 w-8 cursor-pointer ${
                     star <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
                   }`}

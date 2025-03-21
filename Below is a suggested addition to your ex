@@ -1,0 +1,140 @@
+Below is a suggested addition to your existing `API_DOCUMENTATION.md` (or `API_DOCU`) file that captures **new** or **less-obvious** details discovered while scanning the referenced `.tsx` pages and API files. These notes focus on functionality that **was not already obvious** in your existing documentation—particularly around sub-products, the new query parameters for listing/sorting, image management, and user updates/deletions.
+
+Feel free to adjust headings, placement, or formatting to match your documentation style.
+
+---
+
+## Additional Admin & Store Features
+
+### 1. Subproducts on the Storefront
+
+**Context**: In the store-facing [`ProductPage.tsx`](../resources/js/pages/store/ProductPage.tsx), each `Product` can contain one or more “subproducts.” A subproduct represents a specific product variant (for example, a shirt size “Medium” or a shoe size “41”).
+
+- **Data Structure**:  
+  ```js
+  interface StoreProduct {
+      id: number;
+      name: string;
+      description: string;
+      images: { path: string }[];
+      subproducts: {
+          id: number;
+          name: string;   // e.g., "Size M"
+          price: number;  // e.g., 29.99
+      }[];
+      // ...
+  }
+  ```
+- **Adding to Cart**:
+  - **Endpoint**: `POST /cart/add`
+  - **Request Body**:  
+    ```json
+    {
+      "subproduct_id": number, // e.g. 123
+      "quantity": number       // defaulted to 1 in the UI
+    }
+    ```
+  - **Important**: Because each variant is stored as a “subproduct,” you **must** pass the `subproduct_id` rather than the top-level product ID when adding items to the cart.
+
+### 2. Admin Product Listing & Subproduct Management
+
+In [`ProductList.tsx`](../resources/js/pages/admin/ProductList.tsx), admins can view, sort, and manage products. This page supports sorting by several fields, plus actions to edit, delete, or manage subproducts (“options”).
+
+- **Sorting**:
+  - **Endpoint**: `GET /products`
+  - **Query Parameters**:
+    - `sortkey`: One of `name`, `description`, `available`, or `created_at`
+    - `sortdirection`: `asc` or `desc`
+    - `page`: page number for pagination
+  - **Example**:  
+    ```
+    /products?sortkey=name&sortdirection=asc&page=1
+    ```
+- **Subproducts**:
+  - The UI includes modals to create/view subproducts for each product (`NewSubproductModal`, `SubproductsModal`), but the exact endpoints may vary. Commonly these are additional REST routes under the main product resource or a `/subproducts` resource.  
+
+### 3. Image Management
+
+[`UploadPage.tsx`](../resources/js/pages/admin/UploadPage.tsx) allows admins to upload, search, crop, and delete images. While some endpoints or methods may have existed before, here are the non-obvious details:
+
+1. **Listing & Searching Images**  
+   - **Endpoint**: `GET /images`  
+   - **Query Parameters** (all optional):
+     - `search`: filters by image name
+     - `sortkey`: e.g. `name` or `created_at`
+     - `sortdirection`: `asc` or `desc`
+     - `page`: for pagination
+   - **Example**:  
+     ```
+     GET /images?search=banner&sortkey=name&sortdirection=asc&page=2
+     ```
+2. **Uploading Images**  
+   - **Endpoint**: `POST /images` (assumed from code in `imageApi.uploadImage`)
+   - **Request Body**: `FormData` with a key of `"image"`.
+   - Cropping on the client side is optional. The final file (cropped or original) is just sent under the same `image` field.
+3. **Deleting Images**  
+   - **Endpoint**: `DELETE /images/{id}`
+   - **Response**: Returns `204` (no content) on success.
+   - A success message can also be found in the response header as `X-Message` or in the code as `toast.success(...)`.
+
+### 4. Admin User Management
+
+In [`UsersPage.tsx`](../resources/js/pages/admin/UsersPage.tsx), admins can list, sort, delete, and edit user records. While `GET /users` was noted in the original docs, the following routes/behaviors expand that documentation:
+
+1. **Listing & Sorting**  
+   - **Endpoint**: `GET /users`  
+   - **Query Parameters**:
+     - `sortkey`: one of `id`, `name`, `email`, `role`, `created_at`
+     - `sortdirection`: `asc` or `desc`
+     - `page`: pagination page
+   - **Example**:  
+     ```
+     GET /users?sortkey=created_at&sortdirection=desc&page=3
+     ```
+2. **Updating a User**
+   - **Endpoint**: `PUT /users/{id}`
+   - **Request Body** (partial — only include fields that need updating):
+     ```json
+     {
+       "name":   "String [2..50]",
+       "email":  "valid email",
+       "role":   "admin|driver|customer",
+       "password": "String [8+]", // optional, if omitted the old password is retained
+     }
+     ```
+   - **Response**: JSON with the updated user details.
+   - **Access**: Must be admin.
+3. **Deleting a User**
+   - **Endpoint**: `DELETE /users/{id}`
+   - **Response**:  
+     - **204** (no content) on success, or  
+     - **4xx** errors if the user cannot be deleted.
+   - **Access**: Must be admin.
+
+### 5. Extended Product Search Parameters
+
+In [`productApi.ts`](../resources/js/api/productApi.ts), the function `searchProducts` calls `GET /api/products/search` with several parameters:
+
+- **Already Documented**: `name`, `minPrice`, `maxPrice`, `sortBy`, `page`.
+- **New/Extended**: 
+  - `category` (string or ID) — filters by a specific category  
+  - `rating` (number) — filters by minimum rating  
+  - `inStock` (boolean) — filters for products that are in stock  
+
+Example:
+```
+GET /api/products/search?name=drill&minPrice=10&maxPrice=150&rating=4&category=power-tools&inStock=true
+```
+
+### 6. Miscellaneous Notes
+
+- **Quantity in Cart**: The front-end typically sends `"quantity": 1` in `POST /cart/add`. To adjust quantity, you would still call the same endpoint with the desired `quantity`.  
+- **Subproduct IDs**: These IDs are returned with each `subproduct` object in a product’s detail call (e.g., `GET /products/{productId}`). Selecting a subproduct is how the UI picks a variant/size.
+
+---
+
+**End of New Documentation**
+
+You can place the above sections into your `API_DOCUMENTATION.md` (or `API_DOCU`) under appropriate headings (e.g., under “Admin Routes,” “Storefront,” etc.) or merge them with existing sections as needed. This captures the newly surfaced details—particularly around subproduct handling, sorting parameters, and admin operations for images and users—without reiterating the parts you have already documented.
+
+

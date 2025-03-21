@@ -70,7 +70,7 @@ const sidebarItems = [
     {
         icon: <IoSettingsOutline />,
         text: 'Users',
-        href: '/users',
+        href: '/admin/users',
     },
     {
         icon: <FiAlignJustify />,
@@ -99,20 +99,27 @@ export default function Sidebar({
     };
 
     return (
-        <div className={`${styles.sidebar.container} ${sidebarMinimized ? styles.sidebar.minimized : ''}`}>
+        <div 
+            className={`${styles.sidebar.container} ${sidebarMinimized ? styles.sidebar.minimized : ''}`}
+            data-testid="admin-sidebar"
+        >
             <div className={styles.header.container}>
-                <div className={`${styles.header.title} ${sidebarMinimized ? styles.header.minimized : ''}`}>
+                <div 
+                    className={`${styles.header.title} ${sidebarMinimized ? styles.header.minimized : ''}`}
+                    data-testid="sidebar-header"
+                >
                     Admin Panel
                 </div>
                 <MinimizeButton isMinimized={sidebarMinimized} setIsMinimized={setSidebarMinimized} />
             </div>
 
-            <div className={styles.nav.container}>
+            <div className={styles.nav.container} data-testid="sidebar-nav-container">
                 {sidebarItems.map((item, index) => (
                     <Link
                         key={index}
                         href={item.href}
                         className={styles.nav.item.base}
+                        data-testid={`sidebar-nav-item-${item.text.toLowerCase().replace(/\s+/g, '-')}`}
                     >
                         {item.icon}
                         <div className={`${styles.nav.item.text} ${sidebarMinimized ? styles.nav.item.minimized : ''}`}>
@@ -122,9 +129,9 @@ export default function Sidebar({
                 ))}
             </div>
 
-            <div className={styles.profile.container}>
+            <div className={styles.profile.container} data-testid="sidebar-profile">
                 <DropdownMenu>
-                    <DropdownMenuTrigger>
+                    <DropdownMenuTrigger data-testid="profile-dropdown-trigger">
                         <div className={styles.profile.button}>
                             {sidebarMinimized ? (
                                 <CgProfile
@@ -139,7 +146,7 @@ export default function Sidebar({
                         </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className='w-56'>
-                        <DropdownMenuItem onClick={logout} className='text-center'>
+                        <DropdownMenuItem onClick={logout} className='text-center' data-testid="logout-button">
                             Logout
                         </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -160,6 +167,7 @@ function MinimizeButton({
         <div
             className={styles.minimizeButton.container}
             onClick={() => setIsMinimized(!isMinimized)}
+            data-testid="sidebar-minimize-button"
         >
             {isMinimized ? (
                 <FaChevronRight className={styles.minimizeButton.icon} />

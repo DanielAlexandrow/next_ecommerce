@@ -15,6 +15,7 @@ class AdminOrders extends Controller {
     
     public function __construct(OrderService $orderService = null) {
         $this->middleware('admin')->except(['generatePdf']); 
+        $this->middleware('auth')->only(['generatePdf']);
         $this->orderService = $orderService ?? new OrderService();
     }
 
@@ -28,7 +29,7 @@ class AdminOrders extends Controller {
             ->select([
                 'orders.id as order_id',
                 DB::raw('COALESCE(users.name, address_info.name, "N/A") as name'),
-                DB::raw('JSON_LENGTH(orders.items) as item_count'),
+                DB::raw('(LENGTH(orders.items) - LENGTH(REPLACE(orders.items, \',\', \'\')) + 1) as item_count'),
                 'orders.total',
                 'orders.status',
                 'orders.created_at',
@@ -123,11 +124,8 @@ class AdminOrders extends Controller {
         try {
             $order = Order::with(['user', 'guest.addressInfo'])->findOrFail($orderId);
             
-            // Only allow admin or the order owner to access PDF
-            if (!auth()->check() || 
-                (!auth()->user()->isAdmin() && 
-                 auth()->id() !== $order->user_id && 
-                 !($order->guest_id && $order->guest))) {
+            // Allow admin or the order owner to access PDF
+            if (!auth()->user()->isAdmin() && auth()->id() !== $order->user_id) {
                 return response()->json(['message' => 'Unauthorized access to order PDF'], 403);
             }
             
@@ -148,7 +146,7 @@ class AdminOrders extends Controller {
 
             $pdf = PDF::loadView('pdf.invoice', $data);
             
-            return $pdf->download('invoice-' . $order->id . '.pdf');
+            return $pdf->stream('invoice-' . $order->id . '.pdf');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Order not found'], 404);
         } catch (\Exception $e) {

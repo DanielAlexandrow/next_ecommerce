@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -16,7 +17,8 @@ class User extends Authenticatable {
         'name',
         'email',
         'password',
-        'role'
+        'role',
+        'id_address_info'
     ];
 
     protected $hidden = [
@@ -24,14 +26,8 @@ class User extends Authenticatable {
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 
     /**
@@ -62,8 +58,7 @@ class User extends Authenticatable {
      * @return bool
      */
     public function isAdmin(): bool {
-        // Check both the role attribute and the hasRole method for compatibility
-        return $this->role === 'admin' || $this->hasRole('admin');
+        return $this->role === 'admin';
     }
     
     /**
@@ -72,6 +67,18 @@ class User extends Authenticatable {
      * @return bool
      */
     public function isDriver(): bool {
-        return $this->role === 'driver' || $this->hasRole('driver');
+        return $this->role === 'driver';
+    }
+
+    public function addressInfo() {
+        return $this->belongsTo(AddressInfo::class, 'id_address_info');
+    }
+
+    public function orders() {
+        return $this->hasMany(Order::class);
+    }
+
+    public function coordinate() {
+        return $this->hasOne(Coordinate::class);
     }
 }

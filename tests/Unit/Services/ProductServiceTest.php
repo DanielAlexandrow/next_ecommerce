@@ -189,7 +189,7 @@ class ProductServiceTest extends TestCase {
                 'user_id' => $user->id,
                 'product_id' => $product->id,
                 'rating' => 4,
-                'comment' => 'Test review'
+                'content' => 'Test review'
             ]);
         }
 

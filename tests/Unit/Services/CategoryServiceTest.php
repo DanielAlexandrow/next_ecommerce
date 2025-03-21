@@ -196,12 +196,12 @@ class CategoryServiceTest extends TestCase
         
         $user = \App\Models\User::factory()->create();
         
-        // Create reviews with ratings
+        // Create reviews with ratings - changed 'comment' to 'content'
         Review::factory()->count(2)->create([
             'user_id' => $user->id,
             'product_id' => $product->id,
             'rating' => 4,
-            'comment' => 'Test review'
+            'content' => 'Test review'
         ]);
 
         // Act

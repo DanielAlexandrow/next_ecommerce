@@ -20,12 +20,15 @@ class DatabaseSeeder extends Seeder {
         $this->call(RoleSeeder::class);
 
         // Create admin user
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password123'),
-            'email_verified_at' => now(),
-        ]);
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+                'role' => 'admin'
+            ]
+        );
         $admin->assignRole('admin');
 
         // Create categories
@@ -38,11 +41,13 @@ class DatabaseSeeder extends Seeder {
         ];
 
         foreach ($categories as $category) {
-            Category::create([
-                'name' => $category['name'],
-                'description' => $category['description'],
-                'slug' => Str::slug($category['name'])
-            ]);
+            Category::firstOrCreate(
+                ['name' => $category['name']],
+                [
+                    'description' => $category['description'],
+                    'slug' => Str::slug($category['name'])
+                ]
+            );
         }
 
         // Create brands
@@ -55,7 +60,10 @@ class DatabaseSeeder extends Seeder {
         ];
 
         foreach ($brands as $brand) {
-            Brand::create($brand);
+            Brand::firstOrCreate(
+                ['name' => $brand['name']],
+                ['description' => $brand['description']]
+            );
         }
 
         // Create navigation headers
@@ -71,17 +79,16 @@ class DatabaseSeeder extends Seeder {
         ];
 
         foreach ($headers as $index => $header) {
-            $navHeader = Header::create([
-                'name' => $header['name'],
-                'order_num' => $index + 1,
-            ]);
+            $navHeader = Header::firstOrCreate(
+                ['name' => $header['name']],
+                ['order_num' => $index + 1]
+            );
 
             foreach ($header['items'] as $itemIndex => $itemName) {
-                NavigationItem::create([
-                    'name' => $itemName,
-                    'header_id' => $navHeader->id,
-                    'order_num' => $itemIndex + 1,
-                ]);
+                NavigationItem::firstOrCreate(
+                    ['name' => $itemName, 'header_id' => $navHeader->id],
+                    ['order_num' => $itemIndex + 1]
+                );
             }
         }
 
@@ -128,29 +135,33 @@ class DatabaseSeeder extends Seeder {
             $category = Category::where('name', $product['category'])->first();
             $brand = Brand::where('name', $product['brand'])->first();
 
-            $newProduct = Product::create([
-                'name' => $product['name'],
-                'description' => $product['description'],
-                'available' => true,
-                'brand_id' => $brand->id,
-            ]);
+            $newProduct = Product::firstOrCreate(
+                ['name' => $product['name']],
+                [
+                    'description' => $product['description'],
+                    'available' => true,
+                    'brand_id' => $brand->id,
+                ]
+            );
 
-            $newProduct->categories()->attach($category->id);
+            $newProduct->categories()->syncWithoutDetaching([$category->id]);
 
             // Create subproduct for each product with SKU
             $sku = strtoupper(substr($product['brand'], 0, 3) . '-' . substr(preg_replace('/[^A-Za-z0-9]/', '', $product['name']), 0, 3) . '-STD');
-            $newProduct->subproducts()->create([
-                'name' => 'Standard',
-                'price' => $product['price'],
-                'available' => true,
-                'sku' => $sku
-            ]);
+            $newProduct->subproducts()->firstOrCreate(
+                ['sku' => $sku],
+                [
+                    'name' => 'Standard',
+                    'price' => $product['price'],
+                    'available' => true,
+                ]
+            );
         }
 
         // Create placeholder image
-        Image::create([
-            'name' => 'placeholder',
-            'path' => 'placeholder.jpg',
-        ]);
+        Image::firstOrCreate(
+            ['name' => 'placeholder'],
+            ['path' => 'placeholder.jpg']
+        );
     }
 }

@@ -18,6 +18,7 @@ class RouteServiceProvider extends ServiceProvider {
      */
     public const HOME = '/productsearch';
     public const HOME_STORE = '/productsearch';
+    public const HOME_ADMIN = '/shop-settings';
 
 
     /**
