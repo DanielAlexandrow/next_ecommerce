@@ -58,7 +58,8 @@ class CartController extends Controller {
         
         $items = $this->cartService->getCartItems($userId);
         
-        return response()->json(['items' => $items], 201)
+        // Return items directly rather than nested under 'items' key
+        return response()->json($items, 201)
             ->header('X-Message', 'Added to cart')
             ->header('X-Session-Id', Session::getId());
     }
@@ -74,7 +75,8 @@ class CartController extends Controller {
             $userId
         );
 
-        return response()->json(['items' => $items], 201)
+        // Return items directly rather than nested under 'items' key
+        return response()->json($items, 201)
             ->header('X-Session-Id', Session::getId());
     }
 
@@ -82,7 +84,8 @@ class CartController extends Controller {
         $userId = auth()->check() ? auth()->user()->id : null;
         $items = $this->cartService->getCartItems($userId);
 
-        return response()->json(['items' => $items], 200)
+        // Return items directly rather than nested under 'items' key
+        return response()->json($items, 200)
             ->header('X-Session-Id', Session::getId());
     }
 }
