@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, vi } from 'vitest';
 import { initTestHistory } from './resources/js/tests/test-history';
+import axios from 'axios';
 
 // Mock ResizeObserver
 const mockResizeObserver = vi.fn(() => ({
@@ -12,6 +13,11 @@ const mockResizeObserver = vi.fn(() => ({
 
 vi.stubGlobal('ResizeObserver', mockResizeObserver);
 
+// Configure axios for tests
+axios.defaults.baseURL = '';
+// Mock axios adapter to prevent actual HTTP requests
+vi.mock('axios');
+
 // Initialize test history tracking
 beforeAll(() => {
     initTestHistory();
@@ -20,4 +26,4 @@ beforeAll(() => {
 // Cleanup after each test
 afterEach(() => {
     cleanup();
-}); 
+});

@@ -8,19 +8,31 @@ use App\Models\Product;
 use App\Models\Subproduct;
 use App\Models\Image;
 use App\Models\Category;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class TestDatabaseSeeder extends Seeder {
     public function run() {
+        // Create admin user for testing directly with role attribute
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => 'password123', // Will be hashed by the model's mutator
+            'email_verified_at' => now(),
+            'role' => 'admin' 
+        ]);
+        
         // Create test brand
         $brand = Brand::create([
             'name' => 'Test Brand',
             'description' => 'Test Brand Description',
         ]);
-
+        
         // Create test category
         $category = Category::create([
             'name' => 'Test Category',
             'description' => 'Test Category Description',
+            'slug' => 'test-category'
         ]);
 
         // Create test products
@@ -50,6 +62,8 @@ class TestDatabaseSeeder extends Seeder {
                 'product_id' => $product->id,
                 'price' => 100 * $i,
                 'available' => true,
+                'sku' => "TST-PRD-{$i}1",
+                'stock' => 20 // Add stock for cart tests
             ]);
 
             Subproduct::create([
@@ -57,6 +71,8 @@ class TestDatabaseSeeder extends Seeder {
                 'product_id' => $product->id,
                 'price' => 150 * $i,
                 'available' => false,
+                'sku' => "TST-PRD-{$i}2",
+                'stock' => 10
             ]);
         }
     }

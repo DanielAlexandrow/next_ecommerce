@@ -17,7 +17,7 @@ export default function Login(args: LoginProps) {
 	const { data, setData, post, processing, errors, reset } = useForm({
 		email: '',
 		password: '',
-		remember: '',
+		remember: false,
 	});
 
 	useEffect(() => {
@@ -33,7 +33,7 @@ export default function Login(args: LoginProps) {
 	const submit = (e: { preventDefault: () => void }) => {
 		e.preventDefault();
 
-		post(route('login'));
+		post(route('admin.login'));
 	};
 
 	return (
@@ -41,8 +41,15 @@ export default function Login(args: LoginProps) {
 			<Head title='Admin Login' />
 
 			{status && <div className='mb-4 text-sm font-medium text-green-600 dark:text-green-400'>{status}</div>}
+			
+			{/* Add error message display */}
+            {errors.email && (
+                <div className="mb-4 text-sm font-medium text-red-600 dark:text-red-400">
+                    {errors.email}
+                </div>
+            )}
 
-			<form onSubmit={submit}>
+			<form onSubmit={submit} data-testid="admin-login-form">
 				<div>
 					<Label htmlFor='email'>Email</Label>
 					<Input
@@ -54,6 +61,7 @@ export default function Login(args: LoginProps) {
 						autoComplete='username'
 						autoFocus
 						onChange={onChange}
+						data-testid="email-input"
 					/>
 					<InputError message={errors.email} className='mt-2' />
 				</div>
@@ -68,24 +76,33 @@ export default function Login(args: LoginProps) {
 						className='mt-1 block w-full'
 						autoComplete='current-password'
 						onChange={onChange}
+						data-testid="password-input"
 					/>
 					<InputError message={errors.password} className='mt-2' />
 				</div>
 
-				<div className='mt-4 flex items-center justify-between'>
-					<label className='flex items-center'>
-						<Checkbox 
+				<div className='mt-4 block'>
+					<label className='flex items-center gap-2'>
+						<Checkbox
 							id='remember'
 							name='remember'
-							checked={data.remember === 'on'}
-							onCheckedChange={(checked) => setData('remember', checked ? 'on' : '')}
+							checked={data.remember}
+							onCheckedChange={(checked: boolean) => setData('remember', checked)}
+							data-testid="remember-checkbox"
 						/>
-						<span className='ml-2 text-sm text-muted-foreground'>Remember me</span>
+						<span className='text-sm text-muted-foreground cursor-pointer select-none'>
+							Remember me
+						</span>
 					</label>
 				</div>
 
 				<div className='mt-4 flex items-center justify-end'>
-					<Button className='ml-4' disabled={processing} type='submit'>
+					<Button 
+						className='ml-4' 
+						disabled={processing} 
+						type='submit'
+						data-testid="login-button"
+					>
 						Log in
 					</Button>
 				</div>

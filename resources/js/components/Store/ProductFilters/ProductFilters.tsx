@@ -32,8 +32,8 @@ export function ProductFilters() {
     }, [form.watch]);
 
     return (
-        <form className={styles.container}>
-            <div className={styles.section.price.container}>
+        <form className={styles.container} data-testid="product-filters">
+            <div className={styles.section.price.container} data-testid="price-filter-section">
                 <Label>Price Range</Label>
                 <div className={styles.section.price.inputs}>
                     <Input
@@ -41,6 +41,7 @@ export function ProductFilters() {
                         placeholder="Min"
                         {...form.register('minPrice', { valueAsNumber: true })}
                         className={styles.section.price.input}
+                        data-testid="min-price-input"
                     />
                     <span>to</span>
                     <Input
@@ -48,28 +49,30 @@ export function ProductFilters() {
                         placeholder="Max"
                         {...form.register('maxPrice', { valueAsNumber: true })}
                         className={styles.section.price.input}
+                        data-testid="max-price-input"
                     />
                 </div>
             </div>
 
             <Separator className={styles.separator} />
 
-            <div className={styles.sort.container}>
+            <div className={styles.sort.container} data-testid="sort-filter-section">
                 <Label>Sort By</Label>
                 <Select
                     onValueChange={(value) => form.setValue('sortBy', value as any)}
                     defaultValue={filters.sortBy}
+                    data-testid="sort-select"
                 >
-                    <SelectTrigger>
+                    <SelectTrigger data-testid="sort-trigger">
                         <SelectValue placeholder="Sort by..." />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                        <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                        <SelectItem value="name_asc">Name: A to Z</SelectItem>
-                        <SelectItem value="name_desc">Name: Z to A</SelectItem>
-                        <SelectItem value="rating_desc">Highest Rated</SelectItem>
-                        <SelectItem value="newest">Newest First</SelectItem>
+                        <SelectItem value="price_asc" data-testid="sort-option-price-asc">Price: Low to High</SelectItem>
+                        <SelectItem value="price_desc" data-testid="sort-option-price-desc">Price: High to Low</SelectItem>
+                        <SelectItem value="name_asc" data-testid="sort-option-name-asc">Name: A to Z</SelectItem>
+                        <SelectItem value="name_desc" data-testid="sort-option-name-desc">Name: Z to A</SelectItem>
+                        <SelectItem value="rating_desc" data-testid="sort-option-rating">Highest Rated</SelectItem>
+                        <SelectItem value="newest" data-testid="sort-option-newest">Newest First</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

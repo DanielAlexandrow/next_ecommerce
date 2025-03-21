@@ -3,37 +3,67 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'react-toastify';
 import { useUserStore } from '@/stores/useUserStore';
 import { userApi } from '@/api/userApi';
+import { useState } from 'react';
 
 export default function DeleteUserDialog() {
     const { modalUser, users, setUsers, setOpenDeleteModal, setModalUser } = useUserStore();
+    const [isDeleting, setIsDeleting] = useState(false);
 
-    const deleteUser = async () => {
-        if (!modalUser) return;
+    const handleDelete = async () => {
+        if (!modalUser || isDeleting) return;
         
+        setIsDeleting(true);
         try {
             const response = await userApi.deleteUser(modalUser.id);
-            if (response.status === 204) {
-                setUsers(users.filter((user) => user.id !== modalUser.id));
-                toast.success(response.headers['x-message']);
-            }
-        } catch (error) {
-            toast.error('Failed to delete user');
+            setUsers(users.filter((user) => user.id !== modalUser.id));
+            toast.success('User deleted successfully');
+            setOpenDeleteModal(false);
+            setModalUser(null);
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || 'Failed to delete user');
             console.error(error);
+        } finally {
+            setIsDeleting(false);
         }
-        setOpenDeleteModal(false);
-        setModalUser(null);
     };
+
+    if (!modalUser) return null;
 
     return (
         <Dialog open={true} onOpenChange={setOpenDeleteModal}>
             <DialogContent>
                 <DialogTitle>Delete User</DialogTitle>
                 <DialogDescription>
-                    Are you sure you want to delete user {modalUser?.name}?
+                    Are you sure you want to delete {modalUser.name}? This action cannot be undone.
                 </DialogDescription>
-                <div className="flex justify-between">
-                    <Button variant="destructive" onClick={deleteUser}>Delete</Button>
-                    <Button variant="outline" onClick={() => setOpenDeleteModal(false)}>Cancel</Button>
+                <div className="mt-4 space-y-4">
+                    <div className="text-sm text-gray-500">
+                        This will permanently remove:
+                        <ul className="list-disc list-inside mt-2">
+                            <li>User account and profile</li>
+                            <li>Order history</li>
+                            <li>Address information</li>
+                            <li>Reviews and ratings</li>
+                        </ul>
+                    </div>
+                    <div className="flex justify-end gap-2">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setOpenDeleteModal(false)}
+                            disabled={isDeleting}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={handleDelete}
+                            disabled={isDeleting}
+                        >
+                            {isDeleting ? 'Deleting...' : 'Delete User'}
+                        </Button>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

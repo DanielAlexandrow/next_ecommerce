@@ -9,7 +9,7 @@ return new class extends Migration {
         Schema::create('address_infos', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('address');
+            $table->string('street');
             $table->string('city');
             $table->string('postal_code');
             $table->string('country');

@@ -24,7 +24,8 @@ class OrderService {
             ->select([
                 'orders.id as order_id',
                 DB::raw('COALESCE(users.name, address_info.name, "N/A") as name'),
-                DB::raw('JSON_LENGTH(orders.items) as item_count'),
+                // Count items by counting commas in the JSON array and adding 1
+                DB::raw('(LENGTH(orders.items) - LENGTH(REPLACE(orders.items, \',\', \'\')) + 1) as item_count'),
                 'orders.total',
                 'orders.status',
                 'orders.created_at',

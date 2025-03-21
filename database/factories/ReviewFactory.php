@@ -3,19 +3,22 @@
 namespace Database\Factories;
 
 use App\Models\Review;
+use App\Models\User;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ReviewFactory extends Factory {
+class ReviewFactory extends Factory
+{
     protected $model = Review::class;
 
-    public function definition() {
+    public function definition()
+    {
         return [
-            'rating' => $this->faker->numberBetween(1, 5),
-            'comment' => $this->faker->paragraph(),
-            'product_id' => $this->faker->numberBetween(1, 10),
-            'user_id' => $this->faker->numberBetween(1, 10),
-            'created_at' => now(),
-            'updated_at' => now(),
+            'user_id' => User::factory(),
+            'product_id' => Product::factory(),
+            'title' => $this->faker->sentence(),
+            'content' => $this->faker->paragraph(),
+            'rating' => $this->faker->numberBetween(1, 5)
         ];
     }
 }

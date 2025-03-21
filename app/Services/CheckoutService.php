@@ -8,23 +8,32 @@ use App\Models\OrderItem;
 use App\Models\Guest;
 use App\Models\AddressInfo;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Session;
 
 class CheckoutService {
-	public function processCheckout($cartId, $data) {
-		DB::beginTransaction();
+    public function processCheckout($cartId, $data) {
+        DB::beginTransaction();
 
-		try {
-			$cart = Cart::with(['cartItems.subproduct.product'])->findOrFail($cartId);
-			$userId = $cart->user_id;
-			$guestId = null;
+        try {
+            $cart = Cart::with(['cartItems.subproduct.product'])
+                ->where(function($query) {
+                    $query->where('user_id', auth()->id())
+                          ->orWhere('session_id', Session::getId());
+                })
+                ->findOrFail($cartId);
 
-			if (auth()->guest()) {
-				// Create address info
-				$addressInfo = AddressInfo::create([
-					'name' => $data['adressData']['name'],
-					'email' => $data['adressData']['email'],
-					'address' => $data['adressData']['address'],
-					'postal_code' => $data['adressData']['postal_code'],
+            // Check if cart is empty
+            if ($cart->cartItems()->count() === 0) {
+                throw ValidationException::withMessages([
+                    'cart' => ['Cart is empty']
+                ]);
+            }
+
+            $userId = $cart->user_id;
+            $guestId = null;
+
+            // Handle guest checkout
 					'city' => $data['adressData']['city'],
 					'country' => $data['adressData']['country'],
 					'phone' => $data['adressData']['phone']

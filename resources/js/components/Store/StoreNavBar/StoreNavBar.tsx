@@ -82,6 +82,7 @@ const StoreNavBar = () => {
 
                 <div className={styles.nav.wrapper}>
                     <Link
+                         data-testid="cart-btn"
                         href="/cart"
                         className={styles.cartButton}
                     >

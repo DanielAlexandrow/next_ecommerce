@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "XSRF-TOKEN",
+      "value": "eyJpdiI6ImU0UjZnQU83aDhEZ050VjNTTExhVWc9PSIsInZhbHVlIjoiRCs0UWV6VWlDc0NxTkRJM3BZR2pOSEpFOWFsRTk5UG5jVkFURnNmUjIxdVJaYlFBVWlZQTB2WGQ4SWhlQXhxYWw1bTFzQm9YV1psMjlwUTJZMi9aaUx2Y1FLYVY0MkVyaEZJOEw5c2JqekErcXZhZFV5ZEFqOEptOUR6SXY0dHIiLCJtYWMiOiIyNjViYWM4OTUzYzQ1ZDU4Njg0NWY5NmM0YWZkZGFkZDQwOTc0MjVhMGUxMTVmMDBhNjNiYTU5NGY5Y2ZkNWM4IiwidGFnIjoiIn0%3D",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1741764266.443412,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "inertiats_session",
+      "value": "eyJpdiI6IjVrMmVSOS9HZGUvUlNLcDY1eG5IVFE9PSIsInZhbHVlIjoiWUdra2VyOG5iT1Y3N2N2U2dBQ2h0T3JRMUZlUXRxVm5MZXNuOHdxc01lYTNZQkt2ZWN4b1grQ0p4ZTNwK1NkY0ZRb24zYU1sYVZCZFUrajJZTUIxV1pjWEc4OXJoMGRVWGtEMVF5U095NWJwWEdxYUg0aHBYMlFoQjg1UkxaaloiLCJtYWMiOiI0NTBhMDhlNGM4YzA4ZTA2MGY5ZTcyNWZkZjU1NmYwNzJlYmQ1YWU0OWU5NTU5NGVlOGI2OTg1N2JkYTU4ZmU1IiwidGFnIjoiIn0%3D",
+      "domain": "localhost",
+      "path": "/",
+      "expires": 1741764267.683,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "http://localhost:8000",
+      "localStorage": [
+        {
+          "name": "phpdebugbar-height",
+          "value": "300"
+        }
+      ]
+    }
+  ]
+}

@@ -7,9 +7,11 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -24,40 +26,58 @@ class AuthenticatedSessionController extends Controller
         ]);
     }
 
-	public function adminlogin(): Response
-	{
-		return Inertia::render('auth/adminlogin', [
-			'status' => session('status'),
-		]);
-	}
+    public function adminlogin(): Response
+    {
+        return Inertia::render('auth/adminlogin', [
+            'status' => session('status'),
+        ]);
+    }
 
     /**
-     * Handle an incoming authentication request.
+     * Handle an admin login request.
+     */
+    public function adminStore(LoginRequest $request): RedirectResponse
+    {
+        $request->authenticate();
+
+        $user = Auth::user();
+        
+        if (!$user || $user->role !== 'admin') {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            throw ValidationException::withMessages([
+                'email' => ['This account does not have administrator privileges.'],
+            ]);
+        }
+
+        $request->session()->regenerate();
+        
+        return redirect()->intended(RouteServiceProvider::HOME_ADMIN);
+    }
+
+    /**
+     * Handle a regular user login request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
-
-		if ($_SERVER["PATH_INFO"] == "/login") {
-			return redirect()->intended(RouteServiceProvider::HOME_STORE);
-		} else {
-			return redirect()->intended(RouteServiceProvider::HOME);
-		}
+        return redirect()->intended(RouteServiceProvider::HOME_STORE);
     }
 
     /**
      * Destroy an authenticated session.
      */
-	public function destroy(Request $request)
+    public function destroy(Request $request)
     {
-        auth()->guard('web')->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 
         $request->session()->regenerateToken();
 
-		return response()->json(null, 200);
+        return response()->json(null, 200);
     }
 }

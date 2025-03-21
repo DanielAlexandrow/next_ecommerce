@@ -150,10 +150,11 @@ class ProductControllerTest extends TestCase {
         
         // Compare properties individually since we're dealing with stdClass vs Model
         $responseData = (array)$response->getData();
-        $this->assertEquals($updatedProduct->name, $responseData['name']);
-        $this->assertEquals($updatedProduct->description, $responseData['description']);
-        $this->assertEquals($updatedProduct->brand_id, $responseData['brand_id']);
-        $this->assertEquals($updatedProduct->id, $responseData['id']);
+        $productData = (array)$responseData['product'];
+        $this->assertEquals($updatedProduct->name, $productData['name']);
+        $this->assertEquals($updatedProduct->description, $productData['description']);
+        $this->assertEquals($updatedProduct->brand_id, $productData['brand_id']);
+        $this->assertEquals($updatedProduct->id, $productData['id']);
     }
 
     public function test_destroy_product_as_admin() {

@@ -11,7 +11,7 @@ class AddressInfo extends Model {
 	protected $fillable = [
 		'name',
 		'email',
-		'address',
+		'street',
 		'city',
 		'postal_code',
 		'country',

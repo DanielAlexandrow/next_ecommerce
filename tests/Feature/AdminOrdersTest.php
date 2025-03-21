@@ -30,10 +30,10 @@ class AdminOrdersTest extends TestCase {
         // Create admin
         $this->admin = User::factory()->create(['role' => 'admin']);
         
-        // Create address info first
+        // Create address info first - using 'street' instead of 'address'
         $addressInfo = AddressInfo::create([
             'name' => 'John Doe',
-            'address' => '123 Test St',
+            'street' => '123 Test St', // Changed from 'address' to 'street'
             'city' => 'Test City',
             'postal_code' => '12345',
             'country' => 'Test Country',
