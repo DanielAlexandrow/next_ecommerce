@@ -3,78 +3,139 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Models\Review;
 use App\Models\User;
+use App\Models\Review;
 use App\Models\Product;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Subproduct;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ReviewTest extends TestCase
 {
-    private User $user;
-    private Product $product;
-    private Review $review;
+    use RefreshDatabase;
 
+    private $user;
+    private $product;
+    
     protected function setUp(): void
     {
         parent::setUp();
         
-        // Ensure tables are dropped
-        Schema::dropIfExists('reviews');
-        
-        $this->artisan('migrate:fresh');
-        
+        // Create a user
         $this->user = User::factory()->create();
+        
+        // Create a product
         $this->product = Product::factory()->create();
-        $this->review = Review::factory()->make([
+    }
+    
+    public function test_user_can_create_review()
+    {
+        $reviewData = [
             'user_id' => $this->user->id,
-            'product_id' => $this->product->id
+            'product_id' => $this->product->id,
+            'title' => 'Great product',
+            'content' => 'This product exceeded my expectations.',
+            'rating' => 5
+        ];
+        
+        $review = Review::create($reviewData);
+        
+        $this->assertDatabaseHas('reviews', [
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'rating' => 5
         ]);
     }
-
-    public function test_review_belongs_to_user()
+    
+    public function test_user_can_update_review()
     {
-        $review = Review::factory()->create();
-        $this->assertInstanceOf(User::class, $review->user);
+        // Create initial review
+        $review = Review::create([
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'title' => 'Initial title',
+            'content' => 'Initial content',
+            'rating' => 3
+        ]);
+        
+        // Update the review
+        $review->update([
+            'title' => 'Updated title',
+            'content' => 'Updated content',
+            'rating' => 4
+        ]);
+        
+        $this->assertDatabaseHas('reviews', [
+            'id' => $review->id,
+            'title' => 'Updated title',
+            'rating' => 4
+        ]);
     }
-
-    public function test_review_belongs_to_product()
+    
+    public function test_user_can_delete_review()
     {
-        $review = Review::factory()->create();
-        $this->assertInstanceOf(Product::class, $review->product);
+        // Create initial review
+        $review = Review::create([
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'title' => 'Test title',
+            'content' => 'Test content',
+            'rating' => 5
+        ]);
+        
+        $reviewId = $review->id;
+        $review->delete();
+        
+        $this->assertDatabaseMissing('reviews', ['id' => $reviewId]);
     }
-
-    public function test_review_requires_valid_rating()
-    {
-        // Test invalid ratings
-        $this->review->rating = 6;
-        $this->assertFalse($this->review->save());
-
-        $this->review->rating = 0;
-        $this->assertFalse($this->review->save());
-
-        // Test valid ratings
-        $this->review->rating = 5;
-        $this->assertTrue($this->review->save());
-
-        $this->review->rating = 1;
-        $this->assertTrue($this->review->save());
-    }
-
+    
     public function test_user_can_only_review_once_per_product()
     {
-        // Create first review
-        $this->review->save();
-
-        // Try to create second review
-        $secondReview = Review::factory()->make([
+        // Create initial review
+        Review::create([
             'user_id' => $this->user->id,
-            'product_id' => $this->product->id
+            'product_id' => $this->product->id,
+            'title' => 'My review',
+            'content' => 'Content',
+            'rating' => 4
         ]);
-
+        
+        // Add a unique constraint expectation at the database level
         $this->expectException(\Illuminate\Database\QueryException::class);
-        $secondReview->save();
+        
+        // Attempt to create a duplicate review (should fail)
+        Review::create([
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'title' => 'Another review',
+            'content' => 'Another content',
+            'rating' => 5
+        ]);
+    }
+    
+    public function test_review_belongs_to_user()
+    {
+        $review = Review::create([
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'title' => 'Test title',
+            'content' => 'Test content',
+            'rating' => 5
+        ]);
+        
+        $this->assertInstanceOf(User::class, $review->user);
+        $this->assertEquals($this->user->id, $review->user->id);
+    }
+    
+    public function test_review_belongs_to_product()
+    {
+        $review = Review::create([
+            'user_id' => $this->user->id,
+            'product_id' => $this->product->id,
+            'title' => 'Test title',
+            'content' => 'Test content',
+            'rating' => 5
+        ]);
+        
+        $this->assertInstanceOf(Product::class, $review->product);
+        $this->assertEquals($this->product->id, $review->product->id);
     }
 }

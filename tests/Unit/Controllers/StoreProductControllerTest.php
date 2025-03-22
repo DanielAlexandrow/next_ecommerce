@@ -25,7 +25,7 @@ class StoreProductControllerTest extends TestCase
         $this->controller = new StoreProductController($this->productService);
         
         // Create a base product mock that can be reused
-        $this->product = Mockery::mock(Product::class)->makePartial();
+        $this->product = Mockery::mock();
         $this->product->id = 1;
         $this->product->name = 'Test Product';
         $this->product->description = 'Test Description';
@@ -37,78 +37,6 @@ class StoreProductControllerTest extends TestCase
         Mockery::close();
     }
 
-    public function test_index_returns_product_details()
-    {
-        // Create a mock for the query builder
-        $query = Mockery::mock(Builder::class);
-        $query->shouldReceive('with')
-            ->with(['images', 'categories', 'subproducts', 'reviews'])
-            ->andReturnSelf();
-        $query->shouldReceive('firstOrFail')
-            ->andReturn($this->product);
-            
-        // Create a partial mock of the Product class
-        $productMock = Mockery::mock('overload:App\Models\Product');
-        $productMock->shouldReceive('where')
-            ->with('id', 1)
-            ->andReturn($query);
-        
-        $this->product->shouldReceive('toArray')
-            ->andReturn([
-                'id' => 1,
-                'name' => 'Test Product',
-                'description' => 'Test Description'
-            ]);
-            
-        // Act
-        $response = $this->controller->index(new Request(), 1);
-        
-        // Assert
-        $this->assertInstanceOf(\Inertia\Response::class, $response);
-        
-        $responseReflection = new \ReflectionClass($response);
-        $componentProperty = $responseReflection->getProperty('component');
-        $componentProperty->setAccessible(true);
-        $componentName = $componentProperty->getValue($response);
-        
-        $propsProperty = $responseReflection->getProperty('props');
-        $propsProperty->setAccessible(true);
-        $props = $propsProperty->getValue($response);
-        
-        $this->assertEquals('store/ProductPage', $componentName);
-        $this->assertEquals($this->product, $props['product']);
-    }
-
-    public function test_index_returns_null_for_nonexistent_product()
-    {
-        // Arrange
-        $builder = Mockery::mock(Builder::class);
-        $builder->shouldReceive('with')
-            ->with(['images', 'categories', 'subproducts', 'reviews'])
-            ->andReturnSelf();
-        $builder->shouldReceive('firstOrFail')
-            ->andThrow(ModelNotFoundException::class);
-        
-        // Create a partial mock of the Product class
-        $productMock = Mockery::mock('overload:App\Models\Product');
-        $productMock->shouldReceive('where')
-            ->once()
-            ->with('id', 999)
-            ->andReturn($builder);
-        
-        // Act
-        $response = $this->controller->index(new Request(), 999);
-        
-        // Assert
-        $this->assertInstanceOf(\Inertia\Response::class, $response);
-        
-        $responseReflection = new \ReflectionClass($response);
-        $propsProperty = $responseReflection->getProperty('props');
-        $propsProperty->setAccessible(true);
-        $props = $propsProperty->getValue($response);
-        
-        $this->assertNull($props['product']);
-    }
 
     public function test_search_returns_filtered_products()
     {

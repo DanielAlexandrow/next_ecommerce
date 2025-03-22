@@ -6,12 +6,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\Subproduct;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CartService {
     public function getCartItems($userId = null) {
         $cart = $this->getOrCreateCart($userId);
-
+        
         if (!$cart) {
             return [];
         }
@@ -32,7 +34,7 @@ class CartService {
 
     public function getOrCreateCart($userId = null) {
         return DB::transaction(function () use ($userId) {
-            $sessionId = session()->getId();
+            $sessionId = Session::getId();
             
             if ($userId) {
                 // First try to find user's cart
@@ -40,100 +42,78 @@ class CartService {
                     ->where('status', 'active')
                     ->first();
                 
-                // If no user cart exists, look for a session cart to convert
+                // If no user cart exists, look for a session cart to merge
                 if (!$cart) {
                     $sessionCart = Cart::where('session_id', $sessionId)
                         ->where('status', 'active')
                         ->first();
                     
-                    if ($sessionCart) {
-                        $sessionCart->update([
-                            'user_id' => $userId,
-                            'session_id' => null
-                        ]);
-                        return $sessionCart;
-                    }
-                    
-                    // No existing cart found, create new one
-                    return Cart::create([
+                    // Create new cart for user
+                    $cart = Cart::create([
                         'user_id' => $userId,
                         'status' => 'active'
                     ]);
+
+                    // If session cart exists, merge its items
+                    if ($sessionCart) {
+                        $this->mergeCarts($cart, $sessionCart);
+                    }
                 }
                 
                 return $cart;
             } else {
                 // Guest user - find or create cart by session
-                $cart = Cart::where('session_id', $sessionId)
-                    ->where('status', 'active')
-                    ->first();
-                
-                if (!$cart) {
-                    $cart = Cart::create([
+                return Cart::firstOrCreate(
+                    [
                         'session_id' => $sessionId,
                         'status' => 'active'
-                    ]);
-                }
-                return $cart;
+                    ],
+                    [
+                        'total' => 0,
+                        'currency' => 'USD'
+                    ]
+                );
             }
         });
     }
 
-    public function addOrIncrementCartItem($productId, $userId = null, $quantity = 1) {
-        $cart = $this->getOrCreateCart($userId);
+    public function addOrIncrementCartItem($subproductId, $userId = null, $quantity = 1) {
+        return DB::transaction(function () use ($subproductId, $userId, $quantity) {
+            $cart = $this->getOrCreateCart($userId);
 
-        return DB::transaction(function () use ($cart, $productId, $quantity) {
-            $item = $cart->cartItems()
-                ->where('subproduct_id', $productId)
-                ->lockForUpdate()
+            $cartItem = $cart->cartItems()
+                ->where('subproduct_id', $subproductId)
                 ->first();
 
-            if ($item) {
-                $item->quantity += $quantity;
-                $item->save();
+            if ($cartItem) {
+                $cartItem->quantity += $quantity;
+                $cartItem->save();
             } else {
-                $item = CartItem::create([
-                    'cart_id' => $cart->id,
-                    'subproduct_id' => $productId,
+                $cartItem = $cart->cartItems()->create([
+                    'subproduct_id' => $subproductId,
                     'quantity' => $quantity
                 ]);
             }
 
-            $item->load('subproduct.product.images');
-            
-            return [
-                'id' => $item->id,
-                'cart_id' => $cart->id,
-                'subproduct_id' => $productId,
-                'quantity' => $item->quantity,
-                'subproduct' => $item->subproduct->toArray()
-            ];
+            // Update cart total
+            $this->updateCartTotal($cart);
+
+            return $this->getCartItems($userId);
         });
     }
 
-    public function removeOrDecrementCartItem($productId, $userId = null) {
-        $cart = $this->getOrCreateCart($userId);
-        if (!$cart) {
-            return [];
-        }
+    public function removeOrDecrementCartItem($subproductId, $userId = null) {
+        return DB::transaction(function () use ($subproductId, $userId) {
+            $cart = $this->getOrCreateCart($userId);
 
-        return DB::transaction(function () use ($cart, $productId) {
-            $cartItem = $cart->cartItems()
-                ->where('subproduct_id', $productId)
-                ->lockForUpdate()
-                ->first();
+            $cart->cartItems()
+                ->where('subproduct_id', $subproductId)
+                ->delete();
 
-            if (!$cartItem) {
-                return $this->getCartItems($cart->user_id);
-            }
+            // Update cart total
+            $this->updateCartTotal($cart);
 
-            if ($cartItem->quantity > 1) {
-                $cartItem->decrement('quantity');
-            } else {
-                $cartItem->delete();
-            }
-
-            return $this->getCartItems($cart->user_id);
+            return $this->getCartItems($userId);
         });
     }
 
@@ -148,22 +128,35 @@ class CartService {
                     $existingItem->quantity += $item->quantity;
                     $existingItem->save();
                 } else {
-                    $item->cart_id = $userCart->id;
-                    $item->save();
+                    CartItem::create([
+                        'cart_id' => $userCart->id,
+                        'subproduct_id' => $item->subproduct_id,
+                        'quantity' => $item->quantity
+                    ]);
                 }
             }
-            
+
+            $this->updateCartTotal($userCart);
+
             // Delete session cart after merging
             $sessionCart->cartItems()->delete();
             $sessionCart->delete();
         });
     }
 
-    protected function deleteCart(Cart $cart) {
-        if (!is_null($cart->user_id)) {
-            Session::forget('cart_id');
-        }
+    protected function updateCartTotal(Cart $cart) {
+        $total = $cart->cartItems()
+            ->join('subproducts', 'cart_items.subproduct_id', '=', 'subproducts.id')
+            ->sum(DB::raw('subproducts.price * cart_items.quantity'));
+            
+        $cart->total = $total;
+        $cart->save();
+    }
 
-        $cart->delete();
+    protected function deleteCart(Cart $cart) {
+        DB::transaction(function () use ($cart) {
+            $cart->cartItems()->delete();
+            $cart->delete();
+        });
     }
 }

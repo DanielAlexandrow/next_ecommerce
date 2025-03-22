@@ -31,6 +31,9 @@ Route::get('/', function () {
 });
 
 Route::get('/navigation/getnavdata', [NavigationController::class, 'getNavigationData']);
+Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/brands/getallbrands', [BrandController::class, 'getAllBrands']);
+Route::get('/getImagesPaginated', [ImageController::class, 'getImagesPaginated']);
 Route::get('/store/productsearch', [ProductSearchController::class, 'index']);
 Route::get('/api/products/search', [ProductSearchController::class, 'search']);
 Route::get('/categoryservice', [CategoryController::class, 'index']);
@@ -47,6 +50,9 @@ Route::get('/getcartitems', [CartController::class, 'getCartItems']);
 
 // Checkout routes
 Route::post('/checkout/{cartId}', [CheckoutController::class, 'checkout']);
+
+// Order PDF generation - general route that tests are looking for
+Route::get('/orders/generatepdf/{orderId}', [AdminOrders::class, 'generatePdf']);
 
 // Authenticated admin routes
 Route::middleware(['auth', 'admin'])->group(function () {

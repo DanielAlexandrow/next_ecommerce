@@ -44,7 +44,7 @@ class Product extends Model {
     }
 
     public function subproducts(): HasMany {
-        return $this->hasMany(Subproduct::class);
+        return $this->hasMany(Subproduct::class, 'product_id');
     }
 
     public function reviews(): HasMany {
@@ -66,19 +66,13 @@ class Product extends Model {
     }
 
     public function orders() {
-        return $this->hasManyThrough(
-            Order::class,
-            Subproduct::class,
-            'product_id',
-            'subproduct_id'
-        );
+        return $this->hasManyThrough(OrderItem::class, Subproduct::class);
     }
 
     public function getAverageRatingAttribute(): ?float {
-        if ($this->reviews()->count() === 0) {
-            return null;
+        if ($this->reviews->isEmpty()) {
+            return 0;
         }
-
-        return $this->reviews()->avg('rating');
+        return $this->reviews->avg('rating');
     }
 }

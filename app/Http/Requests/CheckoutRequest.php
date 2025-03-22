@@ -3,35 +3,44 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class CheckoutRequest extends FormRequest {
-    public function authorize() {
+class CheckoutRequest extends FormRequest
+{
+    public function authorize()
+    {
         return true;
     }
 
-    public function rules() {
+    public function rules()
+    {
         $rules = [
-            'cart_id' => 'required|exists:carts,id',
-            'adressData' => 'required_if:guest,true|array'
+            'cart_id' => 'required|exists:carts,id'
         ];
 
-        if (!$this->user()) {
+        // Only require address data for guest checkout
+        if (!Auth::check()) {
             $rules['adressData.name'] = 'required|string|max:255';
             $rules['adressData.email'] = 'required|email|max:255';
+            $rules['adressData.phone'] = 'required|string|max:20';
             $rules['adressData.address'] = 'required|string|max:255';
-            $rules['adressData.postal_code'] = 'required|string|max:10';
+            $rules['adressData.postal_code'] = 'required|string|max:20';
             $rules['adressData.city'] = 'required|string|max:255';
             $rules['adressData.country'] = 'required|string|max:255';
-            $rules['adressData.phone'] = 'required|string|max:20';
         }
 
         return $rules;
     }
 
-    public function messages() {
+    public function messages()
+    {
         return [
-            'adressData.required_if' => 'Address information is required for guest checkout.',
-            'adressData.array' => 'Address information must be provided in the correct format.'
+            'adressData.email.required' => 'The email address is required',
+            'adressData.phone.required' => 'The phone number is required',
+            'adressData.address.required' => 'The shipping address is required',
+            'adressData.postal_code.required' => 'The postal code is required',
+            'adressData.city.required' => 'The city is required',
+            'adressData.country.required' => 'The country is required'
         ];
     }
 }

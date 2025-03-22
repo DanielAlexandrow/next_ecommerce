@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Interfaces\ProductServiceInterface;
 use App\Models\Product;
 use App\Models\Subproduct;
+use App\Models\OrderItem;
 use App\Exceptions\ProductHasOrdersException;
 use Illuminate\Support\Facades\DB;
 use App\Models\SearchHistory;
@@ -71,10 +72,16 @@ class ProductService implements ProductServiceInterface
     {
         $product = Product::findOrFail($id);
         
-        if ($product->orders()->exists()) {
+        // Check if any subproduct of this product is in any order
+        $hasOrders = DB::table('order_items')
+            ->join('subproducts', 'order_items.subproduct_id', '=', 'subproducts.id')
+            ->where('subproducts.product_id', $id)
+            ->exists();
+            
+        if ($hasOrders) {
             throw new ProductHasOrdersException('Cannot delete product with existing orders');
         }
-
+        
         return $product->delete();
     }
 
@@ -245,7 +252,6 @@ class ProductService implements ProductServiceInterface
 
             return $results;
         } catch (\Exception $e) {
-        
             throw $e;
         }
     }
