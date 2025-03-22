@@ -19,6 +19,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { updateLinks } from '@/lib/utils';
 import moment from 'moment';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function ProductsList(): React.ReactNode {
 	const [
@@ -174,8 +176,16 @@ export default function ProductsList(): React.ReactNode {
 							onClose={() => setOpenDeleteProductModal(false)}
 							productId={selectedProduct.id}
 							productName={selectedProduct.name}
-							onDelete={() => {
-								console.log('delete product', selectedProduct.id);
+							onDelete={async () => {
+								try {
+									await axios.delete(`/products/${selectedProduct.id}`);
+									const updatedProducts = products.filter(p => p.id !== selectedProduct.id);
+									setProducts(updatedProducts);
+									toast.success('Product deleted successfully');
+								} catch (error) {
+									console.error('Error deleting product:', error);
+									toast.error('Failed to delete product');
+								}
 								setOpenDeleteProductModal(false);
 							}}
 						/>
