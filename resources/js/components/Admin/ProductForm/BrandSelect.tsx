@@ -1,101 +1,88 @@
-import React, { useEffect, useState } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button';
 import { Brand } from '@/types';
-import { brandApi } from '@/api/brandApi';
-import { toast } from 'react-toastify';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { Skeleton } from '@/components/ui/skeleton';
+import { useBrandSelect } from './BrandSelect.hooks';
 
 interface BrandSelectProps {
-  selectedBrands: number[];
-  setSelectedBrands: React.Dispatch<React.SetStateAction<number[]>>;
+    selectedBrands: Brand[];
+    setSelectedBrands: (brands: Brand[]) => void;
 }
 
-const BrandSelect: React.FC<BrandSelectProps> = ({ 
-  selectedBrands, 
-  setSelectedBrands 
-}) => {
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await brandApi.getAllBrands();
-        setBrands(data || []);
-      } catch (err) {
-        console.error('Failed to fetch brands', err);
-        setError('Failed to load brands. Please try again.');
-        toast.error('Failed to load brands');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBrands();
-  }, []);
+const BrandSelect = ({ selectedBrands, setSelectedBrands }: BrandSelectProps) => {
+    const { brands, open, setOpen } = useBrandSelect();
 
-  const handleBrandChange = (brandId: number) => {
-    if (selectedBrands.includes(brandId)) {
-      setSelectedBrands([]);
-    } else {
-      setSelectedBrands([brandId]);
-    }
-  };
-
-  if (loading) {
     return (
-      <div className="space-y-3">
-        <div className="text-sm font-medium mb-2">Select Brand</div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-8 w-full" />
-          ))}
+        <div className="flex flex-col space-y-4">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="w-full justify-between bg-background text-foreground border-input hover:bg-accent hover:text-accent-foreground"
+                    >
+                        Select brands...
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0 bg-popover">
+                    <Command className="bg-transparent">
+                        <CommandInput placeholder="Search brands..." className="h-9 text-foreground" />
+                        <CommandEmpty>No brands found.</CommandEmpty>
+                        <CommandGroup>
+                            {brands.map((brand) => (
+                                <CommandItem
+                                    key={brand.id}
+                                    onSelect={() => {
+                                        setSelectedBrands([brand]);
+                                        setOpen(false);
+                                    }}
+                                    className="text-foreground hover:bg-accent"
+                                >
+                                    <Check
+                                        className={cn(
+                                            "mr-2 h-4 w-4",
+                                            selectedBrands.some(selected => selected.id === brand.id)
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                        )}
+                                    />
+                                    {brand.name}
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </Command>
+                </PopoverContent>
+            </Popover>
+
+            <div className="flex flex-wrap gap-2">
+                {selectedBrands.map((brand) => (
+                    <Badge
+                        key={brand.id}
+                        variant="secondary"
+                        className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    >
+                        {brand.name}
+                    </Badge>
+                ))}
+            </div>
         </div>
-      </div>
     );
-  }
-
-  if (error) {
-    return (
-      <Alert variant="destructive" className="bg-red-50 text-red-800 border border-red-200">
-        <AlertCircle className="h-4 w-4" />
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  if (brands.length === 0) {
-    return (
-      <div className="text-sm text-gray-500 py-2">
-        No brands available. Please create a brand first.
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      <div className="text-sm font-medium mb-2">Select Brand</div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-        {brands.map((brand) => (
-          <div key={brand.id} className="flex items-center space-x-2">
-            <Checkbox
-              id={`brand-${brand.id}`}
-              checked={selectedBrands.includes(brand.id)}
-              onCheckedChange={() => handleBrandChange(brand.id)}
-            />
-            <Label htmlFor={`brand-${brand.id}`} className="text-sm cursor-pointer">
-              {brand.name}
-            </Label>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 };
 
 export default BrandSelect;
