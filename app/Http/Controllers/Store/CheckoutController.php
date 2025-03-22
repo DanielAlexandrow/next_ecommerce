@@ -2,57 +2,60 @@
 
 namespace App\Http\Controllers\Store;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CheckoutRequest;
 use App\Services\CheckoutService;
-use App\Http\Controllers\Controller;
+use App\Services\CartService;
 use App\Models\Cart;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CheckoutController extends Controller
 {
     protected $checkoutService;
+    protected $cartService;
 
-    public function __construct(CheckoutService $checkoutService)
+    public function __construct(CheckoutService $checkoutService, CartService $cartService)
     {
         $this->checkoutService = $checkoutService;
+        $this->cartService = $cartService;
     }
 
-    public function checkout($cartId, CheckoutRequest $request)
+    public function checkout(CheckoutRequest $request, $cartId)
     {
-        DB::beginTransaction();
         try {
-            // Find cart and eager load relationships
-            $cart = Cart::with(['cartItems.subproduct.product'])
-                ->where(function($query) {
-                    $query->where('user_id', auth()->id())
-                          ->orWhere('session_id', session()->getId());
+            // Validate that the cart belongs to the current user/session
+            $cart = Cart::where('id', $cartId)
+                ->where(function ($query) {
+                    $query->where('user_id', Auth::id())
+                          ->orWhere('session_id', Session::getId());
                 })
-                ->findOrFail($cartId);
+                ->where('status', 'active')
+                ->firstOrFail();
 
-            // Check cart belongs to current user/session
-            if ($cart->user_id !== auth()->id() && $cart->session_id !== session()->getId()) {
-                return response()->json([
-                    'message' => 'Cart not found',
-                    'errors' => ['cart_id' => ['Invalid cart']]
-                ], 422);
-            }
+            // Get guest address data if user is not authenticated
+            $addressData = !Auth::check() ? $request->validated()['adressData'] : null;
             
-            // Validate cart is not empty
-            if ($cart->cartItems()->count() === 0) {
+            // Process the checkout
+            $order = $this->checkoutService->processCheckout($cart, $addressData);
+            
+            return response()->json(['order' => $order], 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'The selected cart id is invalid.',
+                'errors' => ['cart_id' => ['The selected cart id is invalid.']]
+            ], 422);
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            if ($errorMessage === 'Cart is empty') {
                 return response()->json([
                     'message' => 'Cart is empty'
                 ], 422);
             }
-
-            $order = $this->checkoutService->processCheckout($cart, $request->validated());
             
-            DB::commit();
-            return response()->json(['order' => $order], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json([
-                'message' => $e->getMessage(),
-                'errors' => method_exists($e, 'errors') ? $e->errors() : null
+                'message' => $errorMessage,
+                'errors' => ['general' => [$errorMessage]]
             ], 422);
         }
     }

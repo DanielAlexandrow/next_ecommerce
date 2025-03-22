@@ -63,7 +63,7 @@ describe('DeleteUserDialog', () => {
 
         render(<DeleteUserDialog />);
 
-        const deleteButton = screen.getByText('Delete User');
+        const deleteButton = screen.getByTestId('confirm-delete-user');
         await act(async () => {
             fireEvent.click(deleteButton);
         });
@@ -89,7 +89,7 @@ describe('DeleteUserDialog', () => {
 
         render(<DeleteUserDialog />);
 
-        const deleteButton = screen.getByText('Delete User');
+        const deleteButton = screen.getByTestId('confirm-delete-user');
         await act(async () => {
             fireEvent.click(deleteButton);
         });
@@ -107,13 +107,13 @@ describe('DeleteUserDialog', () => {
 
         render(<DeleteUserDialog />);
 
-        const deleteButton = screen.getByText('Delete User');
+        const deleteButton = screen.getByTestId('confirm-delete-user');
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
             expect(screen.getByText('Deleting...')).toBeInTheDocument();
-            expect(screen.getByText('Delete User')).toBeDisabled();
-            expect(screen.getByText('Cancel')).toBeDisabled();
+            expect(screen.getByTestId('confirm-delete-user')).toBeDisabled();
+            expect(screen.getByTestId('cancel-delete-user')).toBeDisabled();
         });
 
         await act(async () => {
@@ -124,7 +124,7 @@ describe('DeleteUserDialog', () => {
     it('closes modal on cancel', async () => {
         render(<DeleteUserDialog />);
 
-        const cancelButton = screen.getByText('Cancel');
+        const cancelButton = screen.getByTestId('cancel-delete-user');
         await act(async () => {
             fireEvent.click(cancelButton);
         });
@@ -152,12 +152,12 @@ describe('DeleteUserDialog', () => {
 
         render(<DeleteUserDialog />);
 
-        const deleteButton = screen.getByText('Delete User');
+        const deleteButton = screen.getByTestId('confirm-delete-user');
         fireEvent.click(deleteButton);
 
         await waitFor(() => {
-            expect(screen.getByText('Delete User')).toBeDisabled();
-            expect(screen.getByText('Cancel')).toBeDisabled();
+            expect(screen.getByTestId('confirm-delete-user')).toBeDisabled();
+            expect(screen.getByTestId('cancel-delete-user')).toBeDisabled();
         });
     });
 });

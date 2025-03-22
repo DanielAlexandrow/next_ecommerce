@@ -14,7 +14,7 @@ export default function DeleteUserDialog() {
         
         setIsDeleting(true);
         try {
-            const response = await userApi.deleteUser(modalUser.id);
+            await userApi.deleteUser(modalUser.id);
             setUsers(users.filter((user) => user.id !== modalUser.id));
             toast.success('User deleted successfully');
             setOpenDeleteModal(false);
@@ -31,9 +31,9 @@ export default function DeleteUserDialog() {
 
     return (
         <Dialog open={true} onOpenChange={setOpenDeleteModal}>
-            <DialogContent>
-                <DialogTitle>Delete User</DialogTitle>
-                <DialogDescription>
+            <DialogContent aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-description">
+                <DialogTitle id="delete-dialog-title" data-testid="dialog-title">Delete User</DialogTitle>
+                <DialogDescription id="delete-dialog-description">
                     Are you sure you want to delete {modalUser.name}? This action cannot be undone.
                 </DialogDescription>
                 <div className="mt-4 space-y-4">
@@ -52,6 +52,7 @@ export default function DeleteUserDialog() {
                             variant="outline"
                             onClick={() => setOpenDeleteModal(false)}
                             disabled={isDeleting}
+                            data-testid="cancel-delete-user"
                         >
                             Cancel
                         </Button>
@@ -60,8 +61,9 @@ export default function DeleteUserDialog() {
                             variant="destructive"
                             onClick={handleDelete}
                             disabled={isDeleting}
+                            data-testid="confirm-delete-user"
                         >
-                            {isDeleting ? 'Deleting...' : 'Delete User'}
+                            {isDeleting ? 'Deleting...' : 'Confirm Delete'}
                         </Button>
                     </div>
                 </div>

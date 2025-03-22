@@ -2,90 +2,92 @@
 
 namespace App\Http\Controllers\Store;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Services\CartService;
 use App\Models\Subproduct;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
-class CartController extends Controller {
+class CartController extends Controller
+{
     protected $cartService;
 
-    public function __construct(CartService $cartService) {
+    public function __construct(CartService $cartService)
+    {
         $this->cartService = $cartService;
     }
 
-    public function index() {
-        $userId = auth()->check() ? auth()->user()->id : null;
+    public function index()
+    {
+        $userId = Auth::check() ? Auth::id() : null;
         $cartItems = $this->cartService->getCartItems($userId);
-
-        return inertia('store/CartPage', [
+        
+        return Inertia::render('Cart/Index', [
             'cartitems' => $cartItems,
             'sessionId' => Session::getId()
         ]);
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
         $validated = $request->validate([
             'subproduct_id' => 'required|exists:subproducts,id',
             'quantity' => 'required|integer|min:1'
         ]);
 
-        // Check if subproduct is in stock
-        $subproduct = Subproduct::find($validated['subproduct_id']);
-        if (!$subproduct->available || $subproduct->stock <= 0) {
+        try {
+            // Validate stock availability
+            $subproduct = Subproduct::findOrFail($validated['subproduct_id']);
+            if (!$subproduct->available || $subproduct->stock < $validated['quantity']) {
+                return response()->json([
+                    'message' => 'Product is out of stock',
+                    'errors' => ['subproduct_id' => ['Product is out of stock or insufficient quantity available']]
+                ], 422);
+            }
+
+            $userId = Auth::check() ? Auth::id() : null;
+            $cartItems = $this->cartService->addOrIncrementCartItem(
+                $validated['subproduct_id'],
+                $userId,
+                $validated['quantity']
+            );
+
+            return response()->json($cartItems, 201)
+                ->header('X-Session-Id', session()->getId())
+                ->header('X-Message', 'Added to cart');
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Product is out of stock',
-                'errors' => ['subproduct_id' => ['Product is out of stock']]
+                'message' => 'Error adding item to cart',
+                'errors' => ['general' => [$e->getMessage()]]
             ], 422);
         }
-
-        // Check if requested quantity is available
-        if ($validated['quantity'] > $subproduct->stock) {
-            return response()->json([
-                'message' => 'Not enough stock available',
-                'errors' => ['quantity' => ['Requested quantity exceeds available stock']]
-            ], 422);
-        }
-
-        $userId = auth()->check() ? auth()->user()->id : null;
-        
-        $this->cartService->addOrIncrementCartItem(
-            $validated['subproduct_id'], 
-            $userId,
-            $validated['quantity']
-        );
-        
-        $items = $this->cartService->getCartItems($userId);
-        
-        // Return items directly rather than nested under 'items' key
-        return response()->json($items, 201)
-            ->header('X-Message', 'Added to cart')
-            ->header('X-Session-Id', Session::getId());
     }
 
-    public function remove(Request $request) {
+    public function remove(Request $request)
+    {
         $validated = $request->validate([
             'subproduct_id' => 'required|exists:subproducts,id'
         ]);
-        
-        $userId = auth()->check() ? auth()->user()->id : null;
-        $items = $this->cartService->removeOrDecrementCartItem(
+
+        $userId = Auth::check() ? Auth::id() : null;
+        $cartItems = $this->cartService->removeOrDecrementCartItem(
             $validated['subproduct_id'], 
             $userId
         );
 
-        // Return items directly rather than nested under 'items' key
-        return response()->json($items, 201)
-            ->header('X-Session-Id', Session::getId());
+        return response()->json($cartItems, 201)
+            ->header('X-Session-Id', session()->getId());
     }
 
-    public function getCartItems() {
-        $userId = auth()->check() ? auth()->user()->id : null;
-        $items = $this->cartService->getCartItems($userId);
+    public function getCartItems()
+    {
+        $userId = Auth::check() ? Auth::id() : null;
+        $cartItems = $this->cartService->getCartItems($userId);
 
-        // Return items directly rather than nested under 'items' key
-        return response()->json($items, 200)
-            ->header('X-Session-Id', Session::getId());
+        return response()->json($cartItems)
+            ->header('X-Session-Id', session()->getId());
     }
 }

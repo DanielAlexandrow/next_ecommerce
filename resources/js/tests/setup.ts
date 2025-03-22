@@ -1,6 +1,7 @@
 import { vi } from 'vitest';
 import React from 'react';
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 
 // Mock ResizeObserver
 class ResizeObserver {
@@ -36,6 +37,8 @@ vi.mock('react-toastify', () => ({
     toast: {
         error: vi.fn(),
         success: vi.fn(),
+        info: vi.fn(),
+        warning: vi.fn()
     },
 }));
 
@@ -90,3 +93,38 @@ vi.mock("lucide-react", () => ({
         style: { cursor: className?.includes('cursor-default') ? 'default' : 'pointer' }
     })),
 }));
+
+// Mock Axios
+vi.mock('axios', () => ({
+    default: {
+        get: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        delete: vi.fn(),
+        create: vi.fn(() => ({
+            get: vi.fn(),
+            post: vi.fn(),
+            put: vi.fn(),
+            delete: vi.fn(),
+            interceptors: {
+                request: { use: vi.fn() },
+                response: { use: vi.fn() }
+            }
+        }))
+    }
+}));
+
+// Mock IntersectionObserver
+const mockIntersectionObserver = vi.fn();
+mockIntersectionObserver.mockReturnValue({
+    observe: () => null,
+    unobserve: () => null,
+    disconnect: () => null
+});
+window.IntersectionObserver = mockIntersectionObserver;
+
+// Clean up after each test
+afterEach(() => {
+    cleanup();
+    vi.clearAllMocks();
+});

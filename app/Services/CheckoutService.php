@@ -4,52 +4,50 @@ namespace App\Services;
 
 use App\Models\Cart;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Guest;
 use App\Models\AddressInfo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Session;
 
 class CheckoutService {
-    public function processCheckout($cartId, $data) {
-        DB::beginTransaction();
-
-        try {
+    public function processCheckout($cartId, $addressData = null) {
+        return DB::transaction(function () use ($cartId, $addressData) {
+            // Find cart and validate it exists
             $cart = Cart::with(['cartItems.subproduct.product'])
                 ->where(function($query) {
                     $query->where('user_id', auth()->id())
-                          ->orWhere('session_id', Session::getId());
+                          ->orWhere('session_id', request()->header('X-Session-Id') ?? session()->getId());
                 })
-                ->findOrFail($cartId);
+                ->where('id', $cartId)
+                ->where('status', 'active')
+                ->lockForUpdate()
+                ->firstOrFail();
 
             // Check if cart is empty
             if ($cart->cartItems()->count() === 0) {
-                throw ValidationException::withMessages([
-                    'cart' => ['Cart is empty']
-                ]);
+                throw new \Exception('Cart is empty');
             }
 
             $userId = $cart->user_id;
             $guestId = null;
 
             // Handle guest checkout
-            if (!$userId && isset($data['adressData'])) {
+            if (!$userId && isset($addressData)) {
                 // Create address info
                 $addressInfo = AddressInfo::create([
-                    'name' => $data['adressData']['name'] ?? '',
-                    'address' => $data['adressData']['address'],
-                    'postal_code' => $data['adressData']['postal_code'],
-                    'city' => $data['adressData']['city'],
-                    'country' => $data['adressData']['country'],
-                    'phone' => $data['adressData']['phone']
+                    'name' => $addressData['name'] ?? '',
+                    'address' => $addressData['address'],
+                    'postal_code' => $addressData['postal_code'],
+                    'city' => $addressData['city'],
+                    'country' => $addressData['country'],
+                    'phone' => $addressData['phone']
                 ]);
 
                 // Create guest with address info
                 $guest = Guest::create([
                     'id_address_info' => $addressInfo->id,
-                    'email' => $data['adressData']['email'],
-                    'phone' => $data['adressData']['phone']
+                    'email' => $addressData['email'],
+                    'phone' => $addressData['phone']
                 ]);
                 $guestId = $guest->id;
             }
@@ -60,6 +58,14 @@ class CheckoutService {
 
             foreach ($cart->cartItems as $cartItem) {
                 $subproduct = $cartItem->subproduct;
+                
+                // Verify stock availability
+                if (!$subproduct->available || $subproduct->stock < $cartItem->quantity) {
+                    throw ValidationException::withMessages([
+                        'message' => "Not enough stock available for {$subproduct->name}"
+                    ]);
+                }
+
                 $itemTotal = $subproduct->price * $cartItem->quantity;
                 $total += $itemTotal;
 
@@ -87,15 +93,11 @@ class CheckoutService {
                 'items' => json_encode($items)
             ]);
 
-            // Force delete the cart and its items
-            $cart->cartItems()->forceDelete();
-            $cart->forceDelete();
+            // Delete the cart and its items
+            $cart->cartItems()->delete();
+            $cart->delete();
 
-            DB::commit();
             return $order;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            throw $e;
-        }
+        });
     }
 }
