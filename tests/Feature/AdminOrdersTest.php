@@ -87,26 +87,21 @@ class AdminOrdersTest extends TestCase {
 
     public function test_admin_can_view_orders() {
         $response = $this->actingAs($this->admin)
-            ->getJson('/api/orders');
+            ->get('/orders');
 
         $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'order_id',
-                        'name',
-                        'item_count',
-                        'total',
-                        'status',
-                        'created_at'
-                    ]
-                ]
-            ]);
+            ->assertInertia(fn ($page) => $page
+                ->component('admin/Orders')
+                ->has('orders.data', 1)
+                ->has('sortkey')
+                ->has('sortdirection')
+                ->has('search')
+            );
     }
 
     public function test_admin_can_update_order_status() {
         $response = $this->actingAs($this->admin)
-            ->putJson("/api/orders/{$this->order->id}/status", [
+            ->putJson("/orders/{$this->order->id}/status", [
                 'status' => 'processing',
                 'payment_status' => 'paid',
                 'shipping_status' => 'shipped'
@@ -123,7 +118,7 @@ class AdminOrdersTest extends TestCase {
 
     public function test_admin_can_view_order_details() {
         $response = $this->actingAs($this->admin)
-            ->getJson("/api/orders/{$this->order->id}");
+            ->getJson("/orders/getitems/{$this->order->id}");
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -139,7 +134,7 @@ class AdminOrdersTest extends TestCase {
         $user = User::factory()->create(['role' => 'customer']);
 
         $response = $this->actingAs($user)
-            ->getJson('/api/orders');
+            ->get('/orders');
 
         $response->assertStatus(403);
     }

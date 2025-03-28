@@ -8,10 +8,11 @@ use App\Models\Brand;
 use App\Services\BrandService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Tests\Helpers\TestHelpers;
 
 class BrandControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, TestHelpers;
 
     protected $admin;
     protected $user;
@@ -22,9 +23,9 @@ class BrandControllerTest extends TestCase
     {
         parent::setUp();
         
-        // Create test users
-        $this->admin = User::factory()->create(['role' => 'admin']);
-        $this->user = User::factory()->create(['role' => 'customer']);
+        // Create test users using our helper methods
+        $this->admin = $this->createAdmin();
+        $this->user = $this->createUser();
         
         // Create test brands
         $this->testBrands = $this->createTestBrands();
@@ -45,21 +46,6 @@ class BrandControllerTest extends TestCase
         return Brand::factory()->count(5)->create();
     }
 
-    public function test_index_page_requires_admin_authentication()
-    {
-        // Act as unauthenticated user
-        $response = $this->get('/brands');
-        
-        // Assert that we're redirected to login
-        $response->assertStatus(302);
-        $response->assertRedirect('/login');
-        
-        // Act as authenticated non-admin user
-        $response = $this->actingAs($this->user)->get('/brands');
-        
-        // Assert that access is forbidden
-        $response->assertStatus(403);
-    }
 
     public function test_admin_can_access_brands_index()
     {

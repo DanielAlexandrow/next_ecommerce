@@ -141,7 +141,7 @@ export default function NavigationMaker() {
   };
   
   return (
-    <AdminLayout title="Navigation Maker">
+    <div>
       <Head title="Navigation Maker" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card className="col-span-1">
@@ -212,7 +212,9 @@ export default function NavigationMaker() {
         onDelete={handleDeleteItem}
         itemName={selectedNavigationItem?.name || ""}
       />
-    </AdminLayout>
+     
+    </div>
   );
 }
 
+NavigationMaker.layout = (page: any) => <AdminLayout children={page} />;

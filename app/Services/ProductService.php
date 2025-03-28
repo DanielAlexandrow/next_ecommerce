@@ -24,9 +24,41 @@ class ProductService implements ProductServiceInterface
         return $paginator->toArray();
     }
 
-    public function create(array $data): Product 
+    public function create(array $data): Product
     {
-        return $this->createProduct($data);
+        return DB::transaction(function () use ($data) {
+            // Create the product
+            $product = Product::create([
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'brand_id' => $data['brand_id'],
+                'available' => $data['available'] ?? true,
+                'metadata' => $data['metadata'] ?? null,
+            ]);
+
+            // Attach categories if provided
+            if (!empty($data['categories'])) {
+                $product->categories()->attach($data['categories']);
+            }
+
+            // Create subproducts if provided
+            if (!empty($data['subproducts'])) {
+                foreach ($data['subproducts'] as $subproductData) {
+                    $product->subproducts()->create([
+                        'name' => $subproductData['name'],
+                        'price' => $subproductData['price'],
+                        'stock' => $subproductData['stock'] ?? 0,
+                        'available' => $subproductData['available'] ?? true,
+                        'sku' => $subproductData['sku'] ?? null
+                    ]);
+                }
+            }
+
+            // Refresh the model to load relationships
+            $product->load(['brand', 'categories', 'subproducts']);
+
+            return $product;
+        });
     }
 
     public function createProduct(array $data)

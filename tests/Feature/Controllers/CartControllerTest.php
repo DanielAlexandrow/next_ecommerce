@@ -10,23 +10,27 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Subproduct;
 use App\Services\CartService;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CartControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $user;
-    protected $brand;
-    protected $product;
-    protected $subproduct;
+    protected User $user;
+    protected Brand $brand;
+    protected Product $product;
+    protected Subproduct $subproduct;
+    protected Cart $cart;
     protected $mockCartService;
 
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Create mock cart service
+        $this->mockCartService = Mockery::mock(CartService::class);
+        $this->app->instance(CartService::class, $this->mockCartService);
         
         // Create test user
         $this->user = User::factory()->create(['role' => 'customer']);
@@ -39,7 +43,7 @@ class CartControllerTest extends TestCase
             'brand_id' => $this->brand->id,
             'available' => true
         ]);
-        
+
         // Create test subproduct
         $this->subproduct = Subproduct::factory()->create([
             'name' => 'Test Variant',
@@ -47,52 +51,20 @@ class CartControllerTest extends TestCase
             'stock' => 10,
             'available' => true,
             'product_id' => $this->product->id,
-            'sku' => 'TEST-SKU-001'
         ]);
-        
-        // Mock the cart service
-        $this->mockCartService = Mockery::mock(CartService::class);
-        $this->app->instance(CartService::class, $this->mockCartService);
+
+        // Create cart for authenticated user
+        $this->cart = Cart::factory()->create([
+            'user_id' => $this->user->id
+        ]);
     }
 
-    protected function tearDown(): void
+    public function test_guest_can_view_cart()
     {
-        Mockery::close();
-        parent::tearDown();
-    }
-
-    public function test_can_view_cart_page()
-    {
-        // Setup mock cart items
-        $mockCartItems = [
-            [
-                'id' => 1,
-                'quantity' => 2,
-                'subproduct' => [
-                    'id' => $this->subproduct->id,
-                    'name' => $this->subproduct->name,
-                    'price' => $this->subproduct->price,
-                    'product' => [
-                        'name' => $this->product->name,
-                        'images' => []
-                    ]
-                ]
-            ]
-        ];
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('getCartItems')
-            ->once()
-            ->with(null)  // No user ID for unauthenticated request
-            ->andReturn($mockCartItems);
-        
-        // Make request
         $response = $this->get('/cart');
-        
-        // Assert response
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
-            ->component('Cart/Index')
+            ->component('store/CartPage')
             ->has('cartitems')
             ->has('sessionId')
         );
@@ -100,7 +72,6 @@ class CartControllerTest extends TestCase
 
     public function test_authenticated_user_can_view_cart()
     {
-        // Setup mock cart items
         $mockCartItems = [
             [
                 'id' => 1,
@@ -117,282 +88,161 @@ class CartControllerTest extends TestCase
             ]
         ];
         
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('getCartItems')
-            ->once()
-            ->with($this->user->id)  // User ID for authenticated request
-            ->andReturn($mockCartItems);
-        
-        // Make request as authenticated user
-        $response = $this->actingAs($this->user)->get('/cart');
-        
-        // Assert response
-        $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Cart/Index')
-            ->has('cartitems')
-            ->has('sessionId')
-        );
-    }
-
-    public function test_can_add_item_to_cart()
-    {
-        // Prepare test data
-        $cartData = [
-            'subproduct_id' => $this->subproduct->id,
-            'quantity' => 2
-        ];
-        
-        // Setup mock cart items after addition
-        $mockCartItems = [
-            [
-                'id' => 1,
-                'quantity' => 2,
-                'subproduct' => [
-                    'id' => $this->subproduct->id,
-                    'name' => $this->subproduct->name,
-                    'price' => $this->subproduct->price,
-                    'product' => [
-                        'name' => $this->product->name
-                    ]
-                ]
-            ]
-        ];
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('addOrIncrementCartItem')
-            ->once()
-            ->with($this->subproduct->id, null, 2)
-            ->andReturn($mockCartItems);
-        
-        // Make request
-        $response = $this->postJson('/cart/add', $cartData);
-        
-        // Assert response
-        $response->assertStatus(201);
-        $response->assertJson($mockCartItems);
-        $response->assertHeader('X-Message', 'Added to cart');
-    }
-
-    public function test_authenticated_user_can_add_item_to_cart()
-    {
-        // Prepare test data
-        $cartData = [
-            'subproduct_id' => $this->subproduct->id,
-            'quantity' => 2
-        ];
-        
-        // Setup mock cart items after addition
-        $mockCartItems = [
-            [
-                'id' => 1,
-                'quantity' => 2,
-                'subproduct' => [
-                    'id' => $this->subproduct->id,
-                    'name' => $this->subproduct->name,
-                    'price' => $this->subproduct->price,
-                    'product' => [
-                        'name' => $this->product->name
-                    ]
-                ]
-            ]
-        ];
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('addOrIncrementCartItem')
-            ->once()
-            ->with($this->subproduct->id, $this->user->id, 2)
-            ->andReturn($mockCartItems);
-        
-        // Make request as authenticated user
-        $response = $this->actingAs($this->user)->postJson('/cart/add', $cartData);
-        
-        // Assert response
-        $response->assertStatus(201);
-        $response->assertJson($mockCartItems);
-        $response->assertHeader('X-Message', 'Added to cart');
-    }
-
-    public function test_cannot_add_unavailable_item_to_cart()
-    {
-        // Create an unavailable subproduct
-        $unavailableSubproduct = Subproduct::factory()->create([
-            'name' => 'Unavailable Variant',
-            'price' => 99.99,
-            'stock' => 10,
-            'available' => false,  // Not available
-            'product_id' => $this->product->id,
-            'sku' => 'TEST-SKU-002'
-        ]);
-        
-        // Prepare test data
-        $cartData = [
-            'subproduct_id' => $unavailableSubproduct->id,
-            'quantity' => 2
-        ];
-        
-        // Make request
-        $response = $this->postJson('/cart/add', $cartData);
-        
-        // Assert response
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['subproduct_id']);
-    }
-
-    public function test_cannot_add_out_of_stock_item_to_cart()
-    {
-        // Create a subproduct with insufficient stock
-        $lowStockSubproduct = Subproduct::factory()->create([
-            'name' => 'Low Stock Variant',
-            'price' => 99.99,
-            'stock' => 1,  // Only 1 in stock
-            'available' => true,
-            'product_id' => $this->product->id,
-            'sku' => 'TEST-SKU-003'
-        ]);
-        
-        // Prepare test data requesting more than available
-        $cartData = [
-            'subproduct_id' => $lowStockSubproduct->id,
-            'quantity' => 5  // More than stock
-        ];
-        
-        // Make request
-        $response = $this->postJson('/cart/add', $cartData);
-        
-        // Assert response
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['subproduct_id']);
-    }
-
-    public function test_cart_validates_required_fields()
-    {
-        // Prepare invalid data (missing required fields)
-        $invalidData = [
-            // Missing subproduct_id and quantity
-        ];
-        
-        // Make request
-        $response = $this->postJson('/cart/add', $invalidData);
-        
-        // Assert response
-        $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['subproduct_id', 'quantity']);
-    }
-
-    public function test_can_remove_item_from_cart()
-    {
-        // Prepare test data
-        $cartData = [
-            'subproduct_id' => $this->subproduct->id
-        ];
-        
-        // Setup mock cart items after removal
-        $mockCartItems = []; // Empty cart after removal
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('removeOrDecrementCartItem')
-            ->once()
-            ->with($this->subproduct->id, null)
-            ->andReturn($mockCartItems);
-        
-        // Make request
-        $response = $this->postJson('/cart/remove', $cartData);
-        
-        // Assert response
-        $response->assertStatus(201);
-        $response->assertJson($mockCartItems);
-    }
-
-    public function test_authenticated_user_can_remove_item_from_cart()
-    {
-        // Prepare test data
-        $cartData = [
-            'subproduct_id' => $this->subproduct->id
-        ];
-        
-        // Setup mock cart items after removal
-        $mockCartItems = []; // Empty cart after removal
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('removeOrDecrementCartItem')
-            ->once()
-            ->with($this->subproduct->id, $this->user->id)
-            ->andReturn($mockCartItems);
-        
-        // Make request as authenticated user
-        $response = $this->actingAs($this->user)->postJson('/cart/remove', $cartData);
-        
-        // Assert response
-        $response->assertStatus(201);
-        $response->assertJson($mockCartItems);
-    }
-
-    public function test_can_get_cart_items()
-    {
-        // Setup mock cart items
-        $mockCartItems = [
-            [
-                'id' => 1,
-                'quantity' => 2,
-                'subproduct' => [
-                    'id' => $this->subproduct->id,
-                    'name' => $this->subproduct->name,
-                    'price' => $this->subproduct->price,
-                    'product' => [
-                        'name' => $this->product->name,
-                        'images' => []
-                    ]
-                ]
-            ]
-        ];
-        
-        // Set mock expectations
-        $this->mockCartService->shouldReceive('getCartItems')
-            ->once()
-            ->with(null)
-            ->andReturn($mockCartItems);
-        
-        // Make request
-        $response = $this->getJson('/getcartitems');
-        
-        // Assert response
-        $response->assertStatus(200);
-        $response->assertJson($mockCartItems);
-        $response->assertHeader('X-Session-Id');
-    }
-
-    public function test_authenticated_user_can_get_cart_items()
-    {
-        // Setup mock cart items
-        $mockCartItems = [
-            [
-                'id' => 1,
-                'quantity' => 2,
-                'subproduct' => [
-                    'id' => $this->subproduct->id,
-                    'name' => $this->subproduct->name,
-                    'price' => $this->subproduct->price,
-                    'product' => [
-                        'name' => $this->product->name,
-                        'images' => []
-                    ]
-                ]
-            ]
-        ];
-        
-        // Set mock expectations
         $this->mockCartService->shouldReceive('getCartItems')
             ->once()
             ->with($this->user->id)
             ->andReturn($mockCartItems);
         
-        // Make request as authenticated user
-        $response = $this->actingAs($this->user)->getJson('/getcartitems');
+        $response = $this->actingAs($this->user)->get('/cart');
         
-        // Assert response
         $response->assertStatus(200);
-        $response->assertJson($mockCartItems);
-        $response->assertHeader('X-Session-Id');
+        $response->assertInertia(fn ($page) => $page
+            ->component('store/CartPage')
+            ->has('cartitems')
+            ->has('sessionId')
+        );
+    }
+
+
+    public function test_guest_can_add_item_to_cart()
+    {
+        $response = $this->postJson('/cart/add', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('cart_items', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+        $response->assertJsonStructure([
+            '*' => [
+                'id',
+                'quantity',
+                'subproduct' => [
+                    'id',
+                    'name',
+                    'price',
+                    'product' => [
+                        'name',
+                        'images'
+                    ]
+                ]
+            ]
+        ]);
+        $response->assertHeader('X-Message', 'Added to cart');
+    }
+
+    public function test_authenticated_user_can_add_item_to_cart()
+    {
+        $response = $this->actingAs($this->user)->postJson('/cart/add', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('cart_items', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2,
+            'cart_id' => $this->cart->id
+        ]);
+    }
+
+    public function test_cannot_add_unavailable_item_to_cart()
+    {
+        $this->subproduct->update(['available' => false]);
+
+        $response = $this->postJson('/cart/add', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_cannot_add_out_of_stock_item_to_cart()
+    {
+        $this->subproduct->update(['stock' => 1]);
+
+        $response = $this->postJson('/cart/add', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_can_remove_item_from_cart()
+    {
+        // First add item to cart
+        CartItem::create([
+            'cart_id' => $this->cart->id,
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response = $this->actingAs($this->user)->postJson('/cart/remove', [
+            'subproduct_id' => $this->subproduct->id
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertDatabaseMissing('cart_items', [
+            'cart_id' => $this->cart->id,
+            'subproduct_id' => $this->subproduct->id
+        ]);
+    }
+
+    public function test_can_get_cart_items()
+    {
+        // Add items to cart
+        CartItem::create([
+            'cart_id' => $this->cart->id,
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+
+        $response = $this->actingAs($this->user)->getJson('/getcartitems');
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            '*' => [
+                'id',
+                'quantity',
+                'subproduct' => [
+                    'id',
+                    'name',
+                    'price',
+                    'product' => [
+                        'name',
+                        'images'
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    public function test_cart_persists_between_guest_and_authenticated_sessions()
+    {
+        // Add item as guest
+        $guestResponse = $this->postJson('/cart/add', [
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
+        
+        $sessionId = $guestResponse->headers->get('X-Session-Id');
+        
+        // Login and verify items are transferred
+        $this->actingAs($this->user);
+        
+        $response = $this->getJson('/getcartitems');
+        $response->assertStatus(200);
+        $response->assertJsonCount(1);
+        
+        $this->assertDatabaseHas('cart_items', [
+            'cart_id' => $this->cart->id,
+            'subproduct_id' => $this->subproduct->id,
+            'quantity' => 2
+        ]);
     }
 }

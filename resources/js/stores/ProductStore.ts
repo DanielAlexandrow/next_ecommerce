@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { createStore } from 'zustand/vanilla';
 import { StoreProduct, Review } from '@/types';
 import axios from 'axios';
 
@@ -11,7 +11,7 @@ interface ProductState {
     loadReviews: () => Promise<void>;
 }
 
-export const useProductStore = create<ProductState>((set, get) => ({
+export const useProductStore = createStore<ProductState>((set, get) => ({
     product: null,
     selectedOption: null,
     reviews: [],

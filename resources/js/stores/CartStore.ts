@@ -1,11 +1,15 @@
 import { create } from 'zustand';
-import { Subproduct, CartItem } from '@/types';
-import { cartApi } from '@/api/cartApi';
+import { Subproduct, CartItem, Deal } from '@/types';
+import cartApi from '@/api/cartApi';
 
 interface CartState {
   items: CartItem[];
   loading: boolean;
   error: string | null;
+  originalTotal: number;
+  discountAmount: number;
+  finalTotal: number;
+  appliedDeal: Deal | null;
   addToCart: (subproduct: Subproduct) => Promise<void>;
   removeFromCart: (subproductId: number) => Promise<void>;
   updateQuantity: (subproductId: number, quantity: number) => Promise<void>;
@@ -13,16 +17,28 @@ interface CartState {
   fetchCart: () => Promise<void>;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set) => ({
   items: [],
   loading: false,
   error: null,
+  originalTotal: 0,
+  discountAmount: 0,
+  finalTotal: 0,
+  appliedDeal: null,
   
   addToCart: async (subproduct: Subproduct) => {
     set({ loading: true, error: null });
     try {
       const response = await cartApi.addItem(subproduct.id);
-      set({ items: response.data, loading: false });
+      const cartWithDeals = await cartApi.getCartWithDeals();
+      set({ 
+        items: cartWithDeals.items, 
+        originalTotal: cartWithDeals.original_total,
+        discountAmount: cartWithDeals.discount_amount,
+        finalTotal: cartWithDeals.final_total,
+        appliedDeal: cartWithDeals.applied_deal,
+        loading: false 
+      });
     } catch (error) {
       set({ error: 'Failed to add item to cart', loading: false });
     }
@@ -31,8 +47,16 @@ export const useCartStore = create<CartState>((set, get) => ({
   removeFromCart: async (subproductId: number) => {
     set({ loading: true, error: null });
     try {
-      const updatedCart = await cartApi.removeItem(subproductId);
-      set({ items: updatedCart, loading: false });
+      await cartApi.removeItem(subproductId);
+      const cartWithDeals = await cartApi.getCartWithDeals();
+      set({ 
+        items: cartWithDeals.items,
+        originalTotal: cartWithDeals.original_total,
+        discountAmount: cartWithDeals.discount_amount,
+        finalTotal: cartWithDeals.final_total,
+        appliedDeal: cartWithDeals.applied_deal,
+        loading: false 
+      });
     } catch (error) {
       set({ error: 'Failed to remove item from cart', loading: false });
     }
@@ -41,26 +65,48 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateQuantity: async (subproductId: number, quantity: number) => {
     set({ loading: true, error: null });
     try {
-      // Implement update quantity API call if needed
-      const { items } = get();
-      const updatedItems = items.map(item => 
-        item.id === subproductId ? { ...item, quantity } : item
-      );
-      set({ items: updatedItems, loading: false });
+      if (quantity > 0) {
+        await cartApi.addItem(subproductId);
+      } else {
+        await cartApi.removeItem(subproductId);
+      }
+      const cartWithDeals = await cartApi.getCartWithDeals();
+      set({ 
+        items: cartWithDeals.items,
+        originalTotal: cartWithDeals.original_total,
+        discountAmount: cartWithDeals.discount_amount,
+        finalTotal: cartWithDeals.final_total,
+        appliedDeal: cartWithDeals.applied_deal,
+        loading: false 
+      });
     } catch (error) {
       set({ error: 'Failed to update item quantity', loading: false });
     }
   },
   
   clearCart: () => {
-    set({ items: [], error: null });
+    set({ 
+      items: [], 
+      error: null,
+      originalTotal: 0,
+      discountAmount: 0,
+      finalTotal: 0,
+      appliedDeal: null 
+    });
   },
   
   fetchCart: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await cartApi.getItems();
-      set({ items: response, loading: false });
+      const cartWithDeals = await cartApi.getCartWithDeals();
+      set({ 
+        items: cartWithDeals.items,
+        originalTotal: cartWithDeals.original_total,
+        discountAmount: cartWithDeals.discount_amount,
+        finalTotal: cartWithDeals.final_total,
+        appliedDeal: cartWithDeals.applied_deal,
+        loading: false 
+      });
     } catch (error) {
       set({ error: 'Failed to fetch cart', loading: false });
     }

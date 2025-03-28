@@ -32,7 +32,6 @@ const subproductSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name must be under 255 characters'),
   price: z.number().gt(0, 'Price must be greater than 0'),
   stock: z.number().min(0, 'Stock cannot be negative'),
-  sku: z.string().min(1, 'SKU is required')
 });
 
 export const useProductForm = (mode: 'edit' | 'new', product: Product | null) => {
@@ -89,7 +88,6 @@ export const useProductForm = (mode: 'edit' | 'new', product: Product | null) =>
         name: 'Default variant',
         price: 9.99, // Valid price above 0
         stock: 10,
-        sku: `${values.name.substring(0, 3)}-${Date.now()}`
       };
       
       // Validate the subproduct using our schema

@@ -135,25 +135,21 @@ class DatabaseSeeder extends Seeder {
             $category = Category::where('name', $product['category'])->first();
             $brand = Brand::where('name', $product['brand'])->first();
 
-            $newProduct = Product::firstOrCreate(
+            $newProduct = $brand->products()->firstOrCreate(
                 ['name' => $product['name']],
                 [
                     'description' => $product['description'],
-                    'available' => true,
-                    'brand_id' => $brand->id,
+                    'available' => true
                 ]
             );
 
-            $newProduct->categories()->syncWithoutDetaching([$category->id]);
-
-            // Create subproduct for each product with SKU
-            $sku = strtoupper(substr($product['brand'], 0, 3) . '-' . substr(preg_replace('/[^A-Za-z0-9]/', '', $product['name']), 0, 3) . '-STD');
+            // Create standard subproduct for each product
             $newProduct->subproducts()->firstOrCreate(
-                ['sku' => $sku],
+                ['name' => 'Standard'],
                 [
-                    'name' => 'Standard',
                     'price' => $product['price'],
                     'available' => true,
+                    'stock' => $product['stock'] ?? 100
                 ]
             );
         }

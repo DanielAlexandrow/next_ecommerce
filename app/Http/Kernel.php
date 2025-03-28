@@ -66,6 +66,7 @@ class Kernel extends HttpKernel {
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\CheckRole::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'validate.params' => \App\Http\Middleware\ValidateParams::class,
     ];
 
     /**
@@ -79,5 +80,6 @@ class Kernel extends HttpKernel {
         // ...
         'role' => \App\Http\Middleware\CheckRole::class,
         'verify.purchase' => \App\Http\Middleware\VerifyProductPurchase::class,
+        'validate.params' => \App\Http\Middleware\ValidateParams::class,
     ];
 }

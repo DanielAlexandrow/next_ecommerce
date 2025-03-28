@@ -1,278 +1,359 @@
 <?php
-
 namespace Tests\Unit\Controllers;
 
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
-use App\Services\ProductService;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Subproduct;
 use App\Http\Controllers\ProductController;
 use App\Http\Requests\ProductRequest;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Exceptions\ProductHasOrdersException;
+use App\Http\Requests\CreateProductRequest;
+use App\Services\ProductService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Response;
-use Mockery;
-use Inertia\Testing\AssertableInertia;
+use Illuminate\Support\Facades\DB;
 
-class ProductControllerTest extends TestCase {
+class ProductControllerTest extends TestCase
+{
+    use RefreshDatabase;
+    
     private ProductController $controller;
-    private $productService;
+    private ProductService $productService;
+    private User $adminUser;
+    private User $customerUser;
+    private Brand $brand;
+    private array $categories;
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         parent::setUp();
-        $this->productService = Mockery::mock(ProductService::class);
+        
+        // Create real ProductService
+        $this->productService = new ProductService();
+        
+        // Create the controller with real ProductService
         $this->controller = new ProductController($this->productService);
+        
+        // Create test users
+        $this->adminUser = User::factory()->create(['role' => 'admin']);
+        $this->customerUser = User::factory()->create(['role' => 'customer']);
+        
+        // Create a brand for testing
+        $this->brand = Brand::create(['name' => 'Test Brand']);
+        
+        // Create some categories
+        $this->categories = [
+            Category::create([
+                'name' => 'Category 1',
+                'slug' => 'category-1',
+                'description' => 'Test Category 1'
+            ])->id,
+            Category::create([
+                'name' => 'Category 2',
+                'slug' => 'category-2',
+                'description' => 'Test Category 2'
+            ])->id
+        ];
     }
 
-    protected function tearDown(): void {
-        parent::tearDown();
-        Mockery::close();
-    }
-
-    public function test_store_creates_product_successfully() {
+    public function test_store_creates_product_successfully()
+    {
         // Arrange
+        $this->actingAs($this->adminUser);
+        
         $productData = [
             'name' => 'Test Product',
             'description' => 'Test Description',
-            'brand_id' => 1,
-            'categories' => [1, 2],
+            'brand_id' => $this->brand->id,
+            'available' => true,
+            'categories' => $this->categories,
             'subproducts' => [
                 [
                     'name' => 'Variant 1',
-                    'sku' => 'TEST-001',
                     'price' => 99.99,
-                    'stock' => 10
+                    'stock' => 10,
+                    'available' => true
                 ]
             ]
         ];
+        
+        // Create and configure the request with real data
+        $request = CreateProductRequest::create('/products', 'POST', $productData);
+        $request->setContainer(app())->validateResolved();
 
-        $createdProduct = new Product($productData);
-        $createdProduct->id = 1;
-
-        $request = Mockery::mock(ProductRequest::class);
-        $request->shouldReceive('validated')
-            ->once()
-            ->andReturn($productData);
-
-        $this->productService->shouldReceive('create')
-            ->once()
-            ->with($productData)
-            ->andReturn($createdProduct);
-
+        // Override the validated method to return our test data
+        $request->merge($productData);
+        $request->method('validated', function() use ($productData) {
+            return $productData;
+        });
+        
         // Act
         $response = $this->controller->store($request);
-
+        
         // Assert
         $this->assertEquals(201, $response->status());
-        $this->assertEquals('Product created successfully', $response->headers->get('X-Message'));
+        $responseData = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('id', $responseData);
+        $this->assertEquals('Test Product', $responseData['name']);
+        $this->assertEquals('Test Description', $responseData['description']);
+        $this->assertEquals($this->brand->id, $responseData['brand_id']);
         
-        $responseData = $response->getData();
-        $this->assertTrue($responseData->success);
-        
-        // Compare properties individually since we're dealing with stdClass vs Model
-        $productData = (array)$responseData->product;
-        $this->assertEquals($createdProduct->name, $productData['name']);
-        $this->assertEquals($createdProduct->description, $productData['description']);
-        $this->assertEquals($createdProduct->brand_id, $productData['brand_id']);
-        $this->assertEquals($createdProduct->id, $productData['id']);
+        // Verify product was actually created in the database
+        $this->assertDatabaseHas('products', [
+            'name' => 'Test Product',
+            'description' => 'Test Description'
+        ]);
     }
 
-    public function test_index_returns_paginated_products() {
+    public function test_index_returns_paginated_products()
+    {
         // Arrange
-        $expectedProducts = [
-            'data' => [
-                ['id' => 1, 'name' => 'Product 1'],
-                ['id' => 2, 'name' => 'Product 2']
-            ],
-            'total' => 2,
-            'per_page' => 10,
-            'current_page' => 1
-        ];
-
-        $this->productService->shouldReceive('getPaginatedProducts')
-            ->once()
-            ->with('name', 'asc', 10)
-            ->andReturn($expectedProducts);
-
+        $this->actingAs($this->adminUser);
+        
+        // Create some test products
+        Product::create([
+            'name' => 'Product 1',
+            'description' => 'Description 1',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
+        
+        Product::create([
+            'name' => 'Product 2',
+            'description' => 'Description 2',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
+        
+        $request = Request::create('/products', 'GET');
+        
         // Act
-        $response = $this->controller->index(request());
-
+        $response = $this->controller->index($request);
+        
         // Assert
-        $this->assertInstanceOf(\Inertia\Response::class, $response);
+        $this->assertEquals('admin/ProductList', $response->getComponent());
+        $props = $response->getProps();
         
-        // Test the component name using reflection
-        $responseReflection = new \ReflectionClass($response);
-        $componentProperty = $responseReflection->getProperty('component');
-        $componentProperty->setAccessible(true);
-        $componentName = $componentProperty->getValue($response);
-        $this->assertEquals('admin/ProductList', $componentName);
-        
-        // Test the props using reflection
-        $propsProperty = $responseReflection->getProperty('props');
-        $propsProperty->setAccessible(true);
-        $actualProps = $propsProperty->getValue($response);
-        
-        $this->assertEquals($expectedProducts, $actualProps['products']);
-        $this->assertEquals('name', $actualProps['sortkey']);
-        $this->assertEquals('asc', $actualProps['sortdirection']);
+        $this->assertArrayHasKey('products', $props);
+        $this->assertArrayHasKey('data', $props['products']);
+        $this->assertCount(2, $props['products']['data']);
+        $this->assertEquals('name', $props['sortkey']);
+        $this->assertEquals('asc', $props['sortdirection']);
     }
 
-    public function test_update_modifies_product() {
+    public function test_update_modifies_product()
+    {
         // Arrange
-        $productId = 1;
+        $this->actingAs($this->adminUser);
+        
+        // Create a test product
+        $product = Product::create([
+            'name' => 'Original Product',
+            'description' => 'Original Description',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
+        
         $updateData = [
             'name' => 'Updated Product',
             'description' => 'Updated Description',
-            'brand_id' => 2,
-            'categories' => [3, 4]
+            'brand_id' => $this->brand->id,
+            'available' => true,
+            'categories' => $this->categories
         ];
-
-        $updatedProduct = new Product($updateData);
-        $updatedProduct->id = $productId;
-
-        $request = Mockery::mock(ProductRequest::class);
-        $request->shouldReceive('validated')
-            ->once()
-            ->andReturn($updateData);
-
-        $this->productService->shouldReceive('update')
-            ->once()
-            ->with($updateData, $productId)
-            ->andReturn($updatedProduct);
-
+        
+        // Create and configure the request
+        $request = ProductRequest::create("/products/{$product->id}", 'PUT', $updateData);
+        $request->setContainer(app())->validateResolved();
+        
+        // Override the validated method
+        $request->merge($updateData);
+        $request->method('validated', function() use ($updateData) {
+            return $updateData;
+        });
+        
         // Act
-        $response = $this->controller->update($request, $productId);
-
+        $response = $this->controller->update($request, $product->id);
+        
         // Assert
         $this->assertEquals(200, $response->status());
-        $this->assertEquals('Product updated successfully', $response->headers->get('X-Message'));
+        $responseData = json_decode($response->getContent(), true);
+        $this->assertEquals('Updated Product', $responseData['name']);
+        $this->assertEquals('Updated Description', $responseData['description']);
         
-        // Compare properties individually since we're dealing with stdClass vs Model
-        $responseData = (array)$response->getData();
-        $productData = (array)$responseData['product'];
-        $this->assertEquals($updatedProduct->name, $productData['name']);
-        $this->assertEquals($updatedProduct->description, $productData['description']);
-        $this->assertEquals($updatedProduct->brand_id, $productData['brand_id']);
-        $this->assertEquals($updatedProduct->id, $productData['id']);
+        // Verify the product was updated in the database
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'name' => 'Updated Product',
+            'description' => 'Updated Description'
+        ]);
     }
 
-    public function test_destroy_product_as_admin() {
+    public function test_destroy_product_as_admin()
+    {
         // Arrange
-        $productId = 1;
+        $this->actingAs($this->adminUser);
         
-        // Setup Auth mock with proper expectations
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn(Mockery::mock(['isAdmin' => true]));
+        $product = Product::create([
+            'name' => 'Product to Delete',
+            'description' => 'Will be deleted',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
         
-        $this->productService->shouldReceive('delete')
-            ->once()
-            ->with($productId)
-            ->andReturn(true);
-            
         // Act
-        $response = $this->controller->destroy($productId);
+        $response = $this->controller->destroy($product->id);
         
         // Assert
         $this->assertEquals(204, $response->status());
         $this->assertEquals('Product deleted successfully', $response->headers->get('X-Message'));
+        
+        // Verify product was actually deleted
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
 
-    public function test_destroy_product_as_non_admin() {
+    public function test_destroy_product_as_non_admin()
+    {
         // Arrange
-        $productId = 1;
+        $this->actingAs($this->customerUser);
         
-        // Setup Auth mock with proper expectations
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn(Mockery::mock(['isAdmin' => false]));
-            
+        $product = Product::create([
+            'name' => 'Product That Should Not Be Deleted',
+            'description' => 'Should not be allowed to delete',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
+        
         // Act
-        $response = $this->controller->destroy($productId);
+        $response = $this->controller->destroy($product->id);
         
         // Assert
         $this->assertEquals(403, $response->status());
-        $this->assertEquals('Unauthorized action', $response->getData()->message);
+        $responseData = json_decode($response->getContent());
+        $this->assertEquals('Unauthorized action', $responseData->message);
+        
+        // Verify product still exists
+        $this->assertDatabaseHas('products', ['id' => $product->id]);
     }
 
-    public function test_destroy_non_existent_product() {
+    public function test_destroy_non_existent_product()
+    {
         // Arrange
-        $productId = 999;
+        $this->actingAs($this->adminUser);
         
-        // Setup Auth mock with proper expectations
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn(Mockery::mock(['isAdmin' => true]));
+        // Non-existent ID
+        $nonExistentId = 9999;
         
-        $this->productService->shouldReceive('delete')
-            ->once()
-            ->with($productId)
-            ->andThrow(new ModelNotFoundException());
-            
         // Act
-        $response = $this->controller->destroy($productId);
+        $response = $this->controller->destroy($nonExistentId);
         
         // Assert
         $this->assertEquals(404, $response->status());
-        $this->assertEquals('Product not found', $response->getData()->message);
+        $responseData = json_decode($response->getContent());
+        $this->assertEquals('Product not found', $responseData->message);
     }
 
-    public function test_destroy_product_with_invalid_id() {
+    public function test_destroy_product_with_invalid_id()
+    {
         // Arrange
-        $invalidId = 'not-a-number';
+        $this->actingAs($this->adminUser);
         
-        // No need for Auth mock as it won't get that far
+        // Invalid ID format
+        $invalidId = 'not-a-number';
         
         // Act
         $response = $this->controller->destroy($invalidId);
         
         // Assert
         $this->assertEquals(404, $response->status());
-        $this->assertEquals('Invalid product ID format', $response->getData()->message);
+        $responseData = json_decode($response->getContent());
+        $this->assertEquals('Invalid product ID format', $responseData->message);
     }
 
-    public function test_destroy_product_with_service_error() {
+    public function test_destroy_product_with_service_error()
+    {
         // Arrange
-        $productId = 1;
+        $this->actingAs($this->adminUser);
         
-        // Setup Auth mock with proper expectations
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn(Mockery::mock(['isAdmin' => true]));
+        $product = Product::create([
+            'name' => 'Product with Error',
+            'description' => 'Will cause service error',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
         
-        $this->productService->shouldReceive('delete')
-            ->once()
-            ->with($productId)
-            ->andThrow(new \Exception('Database error'));
-            
+        // Create a partial mock of ProductService just for this specific test
+        $mockService = $this->partialMock(ProductService::class, function ($mock) use ($product) {
+            $mock->shouldReceive('delete')
+                ->once()
+                ->with($product->id)
+                ->andThrow(new \Exception('Database error'));
+        });
+        
+        // Replace the controller's service with our partial mock
+        app()->instance(ProductService::class, $mockService);
+        $controller = app()->make(ProductController::class);
+        
         // Act
-        $response = $this->controller->destroy($productId);
+        $response = $controller->destroy($product->id);
         
         // Assert
         $this->assertEquals(500, $response->status());
-        $this->assertEquals('Failed to delete product', $response->getData()->message);
+        $responseData = json_decode($response->getContent());
+        $this->assertEquals('Failed to delete product', $responseData->message);
     }
 
-    public function test_destroy_product_with_related_orders() {
+    public function test_destroy_product_with_related_orders()
+    {
         // Arrange
-        $productId = 1;
+        $this->actingAs($this->adminUser);
         
-        // Setup Auth mock with proper expectations
-        Auth::shouldReceive('user')
-            ->once()
-            ->andReturn(Mockery::mock(['isAdmin' => true]));
+        // Create product with subproduct
+        $product = Product::create([
+            'name' => 'Product with Orders',
+            'description' => 'Has related orders',
+            'brand_id' => $this->brand->id,
+            'available' => true
+        ]);
         
-        $this->productService->shouldReceive('delete')
-            ->once()
-            ->with($productId)
-            ->andThrow(new ProductHasOrdersException('Cannot delete product with existing orders'));
-            
+        $subproduct = Subproduct::create([
+            'name' => 'Variant',
+            'price' => 10.99,
+            'product_id' => $product->id,
+            'available' => true,
+            'stock' => 5
+        ]);
+        
+        // Create an order with this product
+        $order = Order::create([
+            'user_id' => $this->customerUser->id,
+            'total' => 10.99,
+            'status' => 'pending',
+            'payment_status' => 'pending',
+            'shipping_status' => 'pending'
+        ]);
+        
+        OrderItem::create([
+            'order_id' => $order->id,
+            'subproduct_id' => $subproduct->id,
+            'quantity' => 1,
+            'price' => 10.99
+        ]);
+        
         // Act
-        $response = $this->controller->destroy($productId);
+        $response = $this->controller->destroy($product->id);
         
         // Assert
         $this->assertEquals(409, $response->status());
-        $this->assertEquals('Cannot delete product with existing orders', $response->getData()->message);
+        $responseData = json_decode($response->getContent());
+        $this->assertEquals('Cannot delete product with existing orders', $responseData->message);
+        
+        // Verify product still exists
+        $this->assertDatabaseHas('products', ['id' => $product->id]);
     }
 }

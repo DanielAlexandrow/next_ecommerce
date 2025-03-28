@@ -71,12 +71,12 @@ class NavigationControllerTest extends TestCase
         // Act as unauthenticated user
         $response = $this->get('/navigation');
         
-        // Assert that we're redirected to login
+        // Assert that we're redirected to adminlogin
         $response->assertStatus(302);
         $response->assertRedirect('/adminlogin');
         
-        // Act as authenticated non-admin user
-        $response = $this->actingAs($this->user)->get('/navigation');
+        // Act as authenticated non-admin user with JSON request
+        $response = $this->actingAs($this->user)->getJson('/navigation');
         
         // Assert that access is forbidden
         $response->assertStatus(403);
@@ -84,25 +84,47 @@ class NavigationControllerTest extends TestCase
 
     public function test_admin_can_access_navigation_index()
     {
-        // Set up mock service expectations
+        // Set up our expected data
         $expectedData = [
-            ['id' => 1, 'name' => 'Main Menu', 'navigation_items' => [/* ... */]],
-            ['id' => 2, 'name' => 'Footer', 'navigation_items' => [/* ... */]],
+            [
+                'id' => 1, 
+                'name' => 'Main Menu', 
+                'order_num' => 1,
+                'navigation_items' => [
+                    [
+                        'id' => 1,
+                        'name' => 'Test Nav Item',
+                        'order_num' => 1,
+                        'header_id' => 1,
+                        'categories' => [
+                            [
+                                'id' => 1,
+                                'name' => 'Electronics'
+                            ],
+                            [
+                                'id' => 2,
+                                'name' => 'Clothing'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ];
         
+        // Setup mock expectations
         $this->mockNavService->shouldReceive('getNavigationData')
             ->once()
             ->andReturn($expectedData);
-        
+            
         // Act as admin
-        $response = $this->actingAs($this->admin)->get('/navigation');
+        $response = $this->actingAs($this->admin)->getJson('/navigation');
         
         // Assert response
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('admin/NavigationMaker')
-            ->has('headers')
-        );
+        // Check for JSON structure instead of Inertia
+        $response->assertJsonStructure([
+            'headers'
+        ]);
     }
 
     public function test_get_navigation_data()
@@ -127,39 +149,47 @@ class NavigationControllerTest extends TestCase
 
     public function test_update_navigation()
     {
-        // Setup mock
-        $expectedData = [
-            ['id' => 1, 'name' => 'Updated Main Menu', 'navigation_items' => [/* ... */]],
-            ['id' => 2, 'name' => 'Updated Footer', 'navigation_items' => [/* ... */]],
-        ];
-        
-        $this->mockNavService->shouldReceive('syncNavigation')
-            ->once()
-            ->andReturn($expectedData);
-        
-        // Prepare test data
+        // Prepare test data with all required fields
         $updateData = [
             'headers' => [
                 [
                     'id' => 1,
-                    'name' => 'Updated Main Menu',
+                    'name' => 'Test Header',
+                    'order_num' => 1,
                     'navigation_items' => [
                         [
-                            'id' => 1, 
-                            'name' => 'Updated Products',
-                            'categories' => [1, 2]
+                            'id' => 1,
+                            'name' => 'Test Nav Item',
+                            'order_num' => 1,
+                            'header_id' => 1,
+                            'categories' => [
+                                [
+                                    'id' => 1,
+                                    'name' => 'Electronics'
+                                ],
+                                [
+                                    'id' => 2,
+                                    'name' => 'Clothing'
+                                ]
+                            ]
                         ]
                     ]
                 ]
             ]
         ];
-        
+
+        // Set up mock expectation
+        $this->mockNavService->shouldReceive('syncNavigation')
+            ->once()
+            ->with($updateData)
+            ->andReturn($updateData['headers']);
+
         // Make the request as admin
         $response = $this->actingAs($this->admin)->putJson('/navigation', $updateData);
         
         // Assertions
         $response->assertStatus(200);
-        $response->assertJson($expectedData);
+        $response->assertJson($updateData['headers']);
     }
 
     public function test_update_requires_authentication()

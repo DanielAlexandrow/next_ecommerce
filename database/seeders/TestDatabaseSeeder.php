@@ -12,66 +12,31 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class TestDatabaseSeeder extends Seeder {
-    public function run() {
-        // Create admin user for testing directly with role attribute
-        $admin = User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@example.com',
-            'password' => 'password123', // Will be hashed by the model's mutator
-            'email_verified_at' => now(),
-            'role' => 'admin' 
-        ]);
-        
-        // Create test brand
-        $brand = Brand::create([
-            'name' => 'Test Brand',
-            'description' => 'Test Brand Description',
-        ]);
-        
-        // Create test category
-        $category = Category::create([
-            'name' => 'Test Category',
-            'description' => 'Test Category Description',
-            'slug' => 'test-category'
-        ]);
-
-        // Create test products
-        for ($i = 1; $i <= 5; $i++) {
-            $product = Product::create([
+    public function run(): void
+    {
+        // Create test products with variants
+        for ($i = 1; $i <= 3; $i++) {
+            $product = Product::factory()->create([
                 'name' => "Test Product {$i}",
-                'description' => "Test Product {$i} Description",
-                'brand_id' => $brand->id,
-                'available' => true,
+                'description' => "Test Description {$i}",
+                'available' => true
             ]);
 
-            // Attach category
-            $product->categories()->attach($category->id);
-
-            // Create test image
-            $image = Image::create([
-                'name' => "test{$i}.jpg",
-                'path' => "images/test{$i}.jpg",
-            ]);
-
-            // Attach image to product
-            $product->images()->attach($image->id);
-
-            // Create test subproducts
-            Subproduct::create([
-                'name' => "Test Variant {$i}.1",
+            // Available variant
+            Subproduct::factory()->create([
+                'name' => "Standard Variant {$i}",
+                'price' => 99.99,
                 'product_id' => $product->id,
-                'price' => 100 * $i,
                 'available' => true,
-                'sku' => "TST-PRD-{$i}1",
                 'stock' => 20 // Add stock for cart tests
             ]);
 
-            Subproduct::create([
-                'name' => "Test Variant {$i}.2",
+            // Unavailable variant
+            Subproduct::factory()->create([
+                'name' => "Premium Variant {$i}",
+                'price' => 149.99,
                 'product_id' => $product->id,
-                'price' => 150 * $i,
                 'available' => false,
-                'sku' => "TST-PRD-{$i}2",
                 'stock' => 10
             ]);
         }

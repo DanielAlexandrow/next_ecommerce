@@ -30,12 +30,33 @@ const pageVariants = {
 };
 
 const AnimatedLayout: React.FC<AnimatedLayoutProps> = ({ children }) => {
+    if (!children) {
+        console.error('AnimatedLayout: Children prop is required but was not provided');
+        return (
+            <div className="w-full min-h-screen flex items-center justify-center">
+                <p>Error: No content provided to layout</p>
+            </div>
+        );
+    }
+
     const { url } = usePage();
-    const [prevPath, setPrevPath] = React.useState(url);
+    if (!url) {
+        console.error('AnimatedLayout: URL from usePage is undefined');
+        return (
+            <div className="w-full min-h-screen">
+                {children}
+            </div>
+        );
+    }
+
+    const [prevPath, setPrevPath] = React.useState<string>(url);
     const direction = React.useMemo(() => {
-        const current = url;
-        const direction = current.length > prevPath.length ? 1 : -1;
-        setPrevPath(current);
+        if (!prevPath || !url) {
+            console.warn('AnimatedLayout: Previous path or current URL is undefined');
+            return 0;
+        }
+        const direction = url.length > prevPath.length ? 1 : -1;
+        setPrevPath(url);
         return direction;
     }, [url, prevPath]);
 
@@ -56,4 +77,4 @@ const AnimatedLayout: React.FC<AnimatedLayoutProps> = ({ children }) => {
     );
 };
 
-export default AnimatedLayout; 
+export default AnimatedLayout;

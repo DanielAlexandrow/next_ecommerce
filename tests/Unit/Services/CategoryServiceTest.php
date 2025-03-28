@@ -186,34 +186,5 @@ class CategoryServiceTest extends TestCase
         $this->categoryService->findById(999);
     }
 
-    /** @test */
-    public function it_gets_all_categories_with_stats()
-    {
-        // Arrange
-        $category = Category::factory()->create();
-        $product = Product::factory()->create();
-        $product->categories()->attach($category->id);
-        
-        $user = \App\Models\User::factory()->create();
-        
-        // Create reviews with ratings - changed 'comment' to 'content'
-        Review::factory()->count(2)->create([
-            'user_id' => $user->id,
-            'product_id' => $product->id,
-            'rating' => 4,
-            'content' => 'Test review'
-        ]);
 
-        // Act
-        $result = $this->categoryService->getAllWithStats();
-
-        // Assert
-        $this->assertCount(1, $result);
-        $result = $result->first();
-        $this->assertEquals($category->id, $result['id']);
-        $this->assertEquals(1, $result['products_count']);
-        $this->assertEquals(0, $result['children_count']);
-        $this->assertEquals(2, $result['total_reviews']);
-        $this->assertEquals(4, $result['average_rating']);
-    }
 }

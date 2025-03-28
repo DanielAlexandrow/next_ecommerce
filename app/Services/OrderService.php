@@ -24,29 +24,59 @@ class OrderService {
             ->select([
                 'orders.id as order_id',
                 DB::raw('COALESCE(users.name, address_info.name, "N/A") as name'),
-                // Count items by counting commas in the JSON array and adding 1
-                DB::raw('(LENGTH(orders.items) - LENGTH(REPLACE(orders.items, \',\', \'\')) + 1) as item_count'),
                 'orders.total',
                 'orders.status',
+                'orders.payment_status',
+                'orders.shipping_status',
                 'orders.created_at',
-                'orders.driver_id'
+                DB::raw('(LENGTH(orders.items) - LENGTH(REPLACE(orders.items, \',\', \'\')) + 1) as item_count')
             ])
-            ->leftJoin('users', 'users.id', '=', 'orders.user_id')
-            ->leftJoin('guests', 'guests.id', '=', 'orders.guest_id')
+            ->leftJoin('users', 'orders.user_id', '=', 'users.id')
+            ->leftJoin('guests', 'orders.guest_id', '=', 'guests.id')
             ->leftJoin('address_infos as address_info', 'address_info.id', '=', 'guests.id_address_info');
-            
+
+        // Apply search filter
         if ($search) {
             $query->where(function($q) use ($search) {
-                $q->where('users.name', 'like', "%{$search}%")
-                  ->orWhere('address_info.name', 'like', "%{$search}%")
-                  ->orWhere('orders.id', 'like', "%{$search}%");
+                $q->where('orders.id', 'like', "%{$search}%")
+                  ->orWhere('users.name', 'like', "%{$search}%")
+                  ->orWhere('guests.email', 'like', "%{$search}%")
+                  ->orWhere('address_info.name', 'like', "%{$search}%");
             });
         }
-        
+
+        // Apply status filters
+        if (!empty($params['orderStatus'])) {
+            $query->where('orders.status', $params['orderStatus']);
+        }
+        if (!empty($params['paymentStatus'])) {
+            $query->where('orders.payment_status', $params['paymentStatus']);
+        }
+        if (!empty($params['shippingStatus'])) {
+            $query->where('orders.shipping_status', $params['shippingStatus']);
+        }
+
+        // Apply date range filter
+        if (!empty($params['from'])) {
+            $query->whereDate('orders.created_at', '>=', $params['from']);
+        }
+        if (!empty($params['to'])) {
+            $query->whereDate('orders.created_at', '<=', $params['to']);
+        }
+
+        // Apply total amount range filter
+        if (!empty($params['minTotal'])) {
+            $query->where('orders.total', '>=', $params['minTotal']);
+        }
+        if (!empty($params['maxTotal'])) {
+            $query->where('orders.total', '<=', $params['maxTotal']);
+        }
+
+        // Apply driver filter if specified
         if ($driverId) {
             $query->where('orders.driver_id', $driverId);
         }
-        
+
         // If the current user is a driver, only show their orders
         if (isset($params['user_id']) && isset($params['user_role']) && $params['user_role'] === 'driver') {
             $query->where('orders.driver_id', $params['user_id']);

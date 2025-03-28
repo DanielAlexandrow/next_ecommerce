@@ -7,99 +7,118 @@ dotenv.config();
 // Get base URL from environment or use a default
 const BASE_URL = process.env.APP_URL || 'http://localhost:8000';
 
-test.describe("Cart", () => {
-    // Use stored auth state for all tests in this file
-    test.use({ storageState: 'playwright/.auth/admin.json' });
-
+test.describe("Cart Functionality", () => {
     test.beforeEach(async ({ page }) => {
-        try {
-            console.log(`Navigating to ${BASE_URL}/productsearch`);
-            await page.goto(`${BASE_URL}/productsearch`, {
-                waitUntil: 'networkidle',
-                timeout: 30000
-            });
-        } catch (error) {
-            console.error('Navigation failed:', error);
-            throw error;
-        }
+        // Go to product search page where we can add items
+        await page.goto(`${BASE_URL}/productsearch`);
     });
 
-    test('Add product to Cart From ProductSearch', async ({ page }) => {
-        // Wait for the page to be ready
-        await expect(page).toHaveURL(`${BASE_URL}/productsearch`);
+    test('Can add item to cart', async ({ page }) => {
+        await test.step('Add product to cart', async () => {
+            // Wait for product grid
+            await expect(page.locator('[data-testid="products-grid"]')).toBeVisible();
+
+            // Find first available product
+            const addToCartButton = page.locator('[data-testid="add-to-cart-button"]:not([disabled])').first();
+            await addToCartButton.click();
+
+            // Verify success notification
+            await expect(page.getByRole('alert')).toContainText('Added to cart');
+        });
+
+        await test.step('View cart', async () => {
+            // Go to cart page
+            await page.goto(`${BASE_URL}/cart`);
+
+            // Verify cart is not empty
+            await expect(page.locator('h2')).toContainText('Shopping Cart');
+            await expect(page.locator('[data-testid="cart-items"]')).toBeVisible();
+        });
+    });
+
+    test('Can update cart quantities', async ({ page }) => {
+        // First add an item
+        const addToCartButton = page.locator('[data-testid="add-to-cart-button"]:not([disabled])').first();
+        await addToCartButton.click();
+
+        // Go to cart
+        await page.goto(`${BASE_URL}/cart`);
+
+        // Get initial quantity
+        const quantityText = await page.locator('[data-testid="item-quantity"]').textContent();
+        const initialQuantity = parseInt(quantityText || '0', 10);
+
+        // Click increment button
+        await page.locator('[aria-label="Increment quantity"]').click();
+
+        // Verify quantity increased
+        await expect(page.locator('[data-testid="item-quantity"]'))
+            .toHaveText((initialQuantity + 1).toString());
+
+        // Click decrement button
+        await page.locator('[aria-label="Decrement quantity"]').click();
+
+        // Verify quantity decreased
+        await expect(page.locator('[data-testid="item-quantity"]'))
+            .toHaveText(initialQuantity.toString());
+    });
+
+    test('Cart persists after login', async ({ page }) => {
+        // Add item as guest
+        const addToCartButton = page.locator('[data-testid="add-to-cart-button"]:not([disabled])').first();
+        await addToCartButton.click();
+
+        // Login
+        await page.goto(`${BASE_URL}/login`);
+        await page.fill('input[name="email"]', 'test@example.com');
+        await page.fill('input[name="password"]', 'password');
+        await page.click('button[type="submit"]');
+
+        // Check cart still has items
+        await page.goto(`${BASE_URL}/cart`);
+        await expect(page.locator('[data-testid="cart-items"]')).toBeVisible();
+    });
+
+    test('Can proceed to checkout', async ({ page }) => {
+        // First add an item
+        const addToCartButton = page.locator('[data-testid="add-to-cart-button"]:not([disabled])').first();
+        await addToCartButton.click();
+
+        // Go to cart
+        await page.goto(`${BASE_URL}/cart`);
+
+        // Click checkout button
+        await page.click('text=Checkout');
+
+        // Should be on checkout page
+        await expect(page).toHaveURL(/.*\/checkout/);
+
+        // Fill checkout form
+        await page.fill('[name="name"]', 'Test User');
+        await page.fill('[name="email"]', 'test@example.com');
+        await page.fill('[name="street"]', '123 Test St');
+        await page.fill('[name="city"]', 'Test City');
+        await page.fill('[name="postcode"]', '12345');
+        await page.fill('[name="country"]', 'Test Country');
+
+        // Submit order
+        await page.click('text=Place Order');
+
+        // Verify success
+        await expect(page.getByRole('alert')).toContainText('Order placed successfully');
+    });
+
+    test('Shows empty cart message', async ({ page }) => {
+        await page.goto(`${BASE_URL}/cart`);
+        await expect(page.getByText('Your cart is empty')).toBeVisible();
+    });
+
+    test('Out of stock items cannot be added', async ({ page }) => {
+        // Try to add an out of stock item
+        const outOfStockButton = page.locator('[data-testid="add-to-cart-button"][disabled]').first();
         
-        try {
-            // Wait for products grid container
-            await expect(
-                page.locator('[data-testid="products-grid-container"]')
-            ).toBeVisible({ timeout: 10000 });
-
-            // Wait for either products to load or empty state
-            await Promise.race([
-                page.waitForSelector('[data-testid="product-skeleton"]'),
-                page.waitForSelector('[data-testid="product-card"]'),
-                page.waitForSelector('[data-testid="no-products-message"]')
-            ]);
-
-            // Give a moment for loading to complete if skeletons are showing
-            if (await page.locator('[data-testid="product-skeleton"]').count() > 0) {
-                await page.waitForTimeout(2000);
-            }
-
-            // Check if we have actual products
-            const productCount = await page.locator('[data-testid="product-card"]').count();
-            console.log(`Found ${productCount} product cards`);
-            
-            if (productCount === 0) {
-                // Check for empty state message
-                if (await page.locator('[data-testid="no-products-message"]').isVisible()) {
-                    test.skip('No products available to test add to cart functionality');
-                    return;
-                }
-                throw new Error('No products found and no empty state message visible');
-            }
-
-            // Find first enabled Add to Cart button
-            const addToCartButtons = page.locator('[data-testid="add-to-cart-button"]:not([disabled])');
-            const buttonCount = await addToCartButtons.count();
-            
-            if (buttonCount === 0) {
-                test.skip('No enabled add to cart buttons found');
-                return;
-            }
-
-            // Click the first enabled button
-            await addToCartButtons.first().click();
-            console.log('Clicked add to cart button');
-
-            // Wait for cart button to be visible
-            await expect(page.locator('[data-testid="cart-btn"]')).toBeVisible();
-
-            // Navigate to cart
-            await page.locator('[data-testid="cart-btn"]').click();
-            await expect(page).toHaveURL(`${BASE_URL}/cart`);
-
-            // Check for empty cart message
-            const emptyCartMessage = page.locator('text="Your cart is empty"');
-            const hasEmptyCart = await emptyCartMessage.isVisible();
-            
-            if (hasEmptyCart) {
-                throw new Error('Cart is empty after adding product');
-            }
-
-            // Verify cart has items
-            await expect(
-                page.locator('h2:has-text("Shopping Cart")')
-            ).toBeVisible({ timeout: 5000 });
-
-        } catch (error) {
-            console.error('Test error:', error);
-            await page.screenshot({ 
-                path: 'cart-test-failure.png',
-                fullPage: true 
-            });
-            throw error;
-        }
+        // Verify button is disabled
+        await expect(outOfStockButton).toBeDisabled();
     });
 });
 

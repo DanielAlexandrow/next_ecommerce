@@ -11,7 +11,7 @@ use App\Models\CartItem;
 class Cart extends Model {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'cart';
+    protected $table = 'carts';
 
     protected $fillable = [
         'user_id',

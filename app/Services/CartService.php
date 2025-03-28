@@ -7,10 +7,18 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Subproduct;
+use App\Models\Deal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\DealService;
 
 class CartService {
+    protected $dealService;
+    
+    public function __construct(DealService $dealService = null) {
+        $this->dealService = $dealService ?? app(DealService::class);
+    }
+    
     public function getCartItems($userId = null) {
         $cart = $this->getOrCreateCart($userId);
         
@@ -79,14 +87,37 @@ class CartService {
 
     public function addOrIncrementCartItem($subproductId, $userId = null, $quantity = 1) {
         return DB::transaction(function () use ($subproductId, $userId, $quantity) {
+            // Check subproduct availability and stock
+            $subproduct = Subproduct::find($subproductId);
+            if (!$subproduct || !$subproduct->available) {
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], [])
+                        ->errors()
+                        ->add('message', 'Product is out of stock')
+                );
+            }
+
             $cart = $this->getOrCreateCart($userId);
 
             $cartItem = $cart->cartItems()
                 ->where('subproduct_id', $subproductId)
                 ->first();
 
+            $totalQuantity = $quantity;
             if ($cartItem) {
-                $cartItem->quantity += $quantity;
+                $totalQuantity += $cartItem->quantity;
+            }
+
+            if ($subproduct->stock < $totalQuantity) {
+                throw new \Illuminate\Validation\ValidationException(
+                    validator([], [])
+                        ->errors()
+                        ->add('message', 'Not enough stock available')
+                );
+            }
+
+            if ($cartItem) {
+                $cartItem->quantity = $totalQuantity;
                 $cartItem->save();
             } else {
                 $cartItem = $cart->cartItems()->create([
@@ -117,17 +148,49 @@ class CartService {
         });
     }
 
+    public function getCartWithDeals($userId = null) {
+        $cart = $this->getOrCreateCart($userId);
+        
+        if (!$cart) {
+            return [
+                'items' => [],
+                'original_total' => 0,
+                'discount_amount' => 0,
+                'final_total' => 0,
+                'applied_deal' => null
+            ];
+        }
+        
+        // Get cart items
+        $items = $this->getCartItems($userId);
+        
+        // Apply deals to cart
+        $dealResult = $this->dealService->applyDealsToCart($cart);
+        
+        return [
+            'items' => $items,
+            'original_total' => $dealResult['original_total'] ?? $cart->total,
+            'discount_amount' => $dealResult['discount_amount'] ?? 0,
+            'final_total' => $dealResult['final_total'] ?? $cart->total,
+            'applied_deal' => $dealResult['applied_deal'] ?? null
+        ];
+    }
+
     protected function mergeCarts(Cart $userCart, Cart $sessionCart) {
         DB::transaction(function () use ($userCart, $sessionCart) {
+            // First ensure all items from session cart are properly transferred
             foreach ($sessionCart->cartItems as $item) {
                 $existingItem = $userCart->cartItems()
                     ->where('subproduct_id', $item->subproduct_id)
                     ->first();
 
                 if ($existingItem) {
-                    $existingItem->quantity += $item->quantity;
-                    $existingItem->save();
+                    // Update existing item quantity
+                    $existingItem->update([
+                        'quantity' => $existingItem->quantity + $item->quantity
+                    ]);
                 } else {
+                    // Create new cart item in user's cart
                     CartItem::create([
                         'cart_id' => $userCart->id,
                         'subproduct_id' => $item->subproduct_id,
@@ -136,9 +199,10 @@ class CartService {
                 }
             }
 
+            // Update the total for user's cart
             $this->updateCartTotal($userCart);
 
-            // Delete session cart after merging
+            // Delete the session cart and its items
             $sessionCart->cartItems()->delete();
             $sessionCart->delete();
         });

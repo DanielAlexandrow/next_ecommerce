@@ -2,34 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
-use App\Interfaces\ProductServiceInterface;
-use App\Exceptions\ProductHasOrdersException;
+use App\Http\Requests\CreateProductRequest;
+use App\Models\Product;
+use App\Services\ProductService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    protected $productService;
+    private ProductService $productService;
 
-    public function __construct(ProductServiceInterface $productService)
+    public function __construct(ProductService $productService)
     {
+        $this->middleware('auth');
+        $this->middleware('admin');
         $this->productService = $productService;
-        $this->middleware('role:admin')->only('destroy');
     }
 
     public function index(Request $request)
     {
         $sortKey = $request->input('sortkey', 'name');
         $sortDirection = $request->input('sortdirection', 'asc');
-        $limit = $request->input('limit', 10);
-
-        $products = $this->productService->getPaginatedProducts($sortKey, $sortDirection, $limit);
+        $search = $request->input('search', '');
 
         return inertia('admin/ProductList', [
-            'products' => $products,
+            'products' => $this->productService->getPaginatedProducts($sortKey, $sortDirection, $search),
             'sortkey' => $sortKey,
             'sortdirection' => $sortDirection,
+            'search' => $search
         ]);
     }
 
@@ -38,43 +39,42 @@ class ProductController extends Controller
         return inertia('admin/NewProduct');
     }
 
-    public function store(ProductRequest $request)
+    public function store(CreateProductRequest $request)
     {
-        $product = $this->productService->create($request->validated());
-        return response()->json([
-            'success' => true,
-            'product' => $product
-        ], 201)->header('X-Message', 'Product created successfully');
+        $product = $this->productService->createProduct($request->validated());
+        return response()->json($product, 201);
+    }
+
+    public function show(Product $product)
+    {
+        return response()->json($product->load(['images', 'categories', 'brand', 'subproducts']));
     }
 
     public function update(ProductRequest $request, $id)
     {
-        $result = $this->productService->update($request->validated(), $id);
-        return response()->json([
-            'success' => true,
-            'product' => $result
-        ], 200)->header('X-Message', 'Product updated successfully');
+        $validated = $request->validated();
+        $updated = $this->productService->update($validated, $id);
+        return response()->json($updated);
     }
 
     public function destroy($id)
     {
-        if (!is_numeric($id)) {
-            return response()->json(['message' => 'Invalid product ID format'], 404);
-        }
-
-        // Explicit auth check for admin role
-        if (!Auth::user()->isAdmin()) {
+        if (!Auth::user() || !Auth::user()->role === 'admin') {
             return response()->json(['message' => 'Unauthorized action'], 403);
         }
 
         try {
-            if ($this->productService->delete($id)) {
-                return response()->json(null, 204)->header('X-Message', 'Product deleted successfully');
+            // Validate ID is a number
+            if (!is_numeric($id)) {
+                return response()->json(['message' => 'Invalid product ID format'], 404);
             }
-            return response()->json(['message' => 'Failed to delete product'], 500);
+
+            $this->productService->delete((int)$id);
+            return response()->json(null, 204)
+                ->header('X-Message', 'Product deleted successfully');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Product not found'], 404);
-        } catch (ProductHasOrdersException $e) {
+        } catch (\App\Exceptions\ProductHasOrdersException $e) {
             return response()->json(['message' => $e->getMessage()], 409);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete product'], 500);

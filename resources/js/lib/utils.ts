@@ -23,6 +23,13 @@ export function formatDate(dateString: string): string {
 	}).format(date);
 }
 
+export const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(amount);
+};
+
 export function updateLinks(links, sortKey, sortDirection) {
 	if (!links) return [];
 	return links.map((link) => {

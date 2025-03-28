@@ -1,5 +1,5 @@
 // src/store/useBrandStore.ts
-import create from 'zustand';
+import { create } from 'zustand';
 import { Brand } from "@/types";
 
 interface BrandStore {
