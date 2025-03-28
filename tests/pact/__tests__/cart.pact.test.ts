@@ -5,16 +5,44 @@ import axios, { AxiosError } from 'axios';
 // Base URL for API requests - make configurable via environment variables
 const BASE_URL = process.env.API_URL || 'http://localhost:8000';
 
+// Helper function to check if server is running
+const checkServer = async () => {
+    try {
+        await axios.get(`${BASE_URL}/api/ping`);
+        return true;
+    } catch (error) {
+        console.error('Server check failed:', error.message);
+        console.log('Please ensure Laravel server is running:');
+        console.log('php artisan serve --host=0.0.0.0 --port=8000');
+        return false;
+    }
+};
+
 // Setup axios interceptor for error handling
-beforeAll(() => {
+beforeAll(async () => {
+    // Check if server is running before proceeding 
+    const isServerRunning = await checkServer();
+    if (!isServerRunning) {
+        throw new Error('Laravel server must be running to execute these tests');
+    }
+
+    axios.defaults.baseURL = BASE_URL;
+    axios.defaults.headers.common['Accept'] = 'application/json';
+    axios.defaults.validateStatus = (status) => status < 500;
+
     axios.interceptors.response.use(
         response => response,
         error => {
+            // Return error response for validation/expected errors
             if (error.response) {
-                // Return error response for validation/expected errors
                 return error.response;
             }
-            throw error; // Re-throw network/unexpected errors
+            // Add more detail to network errors
+            if (error.code === 'ECONNREFUSED') {
+                console.error(`Could not connect to server at ${BASE_URL}`);
+                console.error('Please ensure Laravel server is running');
+            }
+            throw error;
         }
     );
 });
