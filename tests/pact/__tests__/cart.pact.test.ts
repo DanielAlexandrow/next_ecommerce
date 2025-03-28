@@ -20,7 +20,7 @@ const checkServer = async () => {
 
 // Setup axios interceptor for error handling
 beforeAll(async () => {
-    // Check if server is running before proceeding
+    // Check if server is running before proceeding 
     const isServerRunning = await checkServer();
     if (!isServerRunning) {
         throw new Error('Laravel server must be running to execute these tests');
