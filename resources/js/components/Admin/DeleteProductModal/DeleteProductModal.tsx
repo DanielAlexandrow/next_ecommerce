@@ -7,9 +7,9 @@ import { productApi } from '@/api/productApi';
 interface DeleteProductModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	productId: number;
-	productName: string;
-	onDelete: () => void;
+	productId: number | null;
+	productName: string | null;
+	onDelete: (id: number) => void;
 }
 
 const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
@@ -19,20 +19,43 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
 	productName,
 	onDelete
 }) => {
-	const [isDeleting, setIsDeleting] = React.useState(false);
+	if (!isOpen) {
+		return null;
+	}
+
+	if (!productId) {
+		console.error('DeleteProductModal: Product ID is required but was not provided');
+		return (
+			<Dialog open={isOpen} onOpenChange={onClose}>
+				<DialogContent>
+					<DialogTitle>Error</DialogTitle>
+					<p>Cannot delete product: Invalid product ID</p>
+					<div className="flex justify-end gap-2">
+						<Button variant="outline" onClick={onClose}>Close</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
+		);
+	}
+
+	if (!productName) {
+		console.warn('DeleteProductModal: Product name is missing');
+		productName = 'Unknown Product';
+	}
 
 	const handleDelete = async () => {
-		setIsDeleting(true);
+		if (!productId) {
+			console.error('DeleteProductModal: Cannot delete product with null ID');
+			return;
+		}
 		try {
 			await productApi.deleteProduct(productId);
 			toast.success('Product deleted successfully');
-			onDelete();
+			onDelete(productId);
 			onClose();
 		} catch (error) {
 			console.error('Delete error:', error);
 			toast.error('Failed to delete product');
-		} finally {
-			setIsDeleting(false);
 		}
 	};
 

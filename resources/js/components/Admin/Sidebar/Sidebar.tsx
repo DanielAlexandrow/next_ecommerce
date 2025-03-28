@@ -11,6 +11,7 @@ import { ShoppingCartIcon } from 'lucide-react';
 import { FaTrademark } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoLocationOutline } from "react-icons/io5";
+import { FiTag } from "react-icons/fi";
 import { styles } from './Sidebar.styles';
 
 import {
@@ -20,6 +21,7 @@ import {
     DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import axios from 'axios';
+import { FaUser } from 'react-icons/fa';
 
 const sidebarItems = [
     {
@@ -67,15 +69,26 @@ const sidebarItems = [
         text: 'Settings',
         href: '/shop-settings',
     },
+    // Updated user management section
     {
-        icon: <IoSettingsOutline />,
+        icon: <FaUser />,
         text: 'Users',
         href: '/admin/users',
+    },
+    {
+        icon: <FaUser />,
+        text: 'Customers',
+        href: '/admin/customers',
     },
     {
         icon: <FiAlignJustify />,
         text: 'Categories',
         href: '/admin/categories',
+    },
+    {
+        icon: <FiTag />,
+        text: 'Deals',
+        href: '/admin/deals',
     },
 ];
 

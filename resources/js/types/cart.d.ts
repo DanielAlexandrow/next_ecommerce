@@ -22,3 +22,6 @@ export interface CartItem {
     created_at?: string;
     updated_at?: string;
 }
+
+// Alias to maintain backward compatibility 
+export type CartItemType = CartItem;

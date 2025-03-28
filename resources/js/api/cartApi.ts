@@ -1,36 +1,36 @@
-import axios from 'axios';
-import { Category } from '@/types';
+import axios from '@/lib/axios';
 
-export const cartApi = {
-	removeItem: async (subproductId) => {
-		const result = await axios.post("/cart/remove", { subproduct_id: subproductId });
-		return result.data;
-	},
+const cartApi = {
+    addItem: async (subproductId: number, quantity: number = 1) => {
+        const response = await axios.post('/cart/add', { 
+            subproduct_id: subproductId,
+            quantity
+        });
+        return response.data;
+    },
 
-	addItem: async (subproductId: number) => {
-		try {
-			const result = await axios.post("/cart/add", {
-				subproduct_id: subproductId,
-				quantity: 1
-			});
-			return { data: result.data, result };
-		} catch (error) {
-			console.error('Error adding item to cart:', error);
-			throw error;
-		}
-	},
+    removeItem: async (subproductId: number) => {
+        const response = await axios.post('/cart/remove', { 
+            subproduct_id: subproductId 
+        });
+        return response.data;
+    },
 
-	checkout: async (cartId, addressData) => {
-		const response = await axios.post(`/checkout/${cartId}`, {
-			addressData,
-			cart_id: cartId
-		});
-		return response.data;
-	},
+    getItems: async () => {
+        const response = await axios.get('/getcartitems');
+        return response.data;
+    },
 
-	getItems: async () => {
-		const result = await axios.get("/getcartitems");
-		return result.data;
-	}
+    getCartWithDeals: async () => {
+        const response = await axios.get('/cart/withdeals');
+        return response.data;
+    },
+
+    checkout: async (cartId: number, addressData?: any) => {
+        const response = await axios.post(`/checkout/${cartId}`, { addressData });
+        return response.data;
+    }
 };
+
+export default cartApi;
 

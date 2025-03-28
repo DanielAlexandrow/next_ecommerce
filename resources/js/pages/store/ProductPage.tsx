@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { StoreLayout } from "@/layouts/store-layout";
 import { usePage } from "@inertiajs/react";
 import { useState } from "react";
-import { Product, StoreProduct } from "@/types";
+import { Product, StoreProduct, Subproduct } from "@/types";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { cartApi } from "@/api/cartApi";
+import cartApi from "@/api/cartApi";
 import { styles } from './ProductPage.styles';
 
 export default function ProductPage() {
@@ -25,9 +25,9 @@ export default function ProductPage() {
 	};
 
 	return (
-		<div className={styles.container}>
+		<div className={styles.container} data-testid="product-page">
 			<div className={styles.grid}>
-				<div className="aspect-square relative h-full w-full">
+				<div className="aspect-square relative h-full w-full" data-testid="product-image-container">
 					<img
 						alt={product.name}
 						className="object-cover"
@@ -37,33 +37,44 @@ export default function ProductPage() {
 							height: '100%',
 							width: '100%',
 							inset: '0px',
-						}}
+							}}
+						data-testid="product-image"
 					/>
 				</div>
-				<div className={styles.content.wrapper}>
+				<div className={styles.content.wrapper} data-testid="product-details">
 					<div className={styles.content.header.container}>
-						<h1 className={styles.content.header.title}>{product.name}</h1>
-						<p className={styles.content.header.description}>{product.description}</p>
+						<h1 className={styles.content.header.title} data-testid="product-name">{product.name}</h1>
+						<p className={styles.content.header.description} data-testid="product-description">{product.description}</p>
 					</div>
 					<div className={styles.content.details.container}>
 						<div className={styles.content.details.section}>
 							<Label className={styles.content.details.label}>Price</Label>
-							<p className={styles.content.price.amount}>$ {selectedOption.price}</p>
+							<p className={styles.content.price.amount} data-testid="product-price">$ {selectedOption.price}</p>
 						</div>
 						<div className={styles.content.details.section}>
 							<Label className={styles.content.details.label}>Size</Label>
 							<Select
 								defaultValue={selectedOption.id.toString()}
-								onValueChange={(value) => setSelectedOption(product.subproducts.find(sp => sp.id.toString() === value))}
+								onValueChange={(value) => {
+									const option = product.subproducts.find(sp => sp.id.toString() === value);
+									if (option) {
+										setSelectedOption(option);
+									}
+								}}
+								data-testid="product-variant-select"
 							>
-								<SelectTrigger className="w-full">
+								<SelectTrigger className="w-full" data-testid="product-variant-trigger">
 									<SelectValue placeholder="Select size" />
 								</SelectTrigger>
-								<SelectContent>
+								<SelectContent data-testid="product-variant-options">
 									{product.subproducts.map((subproduct) => (
-										<SelectItem key={subproduct.id} value={subproduct.id.toString()}>
+										<SelectItem 
+											key={subproduct.id} 
+											value={subproduct.id.toString()}
+											data-testid={`variant-option-${subproduct.id}`}
+										>
 											{subproduct.name}
-										</SelectItem>
+									</SelectItem>
 									))}
 								</SelectContent>
 							</Select>
@@ -72,6 +83,7 @@ export default function ProductPage() {
 							size="lg"
 							className={styles.content.addToCart.button}
 							onClick={handleAddToCart}
+							data-testid="add-to-cart-button"
 						>
 							Add to cart
 						</Button>

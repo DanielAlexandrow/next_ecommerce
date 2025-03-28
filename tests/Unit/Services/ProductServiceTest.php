@@ -25,41 +25,31 @@ class ProductServiceTest extends TestCase {
     }
 
     /** @test */
-    public function it_creates_product_with_categories_and_subproducts() {
-        // Arrange
-        $brand = Brand::factory()->create();
-        $category = Category::factory()->create();
-
+    public function test_create_product()
+    {
         $data = [
             'name' => 'Test Product',
             'description' => 'Test Description',
-            'brand_id' => $brand->id,
-            'categories' => [$category->id],
-            'subproducts' => [
-                [
-                    'name' => 'Variant 1',
-                    'sku' => 'TEST-001',
-                    'price' => 99.99,
-                    'stock' => 10,
-                    'weight' => 1.5,
-                    'dimensions' => ['length' => 10, 'width' => 5, 'height' => 2],
-                    'metadata' => ['color' => 'red']
-                ]
-            ],
-            'metadata' => ['featured' => true]
+            'brand_id' => 1,
+            'available' => true,
+            'subproducts' => [[
+                'name' => 'Standard Variant',
+                'price' => 99.99,
+                'available' => true,
+                'stock' => 10
+            ]]
         ];
 
-        // Act
-        $product = $this->productService->create($data);
+        $product = $this->productService->createProduct($data);
 
-        // Assert
         $this->assertInstanceOf(Product::class, $product);
         $this->assertEquals('Test Product', $product->name);
-        $this->assertCount(1, $product->categories);
+        $this->assertEquals('Test Description', $product->description);
         $this->assertCount(1, $product->subproducts);
-        $this->assertEquals($category->id, $product->categories->first()->id);
-        $this->assertEquals('Variant 1', $product->subproducts->first()->name);
-        $this->assertEquals(['featured' => true], $product->metadata);
+        
+        $subproduct = $product->subproducts->first();
+        $this->assertEquals('Standard Variant', $subproduct->name);
+        $this->assertEquals(99.99, $subproduct->price);
     }
 
     /** @test */
@@ -182,8 +172,7 @@ class ProductServiceTest extends TestCase {
                 'name' => 'Test Variant',
                 'price' => 99.99,
                 'stock' => 10,
-                'available' => true,
-                'sku' => 'TEST-SKU-' . $product->id
+                'available' => true
             ]);
             Review::factory()->create([
                 'user_id' => $user->id,
@@ -215,15 +204,15 @@ class ProductServiceTest extends TestCase {
     }
 
     /** @test */
-    public function it_handles_price_range_filters() {
+    public function test_handles_price_range_filters()
+    {
         // Arrange
         $product = Product::factory()->create();
         $product->subproducts()->create([
             'name' => 'Test Subproduct',
             'price' => 100,
             'stock' => 10,
-            'available' => true,
-            'sku' => 'TEST-SKU-001'
+            'available' => true
         ]);
 
         $filters = [

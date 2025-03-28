@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * READ-ONLY: This model has verified tests and should not be modified without approval.
+ * @see API_DOCUMENTATION.md#categories-read-only for details
+ */
 class Category extends Model {
 	use HasFactory;
 

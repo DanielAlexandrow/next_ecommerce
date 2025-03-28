@@ -10,12 +10,11 @@ class Subproduct extends Model {
 	use HasFactory;
 
 	protected $fillable = [
-		'product_id',
 		'name',
-		'description',
 		'price',
+		'product_id',
+		'available',
 		'stock',
-		'sku',
 		'weight',
 		'dimensions',
 		'metadata'

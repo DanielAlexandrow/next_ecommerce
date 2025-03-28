@@ -65,15 +65,15 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                     <FormItem>
                                         <FormLabel className={styles.formField.label}>Product Name</FormLabel>
                                         <FormControl>
-                                            <div data-testid="product-name-input">
-                                                <Input 
-                                                    placeholder="Enter product name" 
-                                                    className={cn(styles.formField.input, "w-full")}
-                                                    {...field} 
-                                                />
-                                            </div>
+                                            <Input 
+                                                placeholder="Enter product name" 
+                                                className={cn(styles.formField.input, "w-full")}
+                                                data-testid="product-name-input"
+                                                role="textbox"
+                                                {...field} 
+                                            />
                                         </FormControl>
-                                        <FormMessage className={styles.formField.message} />
+                                        <FormMessage className={styles.formField.message} role="alert" />
                                     </FormItem>
                                 )}
                             />
@@ -85,15 +85,15 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                     <FormItem>
                                         <FormLabel className={styles.formField.label}>Description</FormLabel>
                                         <FormControl>
-                                            <div data-testid="product-description-input">
-                                                <Textarea 
-                                                    placeholder="Enter product description" 
-                                                    className={cn(styles.formField.input, "min-h-[120px] w-full")}
-                                                    {...field} 
-                                                />
-                                            </div>
+                                            <Textarea 
+                                                placeholder="Enter product description" 
+                                                className={cn(styles.formField.input, "min-h-[120px] w-full")}
+                                                data-testid="product-description-input"
+                                                role="textbox"
+                                                {...field} 
+                                            />
                                         </FormControl>
-                                        <FormMessage className={styles.formField.message} />
+                                        <FormMessage className={styles.formField.message} role="alert" />
                                     </FormItem>
                                 )}
                             />
@@ -104,13 +104,13 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                 render={({ field }) => (
                                     <FormItem className={styles.checkbox.wrapper}>
                                         <FormControl>
-                                            <div data-testid="product-available-checkbox">
-                                                <Checkbox 
-                                                    checked={field.value} 
-                                                    onCheckedChange={field.onChange}
-                                                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
-                                                />
-                                            </div>
+                                            <Checkbox 
+                                                checked={field.value} 
+                                                onCheckedChange={field.onChange}
+                                                className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                                data-testid="product-available-checkbox"
+                                                role="checkbox"
+                                            />
                                         </FormControl>
                                         <div className={styles.checkbox.label.wrapper}>
                                             <FormLabel className={styles.checkbox.label.title}>Available for purchase</FormLabel>
@@ -118,7 +118,7 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                                 Make this product available in your store
                                             </p>
                                         </div>
-                                        <FormMessage className={styles.formField.message} />
+                                        <FormMessage className={styles.formField.message} role="alert" />
                                     </FormItem>
                                 )}
                             />
@@ -156,13 +156,13 @@ const ProductForm = ({ mode, product }: ProductFormProps): React.ReactNode => {
                                                     selectedBrands={selectedBrands as Brand[]}
                                                     setSelectedBrands={(brands: Brand[]) => setSelectedBrands(brands)}
                                                 />
-                                                <FormMessage className={styles.formField.message} />
+                                                <FormMessage className={styles.formField.message} role="alert" />
                                             </FormItem>
                                         )}
                                     />
                                     
                                     {form.formState.errors.brand_id && (
-                                        <Alert variant="destructive" className="mt-4 bg-red-50 text-red-800 border border-red-200">
+                                        <Alert variant="destructive" className="mt-4 bg-red-50 text-red-800 border border-red-200" role="alert">
                                             <AlertCircle className="h-4 w-4" />
                                             <AlertDescription>
                                                 {form.formState.errors.brand_id.message}

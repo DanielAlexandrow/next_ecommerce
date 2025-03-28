@@ -78,4 +78,26 @@ class ImageController extends Controller {
 
 		return response()->json($images);
 	}
+
+	public function search(Request $request) {
+		$searchTerm = $request->input('term');
+		$images = Image::when($searchTerm, function ($query) use ($searchTerm) {
+			$query->where('name', 'LIKE', "%{$searchTerm}%");
+		})
+		->orderBy('created_at', 'desc')
+		->paginate(10);
+
+		return response()->json([
+			'data' => $images->items(),
+			'meta' => [
+				'current_page' => $images->currentPage(),
+				'last_page' => $images->lastPage(),
+				'from' => $images->firstItem(),
+				'to' => $images->lastItem(),
+				'total' => $images->total(),
+				'per_page' => $images->perPage(),
+				'links' => $images->linkCollection()->toArray()
+			]
+		]);
+	}
 }

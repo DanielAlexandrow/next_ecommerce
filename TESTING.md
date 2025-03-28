@@ -1,65 +1,5 @@
 # Testing Documentation
 
-## Testing Strategy and Priority Order
-
-1. **PHP Tests (First Priority)**
-   ```bash
-   php artisan test
-   ```
-   - Run PHP tests first
-   - Fix any failing tests before proceeding
-   - Includes unit tests, feature tests, and integration tests
-   - Only proceed to next step if all PHP tests pass
-
-2. **Vitest Frontend Tests (Second Priority)**
-   ```bash
-   pnpm run test
-   ```
-   - Run after all PHP tests pass
-   - Fix any failing tests before proceeding
-   - Includes component tests, hooks tests, and utility tests
-   - Only proceed to next step if all Vitest tests pass
-
-3. **Playwright E2E Tests (Third Priority)**
-   ```bash
-   pnpm run test:e2e
-   ```
-   - Run only after PHP and Vitest tests pass
-   - End-to-end testing of complete user flows
-   - Fix any failing tests before deployment
-   - Most comprehensive but slowest tests
-
-## Test Fixing Strategy
-1. Fix tests in order of priority
-2. Do not proceed to next test suite until current suite passes
-3. Document any test fixes in commit messages
-4. Update test documentation when test behavior changes
-
-## Lessons Learned
-
-1. **Factory Usage**
-   - Always use factories for model creation in tests
-   - Use `factory()->make()` with `save()` for relationships instead of direct `create()`
-   - The `SubproductFactory` automatically generates unique SKUs using `fake()->unique()->ean13()`
-
-2. **Special Characters**
-   - When testing with special characters, use `assertJsonFragment` instead of `assertDatabaseHas`
-   - Database may store special characters differently than they are sent
-   - Use `assertStringContainsString` for partial matches when exact matches are not needed
-
-3. **ResizeObserver Mock**
-   - Frontend tests require a mock for `ResizeObserver`
-   - Mock should be added to `vitest.setup.ts`
-   - Mock implementation:
-     ```typescript
-     const mockResizeObserver = vi.fn(() => ({
-         observe: vi.fn(),
-         unobserve: vi.fn(),
-         disconnect: vi.fn(),
-     }));
-     vi.stubGlobal('ResizeObserver', mockResizeObserver);
-     ```
-
 ## Testing Strategies
 
 ### Frontend Testing
@@ -86,19 +26,111 @@
    - Test error handling
    - Test authentication and authorization
 
+## Lessons Learned
+
+1. **Factory Usage**
+   - Always use factories for model creation in tests
+   - Use `factory()->make()` with `save()` for relationships instead of direct `create()`
+   - Customize factories per test case as needed
+
+2. **Special Characters**
+   - When testing with special characters, use `assertJsonFragment` instead of `assertDatabaseHas`
+   - Database may store special characters differently than they are sent
+   - Use `assertStringContainsString` for partial matches when exact matches are not needed
+
+3. **ResizeObserver Mock**
+   - Frontend tests require a mock for `ResizeObserver`
+   - Mock should be added to `vitest.setup.ts`
+   - Mock implementation:
+     ```typescript
+     const mockResizeObserver = vi.fn(() => ({
+         observe: vi.fn(),
+         unobserve: vi.fn(),
+         disconnect: vi.fn(),
+     }));
+     vi.stubGlobal('ResizeObserver', mockResizeObserver);
+     ```
+
+4. **Vite Manifest Issues**
+   - When running tests with Inertia.js pages, ensure the Vite manifest is properly generated
+   - Error: `Unable to locate file in Vite manifest: resources/js/pages/admin/X.tsx`
+   - Solutions:
+     - Mock the Vite facade in your test classes
+     - Run `npm run build` before tests to generate the manifest
+     - Add a custom test helper that creates mock Vite entries for testing
+
+5. **Authentication Redirects**
+   - Always check the correct redirect path in authentication tests
+   - For admin routes, the redirect may be to '/adminlogin' instead of '/login'
+   - Use `assertRedirect(route('login'))` instead of hardcoded paths
+
+6. **Object Availability in Tests**
+   - `Attempt to read property "id" on null` errors typically indicate an object wasn't created successfully
+   - Always check if model creation succeeded before using its properties
+   - Use `assertNotNull($object)` before accessing object properties
+
 ## Common Issues and Solutions
 
-1. **SKU Generation**
-   - Issue: Missing SKU values in tests
-   - Solution: Use `SubproductFactory` which automatically generates unique SKUs
+1. **Data Validation**
+   - Issue: Missing required fields in tests
+   - Solution: Use test data factories with complete data
 
 2. **Special Characters**
    - Issue: Database stores special characters differently
-   - Solution: Use partial matches or JSON response assertions
+   - Solution: Use partial string matching for assertions
 
 3. **Frontend Component Tests**
    - Issue: Missing ResizeObserver
-   - Solution: Add mock to `vitest.setup.ts`
+   - Solution: Add mock to vitest.setup.ts
+
+4. **Vite Asset Loading in Tests**
+   - Issue: Unable to locate file in Vite manifest
+   - Solution: Mock the Vite facade in your TestCase setup
+   ```php
+   // In your TestCase.php or specific test class
+   public function setUp(): void
+   {
+       parent::setUp();
+       // Mock Vite to prevent manifest errors
+       $this->mock(\Illuminate\Foundation\Vite::class, function ($mock) {
+           $mock->shouldReceive('__invoke')->andReturn('');
+       });
+   }
+   ```
+
+5. **Controller Test Setup**
+   - Issue: Undefined properties like `$this->admin`
+   - Solution: Initialize all required properties in setUp method
+   ```php
+   protected function setUp(): void
+   {
+       parent::setUp();
+       $this->admin = User::factory()->create(['role' => 'admin']);
+       $this->user = User::factory()->create(['role' => 'customer']);
+   }
+   ```
+
+6. **Collection Method Errors**
+   - Issue: `Method Collection::paginate does not exist`
+   - Solution: Use Laravel's built-in pagination on query builders instead of collections
+   ```php
+   // Incorrect
+   $collection->paginate(10);
+   
+   // Correct
+   Model::query()->paginate(10);
+   // or
+   DB::table('table')->paginate(10);
+   ```
+
+7. **Model Availability for Tests**
+   - Issue: Cart or other model creation failing silently
+   - Solution: Check model validation rules and use assertDatabaseHas to confirm creation
+   ```php
+   $cart = Cart::create(['user_id' => $user->id]);
+   $this->assertNotNull($cart, 'Cart creation failed');
+   $this->assertDatabaseHas('cart', ['user_id' => $user->id]);
+   ```
 
 ## API Documentation
 
@@ -106,7 +138,6 @@
 - `POST /api/products`
   - Creates a new product with subproducts
   - Handles special characters in names and descriptions
-  - Validates unique SKUs across subproducts
 
 ### Order API
 - `POST /api/orders`
@@ -118,4 +149,4 @@
 - `POST /api/checkout`
   - Processes checkout from cart
   - Creates order and order items
-  - Clears cart after successful checkout 
+  - Clears cart after successful checkout

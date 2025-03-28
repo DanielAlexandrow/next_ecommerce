@@ -1,18 +1,35 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('API Tests', () => {
-    let authToken: string;
+    test.beforeAll(async () => {
+        console.log('🚀 Starting API test suite');
+        console.log('💫 Environment:', process.env.NODE_ENV);
+    });
+
+    test.afterAll(async () => {
+        console.log('🏁 Completed API test suite');
+    });
 
     test.beforeEach(async ({ request }) => {
-        const response = await request.post('/api/login', {
-            data: {
-                email: 'test@example.com',
-                password: 'password123'
-            }
-        });
+        console.log('\n📝 Starting new API test case');
+        console.log('🔄 Setting up test environment');
+    });
+
+    test.afterEach(async () => {
+        console.log('✅ Test case completed');
+    });
+
+    test('should fetch products successfully', async ({ request }) => {
+        console.log('🎯 Testing GET /api/products endpoint');
+        const response = await request.get('/api/products');
+        console.log('📊 Response status:', response.status());
+        console.log('📦 Response headers:', response.headers());
+        
+        const data = await response.json();
+        console.log('🔍 Retrieved products count:', data.data.length);
+        
         expect(response.ok()).toBeTruthy();
-        const body = await response.json();
-        authToken = body.token;
+        expect(data.data).toBeDefined();
     });
 
     test('getUserOrders returns correct order structure', async ({ request }) => {
@@ -109,4 +126,4 @@ test.describe('API Tests', () => {
         });
         expect(clearCartResponse.ok()).toBeTruthy();
     });
-}); 
+});

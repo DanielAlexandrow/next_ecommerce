@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * READ-ONLY: This pivot model has verified tests and should not be modified without approval.
+ * @see API_DOCUMENTATION.md#categories-read-only for details
+ */
 class ProductCategory extends Model
 {
 	use HasFactory;

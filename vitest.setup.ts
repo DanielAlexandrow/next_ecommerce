@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, vi } from 'vitest';
-import { initTestHistory } from './resources/js/tests/test-history';
+import { initTestHistory } from '@/tests/test-history';
 import axios from 'axios';
 
 // Mock ResizeObserver
@@ -15,6 +15,7 @@ vi.stubGlobal('ResizeObserver', mockResizeObserver);
 
 // Configure axios for tests
 axios.defaults.baseURL = '';
+
 // Mock axios adapter to prevent actual HTTP requests
 vi.mock('axios');
 

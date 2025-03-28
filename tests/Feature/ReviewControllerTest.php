@@ -75,9 +75,21 @@ class ReviewControllerTest extends TestCase
 
     public function test_user_can_update_own_review()
     {
-        $review = Review::factory()->create([
+        // Create order with product
+        $subproduct = Subproduct::factory()->create(['product_id' => $this->product->id]);
+        $order = Order::factory()->create(['user_id' => $this->user->id]);
+        OrderItem::factory()->create([
+            'order_id' => $order->id,
+            'subproduct_id' => $subproduct->id
+        ]);
+
+        // Create initial review
+        $review = Review::create([
             'user_id' => $this->user->id,
-            'product_id' => $this->product->id
+            'product_id' => $this->product->id,
+            'title' => 'Initial Title',
+            'content' => 'Initial Content',
+            'rating' => 3
         ]);
 
         $response = $this->actingAs($this->user)

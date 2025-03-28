@@ -9,6 +9,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use App\Services\OrderService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
+use Dompdf\Dompdf;
 
 class AdminOrders extends Controller {
     protected $orderService;
@@ -19,138 +22,115 @@ class AdminOrders extends Controller {
         $this->orderService = $orderService ?? new OrderService();
     }
 
+    private function validateOrderId($orderId): ?string {
+        if (!$orderId) {
+            return 'Order ID is required';
+        }
+        if (!is_numeric($orderId)) {
+            return 'Order ID must be numeric';
+        }
+        return null;
+    }
+
+    private function validateOrderStatus($status): ?string {
+        if (!$status) {
+            return 'Order status is required';
+        }
+        $validStatuses = ['pending', 'processing', 'completed', 'cancelled'];
+        if (!in_array($status, $validStatuses)) {
+            return "Invalid order status. Must be one of: " . implode(', ', $validStatuses);
+        }
+        return null;
+    }
+
     public function index(Request $request) {
-        $sortKey = $request->input('sortkey', 'orders.id');
-        $sortDirection = $request->input('sortdirection', 'desc');
-        $search = $request->input('search', '');
-        $driverId = $request->input('driver_id', null);
+        $params = [
+            'sortkey' => $request->input('sortkey', 'orders.id'),
+            'sortdirection' => $request->input('sortdirection', 'desc'),
+            'search' => $request->input('search'),
+            'orderStatus' => $request->input('orderStatus'),
+            'paymentStatus' => $request->input('paymentStatus'),
+            'shippingStatus' => $request->input('shippingStatus'),
+            'from' => $request->input('from'),
+            'to' => $request->input('to'),
+            'minTotal' => $request->input('minTotal'),
+            'maxTotal' => $request->input('maxTotal'),
+            'driver_id' => $request->input('driver_id'),
+        ];
 
-        $query = Order::query()
-            ->select([
-                'orders.id as order_id',
-                DB::raw('COALESCE(users.name, address_info.name, "N/A") as name'),
-                DB::raw('(LENGTH(orders.items) - LENGTH(REPLACE(orders.items, \',\', \'\')) + 1) as item_count'),
-                'orders.total',
-                'orders.status',
-                'orders.created_at',
-                'orders.driver_id'
-            ])
-            ->leftJoin('users', 'users.id', '=', 'orders.user_id')
-            ->leftJoin('guests', 'guests.id', '=', 'orders.guest_id')
-            ->leftJoin('address_infos as address_info', 'address_info.id', '=', 'guests.id_address_info');
-            
-        if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('users.name', 'like', "%{$search}%")
-                  ->orWhere('address_info.name', 'like', "%{$search}%")
-                  ->orWhere('orders.id', 'like', "%{$search}%");
-            });
-        }
-        
-        // Filter by driver if requested
-        if ($driverId) {
-            $query->where('orders.driver_id', $driverId);
-        }
-        
-        // If the current user is a driver, only show their orders
-        if (auth()->check() && auth()->user()->role === 'driver') {
-            $query->where('orders.driver_id', auth()->id());
+        if (auth()->user()->role === 'driver') {
+            $params['user_id'] = auth()->id();
+            $params['user_role'] = 'driver';
         }
 
-        $orders = $query->orderBy($sortKey, $sortDirection)->paginate(10);
+        $orders = $this->orderService->getOrders($params);
 
-        if ($request->wantsJson()) {
-            return response()->json($orders);
-        }
-
-        // Get the list of drivers for the dropdown
-        $drivers = User::where('role', 'driver')->select('id', 'name')->get();
-
-        return Inertia::render('admin/Orders', [
+        return inertia('admin/Orders', [
             'orders' => $orders,
-            'sortkey' => $sortKey,
-            'sortdirection' => $sortDirection,
-            'drivers' => $drivers
+            'sortkey' => $params['sortkey'],
+            'sortdirection' => $params['sortdirection'],
+            'filters' => [
+                'search' => $params['search'],
+                'orderStatus' => $params['orderStatus'],
+                'paymentStatus' => $params['paymentStatus'],
+                'shippingStatus' => $params['shippingStatus'],
+                'from' => $params['from'],
+                'to' => $params['to'],
+                'minTotal' => $params['minTotal'],
+                'maxTotal' => $params['maxTotal']
+            ]
         ]);
     }
 
-    public function getOrderDetails($order_id) {
-        $order = Order::with(['user', 'guest.addressInfo', 'driver'])->findOrFail($order_id);
-        $customer = $order->user ?? ($order->guest ? [
-            'id' => $order->guest->id,
-            'name' => $order->guest->addressInfo->name ?? 'N/A',
-            'email' => $order->guest->email ?? 'N/A',
-            'address' => $order->guest->addressInfo
-        ] : null);
+    public function getOrderDetails($orderId) {
+        $order = Order::with(['orderItems.subproduct.product'])
+            ->findOrFail($orderId);
+            
+        $customer = $order->user ?? $order->guest;
         
         return response()->json([
             'order' => $order,
             'customer' => $customer,
-            'items' => json_decode($order->items),
+            'items' => $order->orderItems,
             'total' => $order->total,
-            'status' => [
-                'order' => $order->status,
-                'payment' => $order->payment_status,
-                'shipping' => $order->shipping_status
-            ],
-            'driver' => $order->driver
+            'status' => $order->status
         ]);
     }
 
-    public function updateStatus(Request $request, Order $order) {
+    public function updateStatus(Request $request, $orderId) {
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:pending,processing,completed,cancelled',
-            'payment_status' => 'required|in:pending,paid,refunded',
-            'shipping_status' => 'required|in:pending,shipped,delivered',
-            'driver_id' => 'nullable|exists:users,id'
+            'payment_status' => 'required|in:pending,paid,failed',
+            'shipping_status' => 'required|in:pending,shipped,delivered'
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $order->update($request->only(['status', 'payment_status', 'shipping_status', 'driver_id']));
+        $order = Order::findOrFail($orderId);
+        $order->update($validator->validated());
 
-        return response()->json([
-            'message' => 'Order status updated successfully',
-            'order' => $order
-        ]);
+        return response()->json($order);
     }
 
     public function generatePdf($orderId) {
-        try {
-            $order = Order::with(['user', 'guest.addressInfo'])->findOrFail($orderId);
+        $order = Order::with(['orderItems.subproduct.product'])
+            ->findOrFail($orderId);
             
-            // Allow admin or the order owner to access PDF
-            if (!auth()->user()->isAdmin() && auth()->id() !== $order->user_id) {
-                return response()->json(['message' => 'Unauthorized access to order PDF'], 403);
-            }
-            
-            $items = is_string($order->items) ? json_decode($order->items, true) : $order->items;
-            $customer = $order->user ?? ($order->guest ? [
-                'name' => $order->guest->addressInfo->name ?? 'N/A',
-                'email' => $order->guest->email ?? 'N/A',
-                'address' => $order->guest->addressInfo
-            ] : null);
-            
-            $data = [
-                'order' => $order,
-                'items' => $items,
-                'customer' => $customer,
-                'date' => $order->created_at->format('Y-m-d'),
-                'invoice_no' => sprintf('INV-%06d', $order->id)
-            ];
-
-            $pdf = PDF::loadView('pdf.invoice', $data);
-            
-            return $pdf->stream('invoice-' . $order->id . '.pdf');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['message' => 'Order not found'], 404);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to generate PDF'], 500);
+        // Check authorization
+        if (auth()->user()->role !== 'admin' && 
+            auth()->id() !== $order->user_id && 
+            !auth()->user()->can('view', $order)) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
+
+        $pdf = PDF::loadView('pdfs.order', [
+            'order' => $order,
+            'customer' => $order->user ?? $order->guest,
+            'items' => $order->orderItems,
+        ]);
+
+        return $pdf->stream("order-{$orderId}.pdf");
     }
 }

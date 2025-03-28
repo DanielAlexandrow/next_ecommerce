@@ -6,6 +6,10 @@ use App\Interfaces\CategoryServiceInterface;
 use App\Models\Category;
 use Illuminate\Support\Collection;
 
+/**
+ * READ-ONLY: This service has verified tests and should not be modified without approval.
+ * @see API_DOCUMENTATION.md#categories-read-only for details
+ */
 class CategoryService implements CategoryServiceInterface {
 	public function getAll(): array {
 		return Category::with(['parent', 'children'])

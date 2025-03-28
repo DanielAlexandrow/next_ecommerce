@@ -20,6 +20,9 @@ class UserControllerTest extends TestCase
         $admin = User::factory()->create(['role' => 'admin']);
         $this->actingAs($admin);
 
+        // Mock session for Inertia
+        $this->withSession(['_flash' => []]);
+
         // Make request to index method with correct route
         $response = $this->get('/admin/users');
 

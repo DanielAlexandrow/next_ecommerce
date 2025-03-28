@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
 use App\Models\Guest;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -13,6 +13,7 @@ export interface ProductImage extends BaseModel {
 	name: string;
 	url: string;
 	path: string;
+	full_path: string;
 	product_id: number;
 	pivot?: {
 		product_id: number;
@@ -43,13 +44,13 @@ export interface Category extends BaseModel {
 export interface Brand extends BaseModel {
 	name: string;
 	logo?: string;
+	products_count?: number;  // Add this property
 }
 
 export interface Subproduct extends BaseModel {
 	name: string;
 	price: number;
 	product_id: number;
-	sku?: string;
 	stock?: number;
 }
 
@@ -134,6 +135,7 @@ export interface ProductImage {
     id: number;
     name: string;
     path: string;
+    full_path: string;
     pivot?: {
         image_id: number;
         order_num?: number;
@@ -152,6 +154,7 @@ export interface Brand {
     id: number;
     name: string;
     description?: string;
+    products_count?: number;  // Add this property
 }
 
 export interface Subproduct {
@@ -207,6 +210,7 @@ export interface CustomImage {
     name?: string;
     path: string;
     full_path?: string;
+    created_at?: string; // Add this line
     pivot?: {
         id?: number;
         image_id: number;
@@ -259,4 +263,38 @@ export interface NavigationItem {
   header_id: number;
   header?: Header;
   categories?: Category[];
+}
+
+export interface Deal {
+    id: number;
+    name: string;
+    description: string | null;
+    discount_amount: number;
+    discount_type: 'percentage' | 'fixed';
+    start_date: string;
+    end_date: string;
+    active: boolean;
+    deal_type: 'product' | 'category' | 'brand' | 'cart';
+    conditions: {
+        minimum_amount?: number;
+        required_items?: number;
+        [key: string]: any;
+    } | null;
+    metadata: any | null;
+    products?: Array<{ id: number; name: string }>;
+    categories?: Array<{ id: number; name: string }>;
+    brands?: Array<{ id: number; name: string }>;
+    subproducts?: Array<{ id: number; name: string }>;
+    created_at: string;
+    updated_at: string;
+}
+
+// Add to existing types
+export interface CartItem extends BaseModel {
+    cart_id: number;
+    subproduct_id: number;
+    quantity: number;
+    subproduct: Subproduct & {
+        product: Product;
+    };
 }

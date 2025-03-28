@@ -33,9 +33,17 @@ class ReviewController extends Controller
 
     public function store(ReviewRequest $request, Product $product)
     {
+        // Merge user_id into request for validation
+        $request->merge(['user_id' => auth()->id()]);
+        
+        // Validate request (including unique constraint)
+        $validated = $request->validated();
+        
         $review = $product->reviews()->create([
             'user_id' => auth()->id(),
-            ...$request->validated()
+            'title' => $validated['title'],
+            'content' => $validated['content'], 
+            'rating' => $validated['rating']
         ]);
 
         return response()->json($review->load('user'), 201);
